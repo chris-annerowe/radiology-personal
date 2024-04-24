@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Divider, Radio, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
+import { db } from '@/lib/db';
 
 interface Patient {
   key: React.Key;
@@ -72,8 +73,19 @@ const rowSelection = {
   }),
 };
 
+const users = async () => {
+  const resp = await db.user.findMany({
+  orderBy: {
+    createdAt: 'desc',
+  },
+  })
+  console.log(resp)
+  return resp
+}
+
 const Patients = () => {
   const selectionType = 'radio'
+  const user = users()
 
   return (
     <div>
