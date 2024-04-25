@@ -133,3 +133,6 @@ code {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+.sidebar {
+  width: 10%!important;
+}

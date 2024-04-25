@@ -1,10 +1,10 @@
+import Sidebar from '@/ui/dashboard/layout/sidebar'
 import React from 'react'
-import Patients from '@/ui/dashboard/patients'
 
 const Dashboard = () => {
   return (
-    <div>Dashboard
-        <Patients />
+    <div>
+        <Sidebar/>
     </div>
   )
 }

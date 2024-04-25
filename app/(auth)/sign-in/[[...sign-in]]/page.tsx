@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { redirect } from 'next/navigation'
 import React from 'react'
+import { compare } from 'bcrypt'
 
 const SignIn = () => {
 
@@ -19,10 +20,15 @@ async function createUser(data: FormData){
         throw new Error("Invalid Password")
     }
 
-    {users.map((user) => {
+    {users.map( (user) => {
         console.log(user.username)
         console.log(user.password)
-        if(username === user.username && password === user.password){
+        // const passwordMatch = await compare(user.password,password);
+        //     if(!passwordMatch){
+        //        console.log("Password incorrect. Please try again.")
+        //     }
+        //     console.log("decrypted: ",passwordMatch)
+        if(username === user.username && (password === user.password)){
             console.log("User verified")
             redirect('/dashboard')
         }
