@@ -1,35 +1,62 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import React from 'react'
+import { Sidebar, SidebarItems, SidebarItemGroup, SidebarItem } from 'flowbite-react';
 
-const Sidebar = () => {
+const Sidebar1 = () => {
   return (
     <div className='flex sidebar flex-col px-6 pb-6 pt-36 max-md:pb-14 sm:px-14 '>
-        <Link href='/patient'
-            className='flex px-2 py-1 rounded 
+      <Link href='/patient'
+        className='flex px-2 py-1 rounded 
             hover:bg-slate-700 focus-within:bg-slate-700 outline-none'
-        >
-          {/* <Image src='/favicon.ico'
+      >
+        {/* <Image src='/favicon.ico'
             width={23}
             height={23}
             alt="DevFlow"
           /> */}
-          Patient
-        </Link>
-        <Link href='/daybook'
-            className='flex px-2 py-1 rounded 
+        Patient
+      </Link>
+      <Link href='/daybook'
+        className='flex px-2 py-1 rounded 
             hover:bg-slate-700 focus-within:bg-slate-700 outline-none'>Daybook</Link>
-        <Link href='/accessioning'
-            className='flex px-2 py-1 rounded 
+      <Link href='/accessioning'
+        className='flex px-2 py-1 rounded 
             hover:bg-slate-700 focus-within:bg-slate-700 outline-none'>Accessioning</Link>
-        <Link href='/studies'
-            className='flex px-2 py-1 rounded 
+      <Link href='/studies'
+        className='flex px-2 py-1 rounded 
             hover:bg-slate-700 focus-within:bg-slate-700 outline-none'>Studies</Link>
-        <Link href='/'
-            className='flex px-2 py-1 rounded 
+      <Link href='/'
+        className='flex px-2 py-1 rounded 
             hover:bg-slate-700 focus-within:bg-slate-700 outline-none'>Administration</Link>  {/* TODO: not a link, open a submenu*/}
     </div>
   )
 }
 
-export default Sidebar
+const Sidebar2 = () => {
+  return (
+    <Sidebar className='h-screen' aria-label="Default sidebar example">
+      <SidebarItems>
+        <SidebarItemGroup>
+          <SidebarItem href="/patient">
+            Patient
+          </SidebarItem>
+          <SidebarItem href="/daybook">
+            Daybook
+          </SidebarItem>
+          <SidebarItem href="/accessioning" >
+            Accessioning
+          </SidebarItem>
+          <SidebarItem href="/studies" >
+            Studies
+          </SidebarItem>
+          <SidebarItem href="/" >
+            Administration
+          </SidebarItem>
+        </SidebarItemGroup>
+      </SidebarItems>
+    </Sidebar>
+  )
+}
+
+export default Sidebar2
