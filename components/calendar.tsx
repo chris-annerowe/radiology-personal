@@ -62,7 +62,7 @@ const Calendar = () => {
          <div className="grid grid-cols-2 gap-2 text-center border rounded-lg p-8">
             {times?.map((time, i) => (
                 <div key={`time-${i}`} className={`rounded-md bg-gray-100 p-2 cursor:pointer hover:bg-sky-600 hover:text-white `}>
-                    <button classname={`rounded-sm ${date?.dateTime && 'bg-sky-600 text-white'}`} type='button' onClick={()=> setDate((prev)=>({...prev,dateTime:time}))}>
+                    <button className={`rounded-sm ${date?.dateTime && 'bg-sky-600 text-white'}`} type='button' onClick={()=> setDate((prev)=>({...prev,dateTime:time}))}>
                         {format(time,'kk:mm')}
                     </button>
                 </div>
