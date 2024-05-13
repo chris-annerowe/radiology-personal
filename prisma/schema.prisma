@@ -83,6 +83,7 @@ model patient {
   last_modified DateTime? @default(now()) @db.Timestamp(6)
   race          Int?      @default(1)
   email         String?   @db.VarChar(100)
+  allergies     String?   @db.VarChar(255)
 }
 
 model study {
@@ -116,7 +117,7 @@ model worklist {
 
 model Configuration {
   @@map("configuration")
-  configuration_id Int @id @default(autoincrement())
+  configuration_id Int @id
   serverHost String @map("server_host")
   serverPort Int @map("server_port")
   senderEmail String @map("sender_email")

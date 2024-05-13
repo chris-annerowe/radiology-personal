@@ -39,7 +39,7 @@ const Sidebar2 = () => {
       <Sidebar className='h-screen' aria-label="Default sidebar example">
         <SidebarItems>
           <SidebarItemGroup>
-            <SidebarItem href="/patient">
+            <SidebarItem href="/dashboard/patient">
               Patient
             </SidebarItem>
             <SidebarItem href="/daybook">

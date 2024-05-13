@@ -3,8 +3,6 @@
 import { db } from '@/lib/db'
 import { ActionResponse } from '@/types/action'
 import ConfigurationSchema from '@/zod/schemas/configuration'
-import { redirect } from 'next/navigation'
-import React from 'react'
 
 
 export const saveConfiguration = async (prevState: any, formData: FormData): Promise<ActionResponse> => {
@@ -12,6 +10,7 @@ export const saveConfiguration = async (prevState: any, formData: FormData): Pro
     console.log(formData);
 
     const configurationData = {
+        configuration_id: 1,
         serverHost: formData.get('server_host') as string,
         serverPort: parseInt(formData.get('server_port') as string),
         senderEmail: formData.get('sender_email') as string,
@@ -37,7 +36,7 @@ export const saveConfiguration = async (prevState: any, formData: FormData): Pro
         console.log("Validation Succeeded");
         const configuration = await db.configuration.upsert({
             where: {
-                configuration_id: 2
+                configuration_id: 1
             },
             update: configurationData,
             create: configurationData
@@ -58,7 +57,7 @@ export const getConfiguration = async () => {
 
     const configuration = db.configuration.findUnique({
         where: {
-            configuration_id: 2
+            configuration_id: 1
         }
     })
 
