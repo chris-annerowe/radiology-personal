@@ -39,23 +39,23 @@ const Sidebar2 = () => {
       <Sidebar className='h-screen' aria-label="Default sidebar example">
         <SidebarItems>
           <SidebarItemGroup>
-            <SidebarItem href="/dashboard/patient">
-              Patient
-            </SidebarItem>
             <SidebarItem href="/dashboard/daybook">
               Daybook
             </SidebarItem>
-            <SidebarItem href="/accessioning" >
+            <SidebarItem href="dashboard/accessioning" >
               Accessioning
+            </SidebarItem>
+            <SidebarItem href="/dashboard/patient">
+              Patient Management
             </SidebarItem>
             <SidebarItem href="/studies" >
               Studies
             </SidebarItem>
-            <SidebarItem href="/dashboard/configuration" >
-              Configuration
-            </SidebarItem>
-            <SidebarItem href="/" >
+            <SidebarItem href="/admin" >
               Administration
+            </SidebarItem>
+            <SidebarItem href="/dashboard/configuration" >
+              System Configuration
             </SidebarItem>
           </SidebarItemGroup>
         </SidebarItems>
