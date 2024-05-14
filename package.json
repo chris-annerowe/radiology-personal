@@ -16,9 +16,11 @@
     "antd": "^5.16.4",
     "bcrypt": "^5.1.1",
     "date-fns": "^3.6.0",
+    "daypilot-pro-react": "https://npm.daypilot.org/daypilot-pro-react/trial/2024.1.5890.tar.gz",
     "next": "14.2.2",
     "next-auth": "^4.24.7",
     "react": "^18",
+    "react-calendar": "^5.0.0",
     "react-dom": "^18",
     "react-icons": "^5.2.1",
     "zod": "^3.23.5"
