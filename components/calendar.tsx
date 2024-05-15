@@ -84,7 +84,7 @@ const Calendar = () => {
                     {times?.map((time, i) => (
                         <div key={`time-${i}`} className={`rounded-sm bg-gray-100 p-2 m-2 cursor:pointer hover:bg-sky-600 hover:text-white `}>
                             <button className={`rounded-sm ${date?.dateTime && 'bg-sky-600 text-white'}`} type='button' onClick={()=> setDate((prev)=>({...prev,dateTime:time}))}>
-                                {format(time,'kk:mm')}
+                                {format(time,'h:mm aa')}
                             </button>
                         </div>
                     ))}
@@ -95,7 +95,7 @@ const Calendar = () => {
             </div>
             )
             : null}
-            {/* <DayPilotScheduler
+            {/* <DayPilotSchedulea..aa
                 startDate={"2024-12-01"}
                 days={31}
                 scale={"Day"}
