@@ -42,17 +42,25 @@ const Calendar = () => {
 
     const getHolidays = async () => {
         const URL = `https://date.nager.at/api/v3/publicholidays/${new Date().getFullYear()}/${COUNTRY_CODE}`
-        const holidays = await fetch(URL,{
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        if(holidays){
+        try{
+            const resp = await fetch(URL,{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            const holidays = await resp.json()
             console.log("JM Holidays: ",URL,holidays)
-            return holidays
+
+            //extract date value from holidays array
+            let dates = []
+            holidays?.map(holiday => (
+                dates.push(holiday.date)
+            ))
+            console.log(dates)
+            return dates
         }
-        return
+        catch{return}
     }
     const holidays = getHolidays()
 
