@@ -22,7 +22,7 @@ export default function PatientSearch() {
 
     return (
         <>
-            <TextInput id="email4" type="email" icon={HiSearch} placeholder="Search for patients" className="mb-8" onKeyDown={performSearch} required />
+            <TextInput id="email4" type="email" icon={HiSearch} placeholder="Search for patients" className="" onKeyDown={performSearch} required />
         </>
 
     );

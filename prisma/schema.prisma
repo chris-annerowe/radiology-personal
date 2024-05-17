@@ -8,18 +8,26 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String   @unique
-  password  String   @unique
-  createdAt DateTime @default(now())
+  id                     Int             @id @default(autoincrement())
+  email                  String          @unique
+  username               String          @unique
+  password               String          @unique
+  createdAt              DateTime        @default(now())
   modifiedConfigurations Configuration[]
 }
 
 model modality {
-  modality_id          BigInt @id
+  modality_id              BigInt  @id @default(autoincrement())
+  modality_code            String  @db.VarChar(10)
+  application_entity_title String
+  modality_description     String?
+}
+
+model modality_codes {
+  modality_code        String    @unique @db.VarChar(10)
   modality_name        String
-  modality_description String
+  modality_description String?
+  studies              studies[]
 }
 
 model appointment {
@@ -86,10 +94,14 @@ model patient {
   allergies     String?   @db.VarChar(255)
 }
 
-model study {
-  study_id          BigInt  @id
-  study_name        String? @db.VarChar(40)
-  study_description String? @db.VarChar
+model studies {
+  study_id          BigInt         @id
+  cpt_code          String         @db.VarChar(5)
+  study_name        String?        @db.VarChar(255)
+  study_description String?        @db.VarChar
+  modality          modality_codes @relation(fields: [modality_code], references: [modality_code])
+  modality_code     String         @map("modality_code")
+  price             Float?
 }
 
 model user {
@@ -116,17 +128,17 @@ model worklist {
 }
 
 model Configuration {
+  configuration_id Int      @id
+  serverHost       String   @map("server_host")
+  serverPort       Int      @map("server_port")
+  senderEmail      String   @map("sender_email")
+  senderPassword   String   @map("sender_password")
+  receiverEmail    String   @map("receiver_email")
+  subject          String
+  message          String
+  updatedAt        DateTime @default(now()) @map("updated_at")
+  modifiedBy       Int      @map("modified_by")
+  modifier         User?    @relation(fields: [modifiedBy], references: [id])
+
   @@map("configuration")
-  configuration_id Int @id
-  serverHost String @map("server_host")
-  serverPort Int @map("server_port")
-  senderEmail String @map("sender_email")
-  senderPassword String @map("sender_password")
-  receiverEmail String @map("receiver_email")
-  subject String
-  message String
-  updatedAt DateTime @default(now()) @map("updated_at")
-  modifiedBy Int @map("modified_by")
-  modifier User? @relation(fields: [modifiedBy], references: [id])
-  
 }

@@ -52,17 +52,28 @@ export const findPatientByName = async (name: string, page: number, limit: numbe
     let patients;
     console.log(`Searching for patient last name starting: ${searchName}`);
 
-    
-    patients = dbExt.patient.findMany({
+
+    patients = db.$queryRaw`SELECT * FROM patient WHERE (first_name || ' ' || last_name) ILIKE ${'%'+name+'%'}`
+    /*patients = dbExt.patient.findMany({
         skip: ((page - 1) * limit),
         take: limit,
         where: {
-            last_name: {
-                startsWith: searchName
-            }
+            OR: [
+                {
+                    last_name: {
+                        startsWith: searchName
+                    }
+                },
+                {
+                    first_name: {
+                        startsWith: searchName
+                    }
+                }
+            ]
+
         }
-    })
-    
+    })*/
+
 
     return patients;
 
