@@ -9,9 +9,9 @@ import { HiPlus } from "react-icons/hi2";
 
 export default async function Patients({
     searchParams,
-  }: {
+}: {
     searchParams: { [key: string]: string | string[] | undefined };
-  }) {
+}) {
 
     let pageNumber = 1;
 
@@ -20,24 +20,24 @@ export default async function Patients({
     const pageNumberParam = searchParams["page"];
     const searchParam = searchParams["search"];
 
-    if(pageNumberParam){    
-        try{
-            if(Array.isArray(pageNumberParam)){
-                pageNumber= parseInt(pageNumberParam[0])
-            }else{
+    if (pageNumberParam) {
+        try {
+            if (Array.isArray(pageNumberParam)) {
+                pageNumber = parseInt(pageNumberParam[0])
+            } else {
                 pageNumber = parseInt(pageNumberParam);
-            }    
-        }catch(e){
+            }
+        } catch (e) {
             console.log("Page number parameter invalid.")
         }
     }
 
-    if(searchParam){
-       
+    if (searchParam) {
+
         search = Array.isArray(searchParam) ? searchParam[0] : searchParam
-      
+
     }
-    
+
 
     const limit = 5;
 
@@ -52,9 +52,11 @@ export default async function Patients({
                     <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Patients</h2>
                 </div>
 
-                <PatientSearch />
-                
-                <div className="flex justify-end m-2">
+
+                <div className="flex justify-between m-2">
+                    <div className="w-64">
+                        <PatientSearch />
+                    </div>
                     <Button href="/dashboard/patient/add">
                         <HiPlus className="mr-2 h-5 w-5" />
                         Add Patient
@@ -63,7 +65,7 @@ export default async function Patients({
 
                 <PatientList patients={patients} patientCount={patientCount} activePage={pageNumber} limit={limit} search={search} />
 
-                
+
 
             </div>
 
