@@ -1,5 +1,6 @@
 "use client"
 
+import { Patient } from "@/types/patient"
 import { Prisma } from "@prisma/client"
 import { format } from "date-fns"
 import { Pagination, Popover, Table } from "flowbite-react"
@@ -8,7 +9,7 @@ import { useRouter } from "next/navigation"
 import { HiNewspaper, HiOutlinePencilAlt } from "react-icons/hi"
 
 interface PatientListProps {
-    patients: Prisma.patientCreateInput[],
+    patients: Patient[],
     patientCount: number,
     activePage: number,
     limit: number,
@@ -25,6 +26,8 @@ export default function PatientList(props: PatientListProps) {
         else
         router.push(`/dashboard/patient?page=${page}`);
     }
+
+    const totalPages = Math.ceil(props.patientCount / props.limit);
 
     
 
@@ -85,7 +88,7 @@ export default function PatientList(props: PatientListProps) {
             </Table>
 
             <div className="flex overflow-x-auto sm:justify-center">
-                <Pagination currentPage={props.activePage} totalPages={Math.ceil(props.patientCount / props.limit)} onPageChange={onPageChange} />
+                <Pagination currentPage={props.activePage} totalPages={totalPages < 1 ? 1 : totalPages} onPageChange={onPageChange} />
             </div>
 
         </div>
