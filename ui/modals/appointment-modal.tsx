@@ -1,7 +1,8 @@
 'use client';
 
 import { createAppointment } from "@/data/appointment";
-import { Button, Label, Modal, TextInput } from "flowbite-react";
+import { format } from "date-fns";
+import { Button, Datepicker, Label, Modal, TextInput } from "flowbite-react";
 import { useEffect, useState } from "react";
 
 interface ApptModalProps{
@@ -13,6 +14,7 @@ interface ApptModalProps{
 
 export default function AppointmentModal(props: ApptModalProps) {
     const [errors, setErrors] = useState<{[key:string]:any}>({});
+    const [dob, setDOB] = useState<Date>(new Date())
 
     useEffect(()=>{
         if(errors){
@@ -28,6 +30,9 @@ export default function AppointmentModal(props: ApptModalProps) {
             const firstName = data.get('firstName')?.valueOf()
             const description = data.get('description')?.valueOf()           
             const tel = data.get('tel')?.valueOf()
+            // let dob = data.get('dob')?.valueOf()
+
+            console.log(dob)
 
             if (typeof firstName !== 'string' || firstName?.length === 0) {
                 throw new Error("Invalid First Name")
@@ -41,8 +46,14 @@ export default function AppointmentModal(props: ApptModalProps) {
             if (typeof description !== 'string') {
                 throw new Error("Invalid Description")
             }
+            // if (typeof dob !== 'string') {
+            //     throw new Error("Invalid DOB")
+            // }
+
+            // dob = format(dob, 'dd:MM:yyyy')
+            // console.log("formatted ",dob)
     
-           await createAppointment(lastName,firstName, description, props.date, props.modality, tel)
+           await createAppointment(lastName,firstName, description, props.date, props.modality, tel, dob)
            //TODO: close modal or return to patients/dashboard page
     }
 
@@ -89,7 +100,12 @@ export default function AppointmentModal(props: ApptModalProps) {
                         />
                     </div>
 
-                    <div></div>
+                    <div>
+                        <div className="mb-2 block">
+                            <Label htmlFor="dob" value="Date Of Birth" />
+                        </div>
+                        <Datepicker name="dob" maxDate={new Date()} defaultDate={undefined} onSelectedDateChanged={()=>setDOB}/>
+                    </div>
 
                     <div  className="col-span-2">
                         <div className="mb-2 block">

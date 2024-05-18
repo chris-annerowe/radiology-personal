@@ -9,6 +9,7 @@ export const createAppointment = async (
     date: Date,
     modality: string,
     tel: string,
+    dob: Date,
 ) =>{
     try{
         await db.appointment.create({
@@ -19,6 +20,7 @@ export const createAppointment = async (
                 description,
                 modality: modality,
                 tel,
+                dob
             }
         })
 
