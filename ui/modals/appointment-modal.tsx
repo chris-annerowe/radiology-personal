@@ -3,6 +3,7 @@
 import { createAppointment } from "@/data/appointment";
 import { format } from "date-fns";
 import { Button, Datepicker, Label, Modal, TextInput } from "flowbite-react";
+import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface ApptModalProps{
@@ -14,7 +15,7 @@ interface ApptModalProps{
 
 export default function AppointmentModal(props: ApptModalProps) {
     const [errors, setErrors] = useState<{[key:string]:any}>({});
-    const [dob, setDOB] = useState<Date>(new Date())
+    const [dob, setDOB] = useState<Date>()
 
     useEffect(()=>{
         if(errors){
@@ -30,9 +31,9 @@ export default function AppointmentModal(props: ApptModalProps) {
             const firstName = data.get('firstName')?.valueOf()
             const description = data.get('description')?.valueOf()           
             const tel = data.get('tel')?.valueOf()
-            // let dob = data.get('dob')?.valueOf()
+            const dobString = data.get('dob')?.valueOf()
 
-            console.log(dob)
+            console.log("Date as string: ",dobString)
 
             if (typeof firstName !== 'string' || firstName?.length === 0) {
                 throw new Error("Invalid First Name")
@@ -46,15 +47,16 @@ export default function AppointmentModal(props: ApptModalProps) {
             if (typeof description !== 'string') {
                 throw new Error("Invalid Description")
             }
-            // if (typeof dob !== 'string') {
-            //     throw new Error("Invalid DOB")
-            // }
+            if (typeof dobString !== 'string') {
+                throw new Error("Invalid DOB")
+            }
 
-            // dob = format(dob, 'dd:MM:yyyy')
-            // console.log("formatted ",dob)
-    
+            const dob = new Date(dobString)
+            console.log("Date as date: ",dob)
+
            await createAppointment(lastName,firstName, description, props.date, props.modality, tel, dob)
-           //TODO: close modal or return to patients/dashboard page
+           // close modal and return to /dashboard/daybook page
+           redirect("/dashboard/daybook")
     }
 
 
