@@ -28,11 +28,19 @@ export const createAppointment = async (
     }catch{ return }
 }
 
-export const getAppointments = async () =>{
+export const getAppointments = async(time: Date, modality: string) => {
     try{
         const appointments = await db.appointment.findMany()
 
         console.log("Appointments retrieved successfully: ",appointments)
-        return appointments
+       
+        //extract appointment times and modality
+        let apptExists = false
+        
+        appointments?.map(appt => (
+            appt.appointment_time?.getTime() === time.getTime() && modality === appt.modality ? apptExists = true : null
+        ))
+        console.log("Selected timeslot already exists: ",apptExists)
+        return apptExists
     }catch{ return }
 }

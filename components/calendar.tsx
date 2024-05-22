@@ -4,11 +4,9 @@ import ReactCalendar from 'react-calendar'
 import React, { useState } from 'react'
 import { add, format, sub } from 'date-fns'
 import { BUSINESS_HOURS_INTERVAL, CLOSING_HOURS, COUNTRY_CODE, MODALITIES, OPENING_HOURS } from '@/config'
-import { FaCalendar, FaClock } from 'react-icons/fa6'
-import {DayPilotScheduler} from "daypilot-pro-react";
+import { FaCalendar } from 'react-icons/fa6'
 import AppointmentModal from '@/ui/modals/appointment-modal'
 import { getAppointments } from '@/data/appointment'
-import { db } from '@/lib/db'
 
 interface DateType {
     justDate: Date | null
@@ -27,25 +25,7 @@ const Calendar = () => {
 
         setShowModal(false);
     }
-
-    const checkForAvailability = async() => {
-        try{
-            const appointments = await db.appointment.findMany()
     
-            console.log("Appointments retrieved successfully: ",appointments)
-           
-            //extract appointment times and modality
-            let appts = []
-            appointments?.map(appt => (
-                appts.push(appt.appointment_time, appt.modality)
-            ))
-            console.log("Extracted appt times: ",appts)
-            return appts
-        }catch{ return }
-    }
-
-    const unavailableSlots = checkForAvailability()
-
     const getTimes = () => {
         if(!date.justDate) return
 
@@ -155,12 +135,18 @@ const Calendar = () => {
             )
             : null}
             {date?.dateTime && date?.justDate ?
+                <>
+                {getAppointments(date.dateTime, selectedModality) ?
+                null //TODO: create modal to notify an appointment already exists for that slot
+                :  null
+                }
                 <AppointmentModal 
-                    show={showModal} 
-                    onClose={closeModal} 
-                    date={date.dateTime} 
-                    modality={selectedModality} 
+                        show={showModal} 
+                        onClose={closeModal} 
+                        date={date.dateTime} 
+                        modality={selectedModality} 
                 />
+                </>
             : null }
       </section>
   )
