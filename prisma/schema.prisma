@@ -45,15 +45,16 @@ model appointment {
 }
 
 model order {
-  order_number                    String    @id @db.VarChar(40)
-  patient_id                      String?   @db.VarChar(40)
-  payment_status                  String?   @db.VarChar
+  order_number                    String        @id @db.VarChar(40)
+  patient_id                      String?       @db.VarChar(40)
+  payment_status                  String?       @db.VarChar
   balance_outstanding             Float?
-  report_status                   String?   @db.VarChar
-  report_zip_expiration_time      DateTime? @db.Timestamp(6)
-  report_zip_link_expiration_time DateTime? @db.Timestamp(6)
-  report_zip_link                 String?   @db.VarChar
-  last_modified                   DateTime? @default(now()) @db.Timestamp(6)
+  report_status                   String?       @db.VarChar
+  report_zip_expiration_time      DateTime?     @db.Timestamp(6)
+  report_zip_link_expiration_time DateTime?     @db.Timestamp(6)
+  report_zip_link                 String?       @db.VarChar
+  last_modified                   DateTime?     @default(now()) @db.Timestamp(6)
+  order_studies                   order_study[]
 }
 
 model order_numbers {
@@ -110,6 +111,15 @@ model studies {
   modality          modality_codes @relation(fields: [modality_code], references: [modality_code])
   modality_code     String         @map("modality_code")
   price             Float?
+  order_studies     order_study[]
+}
+
+model order_study {
+  order_study_id BigInt  @id @default(autoincrement())
+  order          order   @relation(fields: [order_number], references: [order_number])
+  order_number   String
+  study          studies @relation(fields: [study_id], references: [study_id])
+  study_id       BigInt
 }
 
 model user {
@@ -149,4 +159,26 @@ model Configuration {
   modifier         User?    @relation(fields: [modifiedBy], references: [id])
 
   @@map("configuration")
+}
+
+//Point Of Sale Tables
+
+model pos_insurance {
+  insurance_id     String   @id @db.VarChar(5)
+  insurance_name   String   @db.VarChar(100)
+  user_id          Int
+  last_modified    DateTime @default(now())
+  in_use           Int      @default(0)
+  ins_abbreviation String?  @db.VarChar(10)
+  bin_nos          String?  @db.VarChar(100)
+  bin_codes        String?  @db.VarChar(100)
+}
+
+model pos_payment_options {
+  payment_type  String   @id @db.VarChar(10)
+  name          String   @db.VarChar(50)
+  abbreviation  String   @db.VarChar(15)
+  id_required   Boolean
+  user_id       Int
+  last_modified DateTime @default(now())
 }

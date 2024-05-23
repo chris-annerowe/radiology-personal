@@ -1,6 +1,6 @@
-export interface ActionResponse {
+export interface ActionResponse<Type=void> {
     success: boolean;
     message?: string;
-    data?: object;
+    data?: Type;
     errors?: { [key: string]: any };
 }

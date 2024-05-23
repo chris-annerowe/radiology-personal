@@ -41,9 +41,11 @@ export default async function Patients({
 
     const limit = 5;
 
-    const patientsList = search ? await findPatientByName(search, pageNumber, limit) : await findPatientByPagination(pageNumber, limit);
-    const patientCount = search ? await getPatientSearchCount(search) : await getPatientCount();
-    const patients = JSON.parse(JSON.stringify(patientsList));
+    const patientSearchResult = search ? await findPatientByName(search, pageNumber, limit) : await findPatientByPagination(pageNumber, limit);
+
+    const patients = patientSearchResult.data;
+
+    const patientCount = patientSearchResult.pagination.count;
 
     return (
         <>

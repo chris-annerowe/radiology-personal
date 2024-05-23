@@ -9,6 +9,7 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./ui/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/flowbite/**/*.js",
+    "./node_modules/tailwind-datepicker-react/dist/**/*.js",
     flowbite_react.content()
   ],
   theme: {

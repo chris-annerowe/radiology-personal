@@ -1,9 +1,11 @@
 "use server"
 
 import { db } from "@/lib/db"
-import { getAge } from "@/lib/utils";
+import { getAge, toJSON } from "@/lib/utils";
 import { ActionResponse } from "@/types/action";
+import { Patient, PatientSearch } from "@/types/patient";
 import PatientSchema from "@/zod/schemas/patient";
+import { Prisma } from "@prisma/client";
 import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 
@@ -38,44 +40,120 @@ export const findPatientById = async (id: string) => {
 }
 
 export const findPatientByPagination = async (page: number, limit: number) => {
-    const patients = db.patient.findMany({
-        skip: ((page - 1) * limit),
-        take: limit
-    });
+   
+    const [patients, count] = await db.$transaction([
+        db.patient.findMany({
+            skip: ((page - 1) * limit),
+            take: limit
+        }),
+        db.patient.count()
+    ])
 
-    return patients
+    const data = {
+        pagination: {
+            count: count
+        },
+        data: patients
+    }
+
+    return JSON.parse(JSON.stringify(data)) 
 
 }
 
-export const findPatientByName = async (name: string, page: number, limit: number) => {
-    const searchName = name;
-    let patients;
-    console.log(`Searching for patient last name starting: ${searchName}`);
+export const findPatientsByNameAndDOB = async (page: number, limit: number, firstName: string, lastName: string, dob: Date | null): Promise<ActionResponse<PatientSearch>> => {
+   
+    //let query = `SELECT * FROM patient WHERE (first_name || ' ' || last_name) ILIKE ${'%' + name + '%'} LIMIT ${limit} OFFSET ${page - 1}`
+
+    let queryObject = {};
+
+    if(firstName)
+        queryObject = {...queryObject, first_name: firstName}
+
+    if(lastName)
+        queryObject = {...queryObject, last_name: lastName}
+
+    if(dob)
+        queryObject = {...queryObject, dob: dob}
+
+    console.log(queryObject);
+   
+
+    const patientSearchQuery: Prisma.patientFindManyArgs = {
+        where: queryObject
+    }
+
+    const [patients, count] = await db.$transaction([
+        db.patient.findMany({
+            skip: ((page - 1) * limit),
+            take: limit,
+            where: patientSearchQuery.where
+        }),
+        db.patient.count({ where: patientSearchQuery.where })
+    ]);
+
+    const data = {
+        pagination: {
+            count: count
+        },
+        data: patients
+    }
 
 
-    patients = db.$queryRaw`SELECT * FROM patient WHERE (first_name || ' ' || last_name) ILIKE ${'%'+name+'%'}`
-    /*patients = dbExt.patient.findMany({
-        skip: ((page - 1) * limit),
-        take: limit,
+    return {
+        success: true,
+        data: JSON.parse(JSON.stringify(data))
+    }
+
+}
+
+
+export const findPatientByName = async (search: string, page: number, limit: number) => {
+    console.log(`Searching for patient by search string: ${search}`);
+
+
+    
+    
+    const patients = await db.$queryRaw`SELECT * FROM patient WHERE (first_name || ' ' || last_name) ILIKE ${'%' + search + '%'} LIMIT ${limit} OFFSET ${page - 1}`;
+    const patientCount: {[key: string]: any} = await db.$queryRaw`SELECT COUNT(*) FROM patient WHERE (first_name || ' ' || last_name) ILIKE ${'%' + search + '%'}`;
+    
+    
+    /*const patientSearchQuery: Prisma.patientFindManyArgs = {
         where: {
             OR: [
                 {
-                    last_name: {
-                        startsWith: searchName
-                    }
-                },
-                {
                     first_name: {
-                        startsWith: searchName
+                        contains: search
+                    },
+                    last_name: {
+                        contains: search
                     }
+
                 }
             ]
-
+            
         }
-    })*/
+    }*/
+
+    /*const [patients, count] = await db.$transaction([
+        db.patient.findMany({
+            skip: ((page - 1) * limit),
+            take: limit,
+            where: patientSearchQuery.where
+        }),
+        db.patient.count({ where: patientSearchQuery.where })
+    ]);*/
+
+    let count = JSON.parse(toJSON(patientCount));
+
+    const data = {
+        pagination: {
+            count: count[0].count
+        },
+        data: patients
+    }
 
 
-    return patients;
+    return JSON.parse(toJSON(data));
 
 }
 
@@ -144,7 +222,7 @@ export const savePatient = async (prevState: any, formData: FormData): Promise<A
 
         return {
             success: true,
-            data: patientData
+            //data: patientData
         }
 
     }
@@ -207,7 +285,7 @@ export const updatePatient = async (patientId: string, prevState: any, formData:
 
         return {
             success: true,
-            data: patientData
+            //data: patientData
         }
 
     }

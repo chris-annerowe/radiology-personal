@@ -41,3 +41,10 @@ export interface Patient {
     email?: string | null
     allergies?: string | null
   }
+
+  export interface PatientSearch {
+    pagination: {
+      count: number
+    }
+    data: Patient[]
+  }
