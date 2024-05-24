@@ -32,7 +32,7 @@ export const appointmentExists = async(time: Date, modality: string) => {
     try{
         const appointments = await db.appointment.findMany()
 
-        console.log("Appointments retrieved successfully: ",appointments)
+        //console.log("Appointments retrieved successfully: ",appointments)
        
         //extract appointment times and modality
         let apptExists = false
@@ -42,5 +42,15 @@ export const appointmentExists = async(time: Date, modality: string) => {
         ))
         console.log("Selected timeslot already exists: ",apptExists)
         return apptExists
+    }catch{ return }
+}
+
+export const getAppointments = async() => {
+    try{
+        const appointments = await db.appointment.findMany()
+
+        console.log("Appointments retrieved successfully: ",appointments)
+       
+        return appointments
     }catch{ return }
 }

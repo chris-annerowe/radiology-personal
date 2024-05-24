@@ -7,6 +7,7 @@ import { BUSINESS_HOURS_INTERVAL, CLOSING_HOURS, COUNTRY_CODE, MODALITIES, OPENI
 import { FaCalendar } from 'react-icons/fa6'
 import AppointmentModal from '@/ui/modals/appointment-modal'
 import { appointmentExists } from '@/data/appointment'
+import DailyAppointments from './ui/daybook'
 
 interface DateType {
     justDate: Date | null
@@ -113,7 +114,7 @@ const Calendar = () => {
               onClickDay={(date)=>{handleSelectedDate(date)}}
           />
           </div>
-          {date?.justDate &&
+          {date?.justDate ?
           (
           <div className='flex flex-col border w-3/4 m-3'>
           <div className='grid grid-cols-5 gap-2 text-center p-1'>
@@ -133,10 +134,14 @@ const Calendar = () => {
          
             </div>
             )
-            }
+            : (
+                <div className='flex flex-col border w-3/4 m-3'>
+                    <DailyAppointments />
+                </div>
+            )}
             {date?.dateTime && date?.justDate &&
                 <>
-                {appointmentExists(date.dateTime, selectedModality) && null //TODO: create modal to notify an appointment already exists for that slot
+                {appointmentExists(date.dateTime, selectedModality)  && null //TODO: create modal to notify an appointment already exists for that slot
                 }
                 <AppointmentModal 
                         show={showModal} 
@@ -145,7 +150,7 @@ const Calendar = () => {
                         modality={selectedModality} 
                 />
                 </>
-            }
+           }
       </section>
   )
 }
