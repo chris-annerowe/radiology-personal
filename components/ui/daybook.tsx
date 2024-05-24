@@ -1,21 +1,17 @@
 "use client"
 
-import { getAppointments } from "@/data/appointment"
+import { Appointment } from "@/types/appointment"
 import { format } from "date-fns"
 import { Pagination, Popover, Table } from "flowbite-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { HiNewspaper, HiOutlinePencilAlt } from "react-icons/hi"
 
-interface Appointment {
-    firstName: string,
-    lastname: string,
-    dob: Date | string,
-    tel: string,
-    sex: string
+interface AppointmentProps {
+    appointments: Appointment[]
 }
 
-export default function DailyAppointments() {
+export default function DailyAppointments(props: AppointmentProps) {
 
     const router = useRouter();
 
@@ -29,13 +25,14 @@ export default function DailyAppointments() {
 
     // const totalPages = Math.ceil(props.patientCount / props.limit);
 
-    const appointments = async () => {
-        const appts = await getAppointments()
-        console.log("Daily appointments")
-        return appts
-    }
-
-    const dailyAppointments = appointments()
+    // const appointments = async () => {
+    //     const appts = await getAppointments()
+    //     let dailyAppointments = []
+    //     appts?.map(appt=>{
+    //         dailyAppointments.push(appt)
+    //     })
+    //     return dailyAppointments
+    // }
 
 
     return (
@@ -57,7 +54,7 @@ export default function DailyAppointments() {
                 </Table.Head>
                 <Table.Body className="divide-y">
                     {
-                        dailyAppointments?.map((appt, index) => (
+                        props.appointments.map((appt, index) => (
                             <Table.Row key={index} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                 <Table.Cell>{appt.lastName}</Table.Cell>
                                 <Table.Cell>{appt.firstName}</Table.Cell>

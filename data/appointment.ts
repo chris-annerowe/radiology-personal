@@ -32,9 +32,7 @@ export const appointmentExists = async(time: Date, modality: string) => {
     try{
         const appointments = await db.appointment.findMany()
 
-        //console.log("Appointments retrieved successfully: ",appointments)
-       
-        //extract appointment times and modality
+         //extract appointment times and modality
         let apptExists = false
         
         appointments?.map(appt => (
@@ -52,5 +50,5 @@ export const getAppointments = async() => {
         console.log("Appointments retrieved successfully: ",appointments)
        
         return appointments
-    }catch{ return }
+    }catch{  }
 }

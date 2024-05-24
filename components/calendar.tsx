@@ -1,12 +1,13 @@
 "use client"
 import ReactCalendar from 'react-calendar'
+import { Appointment } from "@/types/appointment"
 
 import React, { useState } from 'react'
 import { add, format, sub } from 'date-fns'
 import { BUSINESS_HOURS_INTERVAL, CLOSING_HOURS, COUNTRY_CODE, MODALITIES, OPENING_HOURS } from '@/config'
 import { FaCalendar } from 'react-icons/fa6'
 import AppointmentModal from '@/ui/modals/appointment-modal'
-import { appointmentExists } from '@/data/appointment'
+import { appointmentExists, getAppointments } from '@/data/appointment'
 import DailyAppointments from './ui/daybook'
 
 interface DateType {
@@ -84,6 +85,27 @@ const Calendar = () => {
         return nextMonth;
     }
 
+    const appointments = async () => {
+        const appts = await getAppointments()
+        let appointment:Appointment;
+        let appointments:Appointment[] = [];
+        appts?.map(appt => {
+            //populate each appointment
+            appointment.dob = appt.dob
+            appointment.firstName = appt.firstName
+            appointment.lastName = appt.lastName
+            appointment.modality = appt.modality
+            // appointment.sex = appt.sex
+            appointment.tel = appt.tel
+            appointment.appointment_id = appt.appointment_id
+            appointment.appointment_time = appt.appointment_time
+
+            //push each appointment to array
+            appointments.push(appointment)
+        })
+        return appointments
+    }
+
     const handleSelectedTimeslot = (time: Date) => {
         const utcAdjusted = sub(time, {hours: 5})
         setDate((prev)=>({...prev,dateTime:utcAdjusted}))
@@ -136,7 +158,7 @@ const Calendar = () => {
             )
             : (
                 <div className='flex flex-col border w-3/4 m-3'>
-                    <DailyAppointments />
+                    <DailyAppointments appointments={appointments}/>
                 </div>
             )}
             {date?.dateTime && date?.justDate &&
