@@ -28,6 +28,9 @@ export const getBgColour = (modality:string) => {
         case 'Xray':
             colour = 'yellow'
             break;
+        default:
+            colour = 'slate'
+            break;
     }
         
     return colour

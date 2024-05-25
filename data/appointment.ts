@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db"
 import { getBgColour } from "@/types/appointment"
+import { add, sub } from "date-fns"
 
 export const createAppointment = async (
     lastName: string,
@@ -32,8 +33,6 @@ export const createAppointment = async (
 export const appointmentExists = async(time: Date, modality: string) => {
     try{
         const appointments = await db.appointment.findMany()
-
-         //extract appointment times and modality
         let apptExists = false
         
         appointments?.map(appt => (
@@ -41,6 +40,27 @@ export const appointmentExists = async(time: Date, modality: string) => {
         ))
         console.log("Selected timeslot already exists: ",apptExists)
         return apptExists
+    }catch{ return }
+}
+
+export const getExistingAppointment = async(time: Date, modality: string) => {
+    try{
+        const utcAdjusted = sub(time,{hours: 10})
+        const appointments = await db.appointment.findFirst({
+            where: {appointment_time:utcAdjusted,modality}
+        })
+
+        let colour= 'slate'
+        if(appointments){
+            // appointments?.map(appt => (
+            //     appt.appointment_time?.getTime() === utcAdjusted.getTime() && modality === appt.modality ? colour = getBgColour(modality) : null
+            // ))
+            colour= getBgColour(modality)
+        } 
+
+        console.log("Appointment exists: ",colour,appointments)
+        return colour 
+        
     }catch{ return }
 }
 
