@@ -49,8 +49,10 @@ export const getExistingAppointment = async(time: Date, modality: string) => {
         const appointments = await db.appointment.findFirst({
             where: {appointment_time:utcAdjusted,modality}
         })
-
-        let colour= 'slate'
+        // console.log("Getting appt",time,appointments,utcAdjusted)
+        
+        let colour= 'bg-slate-100'
+        // console.log("Calling get bg colour")
         if(appointments){
             // appointments?.map(appt => (
             //     appt.appointment_time?.getTime() === utcAdjusted.getTime() && modality === appt.modality ? colour = getBgColour(modality) : null
@@ -59,7 +61,7 @@ export const getExistingAppointment = async(time: Date, modality: string) => {
         } 
 
         console.log("Appointment exists: ",colour,appointments)
-        return colour 
+        return colour
         
     }catch{ return }
 }

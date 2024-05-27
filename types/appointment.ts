@@ -14,19 +14,19 @@ export const getBgColour = (modality:string) => {
 
     switch(modality){
         case 'Mammogram': 
-            colour = 'pink'
+            colour = 'bg-pink-100'
             break;
         case 'MRI':
-            colour = 'blue'
+            colour = 'bg-blue-100'
             break;
         case 'CT':
-            colour = 'red'
+            colour = 'bg-red-100'
             break;
         case 'UltraSound':
-            colour = 'green'
+            colour = 'bg-green-100'
             break;
         case 'Xray':
-            colour = 'yellow'
+            colour = 'bg-yellow-100'
             break;
         default:
             colour = 'slate'

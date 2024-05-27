@@ -9,6 +9,7 @@ import { FaCalendar } from 'react-icons/fa6'
 import AppointmentModal from '@/ui/modals/appointment-modal'
 import { appointmentExists, getAppointmentColour, getAppointments, getExistingAppointment } from '@/data/appointment'
 import DailyAppointments from './ui/daybook'
+import { Colour } from './background-colour'
 
 interface DateType {
     justDate: Date | null
@@ -17,6 +18,7 @@ interface DateType {
 
 const Calendar = () => {
     const [selectedModality, setSelectedModality] = useState("")
+    const [bgColour, setBgColour] = useState("")
     const [showModal, setShowModal] = useState(false);
     const [date, setDate] = useState<DateType>({
         justDate: null,
@@ -88,26 +90,26 @@ const Calendar = () => {
         return nextMonth;
     }
 
-    const appointments = async () => {
-        const appts = await getAppointments()
-        let appointment:Appointment;
-        let appointments:Appointment[] = [];
-        appts?.map(appt => {
-            //populate each appointment
-            appointment.dob = appt.dob
-            appointment.firstName = appt.firstName
-            appointment.lastName = appt.lastName
-            appointment.modality = appt.modality
-            // appointment.sex = appt.sex
-            appointment.tel = appt.tel
-            appointment.appointment_id = appt.appointment_id
-            appointment.appointment_time = appt.appointment_time
+    // const appointments = async () => {
+    //     const appts = await getAppointments()
+    //     let appointment:Appointment;
+    //     let appointments:Appointment[] = [];
+    //     appts?.map(appt => {
+    //         //populate each appointment
+    //         appointment.dob = appt.dob
+    //         appointment.firstName = appt.firstName
+    //         appointment.lastName = appt.lastName
+    //         appointment.modality = appt.modality
+    //         // appointment.sex = appt.sex
+    //         appointment.tel = appt.tel
+    //         appointment.appointment_id = appt.appointment_id
+    //         appointment.appointment_time = appt.appointment_time
 
-            //push each appointment to array
-            appointments.push(appointment)
-        })
-        return appointments
-    }
+    //         //push each appointment to array
+    //         appointments.push(appointment)
+    //     })
+    //     return appointments
+    // }
 
     const handleSelectedTimeslot = (time: Date) => {
         const utcAdjusted = sub(time, {hours: 5})
@@ -119,44 +121,54 @@ const Calendar = () => {
         setDate((prev)=>({...prev,justDate:date}))
     }
     
+    const handleBgColour =  (time:Date, modality:string) => {
+        const colour = Colour(time,modality)
+        console.log("Handle bg color",colour,time,modality)
+        if(typeof colour === 'string'){
+            setBgColour(colour)
+            return true
+        }
+        return false
+    }
+
     return (
-        <section className='h-screen flex flex-row'>
-      <div className='flex flex-col w-1/4 m-3'>
-       <h2 className='flex justify-start items-center gap-3 mb-4'>
-        <FaCalendar/>
-            Select Date 
-       </h2>
-        <ReactCalendar
-              className="REACT-CALENDAR p-2"
-              minDate={new Date()}
-              view='month'
-              onClickDay={(date)=>{handleSelectedDate(date)}}
-          />
-          <ReactCalendar
-              className="REACT-CALENDAR p-2 mt-6"
-              activeStartDate={getNextMonth()}
-              view='month'
-              onClickDay={(date)=>{handleSelectedDate(date)}}
-          />
-          </div>
-          {date?.justDate ?
-          (
-          <div className='flex flex-col w-3/4 m-3'>
-          <div className='grid grid-cols-5 gap-2 text-center p-1'>
-                {MODALITIES?.map((modality,i) => (
+        <div className='h-screen flex flex-row'>
+            <div className='flex flex-col w-1/4 m-3'>
+                <h2 className='flex justify-start items-center gap-3 mb-4'>
+                    <FaCalendar/>
+                        Select Date 
+                </h2>
+                <ReactCalendar
+                    className="REACT-CALENDAR p-2"
+                    minDate={new Date()}
+                    view='month'
+                    onClickDay={(date)=>{handleSelectedDate(date)}}
+                />
+                <ReactCalendar
+                    className="REACT-CALENDAR p-2 mt-6"
+                    activeStartDate={getNextMonth()}
+                    view='month'
+                    onClickDay={(date)=>{handleSelectedDate(date)}}
+                />
+            </div>
+            {date?.justDate ?
+            (
+            <div className='flex flex-col w-3/4 m-3'>
+                <div className='grid grid-cols-5 gap-2 text-center p-1'>
+                    {MODALITIES?.map((modality,i) => (
                     <div key={`modality-${i}`}>
                         {modality}
-                    {times?.map((time, i) => (
-                        <div key={`time-${i}`} className={`rounded-sm bg-${getExistingAppointment(time,modality)}-100 p-2 m-2 cursor:pointer hover:bg-sky-600 hover:text-white `} onClick={()=>setSelectedModality(modality)}>
-                            <button id={`${modality}-timeslot`} className={`rounded-sm'}`} type='button' onClick={()=> handleSelectedTimeslot(time)}>
+                        {times?.map((time, i) => (
+                           <div key={`time-${i}`} className={`rounded-sm p-2 m-2 cursor:pointer hover:bg-sky-600 hover:text-white `} onClick={()=>setSelectedModality(modality)} >
+                                <button id={`${modality}-timeslot`} className={bgColour} type='button' onClick={()=> handleSelectedTimeslot(time)}>
+                                {handleBgColour(time,modality)}
                                 {format(time,'h:mm aa')}
-                            </button>
-                        </div>
-                    ))}
+                                </button>
+                            </div>
+                        ))}
                     </div>   
                 ))}
-            </div>
-         
+                </div>
             </div>
             )
             : (
@@ -177,7 +189,7 @@ const Calendar = () => {
                 />
                 </>
            }
-      </section>
+      </div>
   )
 }
 
