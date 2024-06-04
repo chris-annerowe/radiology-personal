@@ -11,6 +11,7 @@ interface ApptModalProps{
     onClose: ()=>void
     date: Date
     modality: string
+    index: number | undefined
 };
 
 export default function AppointmentModal(props: ApptModalProps) {
@@ -32,6 +33,7 @@ export default function AppointmentModal(props: ApptModalProps) {
             const description = data.get('description')?.valueOf()           
             const tel = data.get('tel')?.valueOf()
             const dobString = data.get('dob')?.valueOf()
+            const sex = data.get('sex')?.valueOf()
 
             console.log("Date as string: ",dobString)
 
@@ -50,11 +52,17 @@ export default function AppointmentModal(props: ApptModalProps) {
             if (typeof dobString !== 'string') {
                 throw new Error("Invalid DOB")
             }
+            if (typeof sex !== 'string') {
+                throw new Error("Invalid Sex")
+            }
+            if (typeof props.index !== 'number'){
+                throw new Error("Invalid index")
+            }
 
             const dob = new Date(dobString)
             console.log("Date as date: ",dob)
 
-           await createAppointment(lastName,firstName, description, props.date, props.modality, tel, dob)
+           await createAppointment(lastName,firstName, description, props.date, props.modality, tel, dob, sex, props.index)
            // close modal and return to /dashboard/daybook page
            redirect("/dashboard/daybook")
     }
@@ -98,6 +106,17 @@ export default function AppointmentModal(props: ApptModalProps) {
                         <TextInput id="tel" name="tel" type="" placeholder="Digits only" defaultValue="" required shadow
                             helperText={
                                 errors?.tel && 'Required'
+                            }
+                        />
+                    </div>
+
+                    <div>
+                        <div className="mb-2 block">
+                            <Label htmlFor="sex" value="Sex" />
+                        </div>
+                        <TextInput id="sex" name="sex" type="" placeholder="" defaultValue="" required shadow
+                            helperText={
+                                errors?.sex && 'Required'
                             }
                         />
                     </div>

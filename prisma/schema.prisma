@@ -40,6 +40,8 @@ model appointment {
   modality         String?   @db.VarChar(20)
   dob              DateTime? @db.Timestamp(6)
   tel              String?   @db.VarChar(10)
+  sex              String?   @db.VarChar(10)
+  index            Int?
 }
 
 model order {

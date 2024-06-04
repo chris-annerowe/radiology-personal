@@ -12,6 +12,8 @@ export const createAppointment = async (
     modality: string,
     tel: string,
     dob: Date,
+    sex: string,
+    index: number
 ) =>{
     try{
         await db.appointment.create({
@@ -22,7 +24,9 @@ export const createAppointment = async (
                 description,
                 modality: modality,
                 tel,
-                dob
+                dob,
+                sex,
+                index
             }
         })
 
@@ -32,11 +36,43 @@ export const createAppointment = async (
 
 export const appointmentExists = async(time: Date, modality: string) => {
     try{
+        const utcAdjusted = sub(time,{hours: 10})
         const appointments = await db.appointment.findMany()
-        let apptExists = false
+        let apptExists = null
         
         appointments?.map(appt => (
-            appt.appointment_time?.getTime() === time.getTime() && modality === appt.modality ? apptExists = true : null
+            appt.appointment_time?.getTime() === utcAdjusted.getTime() && modality === appt.modality ? apptExists = appt : null
+        ))
+        console.log("Selected timeslot already exists: ",apptExists)
+        return apptExists
+    }catch{ return }
+}
+
+export const getApptIndex = async(date: Date, modality: string, i: number) => {
+    try{
+        const utcAdjusted = add(date,{hours: 6})
+        const appointments = await db.appointment.findMany()
+        let index = null
+        console.log("Appt date: ",date,utcAdjusted)
+        
+        appointments?.map(appt => (
+            appt.appointment_time?.getDate() === utcAdjusted.getDate() && modality === appt.modality && appt.index === i ? index = appt.index : null
+        ))
+        console.log("Appt index: ",index)
+        return index
+    }catch{ return }
+}
+
+export const getAppointmentTime = async(time: Date, modality: string) => {
+    try{
+        //const utcAdjusted = sub(time,{hours: 10})
+        const appointments = await db.appointment.findMany()
+        let apptExists = null
+        console.log(time)
+        
+        appointments?.map(appt => (
+            // console.log(time,appointments)
+            appt.appointment_time?.getTime() === time.getTime() && modality === appt.modality ? apptExists = appt.appointment_time : null
         ))
         console.log("Selected timeslot already exists: ",apptExists)
         return apptExists
@@ -49,15 +85,30 @@ export const getExistingAppointment = async(time: Date, modality: string) => {
         const appointments = await db.appointment.findFirst({
             where: {appointment_time:utcAdjusted,modality}
         })
-        // console.log("Getting appt",time,appointments,utcAdjusted)
         
         let colour= 'bg-slate-100'
-        // console.log("Calling get bg colour")
+        
         if(appointments){
-            // appointments?.map(appt => (
-            //     appt.appointment_time?.getTime() === utcAdjusted.getTime() && modality === appt.modality ? colour = getBgColour(modality) : null
-            // ))
-            colour= getBgColour(modality)
+            switch(modality){
+                case 'Mammogram': 
+                    colour = 'bg-pink-100'
+                    break;
+                case 'MRI':
+                    colour = 'bg-blue-100'
+                    break;
+                case 'CT':
+                    colour = 'bg-red-100'
+                    break;
+                case 'UltraSound':
+                    colour = 'bg-green-100'
+                    break;
+                case 'Xray':
+                    colour = 'bg-yellow-100'
+                    break;
+                default:
+                    colour = 'slate'
+                    break;
+            }
         } 
 
         console.log("Appointment exists: ",colour,appointments)

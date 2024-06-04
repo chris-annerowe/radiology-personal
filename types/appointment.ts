@@ -1,3 +1,5 @@
+import { getApptIndex } from "@/data/appointment";
+
 export interface Appointment {
     firstName: string | null,
     lastName: string | null,
@@ -32,6 +34,20 @@ export const getBgColour = (modality:string) => {
             colour = 'slate'
             break;
     }
+    console.log("Bg colour ",colour)
         
     return colour
 }
+
+export const getAppointmentIndex = async (date:Date, modality:string, i:number) => {
+    try{
+        const index = await getApptIndex(date,modality,i)
+        if(typeof index === 'number'){
+            let i = index
+            console.log("Appointment Index: ",i)
+            return i
+        }
+    }
+    catch{}
+}
+
