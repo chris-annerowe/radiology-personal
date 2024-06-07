@@ -22,7 +22,11 @@ interface BgData {
     modality: string
 }
 
-const Calendar = (props:any[]) => {
+interface AppointmentProps {
+    appts: any[]
+}
+
+const Calendar = (props:AppointmentProps) => {
     console.log("Appointments props from daybook: ",props)
     const [selectedModality, setSelectedModality] = useState("")
     const [bgColour, setBgColour] = useState("")
