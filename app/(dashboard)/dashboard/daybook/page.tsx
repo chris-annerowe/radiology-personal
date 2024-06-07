@@ -1,3 +1,5 @@
+"use server"
+
 import Calendar from '@/components/calendar'
 import React from 'react'
 import "@/styles/calendar.css"
@@ -9,18 +11,24 @@ interface DateAndModality{
   modality: string | null
 }
 let appts = []
-let temp:DateAndModality = {
-  date: null,
-  modality:null
-}
+// let temp:DateAndModality = {
+//   date: null,
+//   modality:null
+// }
     
 const Daybook = () => {
   const getAppts = async () => {
     const appointments = await getAppointments()
     console.log("Daybook appointments: ",appointments)
-    appointments?.map(appt=>(
-      appts.push(appt.appointment_time,appt.modality)
-    ))
+    appointments?.map(appt=>{
+      let temp:DateAndModality = {
+        date: null,
+        modality:null
+      }
+      temp.date = appt.appointment_time
+      temp.modality = appt.modality
+      appts.push(temp)
+  })
     console.log("Call ",appts)
     return appts
   }

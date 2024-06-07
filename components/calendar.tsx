@@ -22,8 +22,8 @@ interface BgData {
     modality: string
 }
 
-const Calendar = ({appointments}) => {
-    console.log("Appointments props from daybook: ",appointments)
+const Calendar = (props:any[]) => {
+    console.log("Appointments props from daybook: ",props)
     const [selectedModality, setSelectedModality] = useState("")
     const [bgColour, setBgColour] = useState("")
     const [bgData, setBgData] = useState<BgData>({
@@ -130,62 +130,6 @@ const Calendar = ({appointments}) => {
     const handleSelectedDate = (date: Date) => {
         setDate((prev)=>({...prev,justDate:date}))
     }
-    
-    const handleBgColour =  (time:Date, modality:string) => {
-        let bg=null
-        const colour = Colour(time,modality).then((res)=>{
-            if(typeof res !=='string'){
-                //setBgColour(res)
-                bg = res
-                console.log("Res: ",res)
-            }
-        })
-        return bg
-    }
-    console.log("BG colour: ",bgColour)
-
-     useEffect(() => {
-        const getBg = async (time: Date, modality: string) => {
-            //if(typeof bgData.time !== null){}
-            const utcAdjusted = sub(time,{hours: 10})
-            console.log("Modality: ",modality)
-            const appointments = await db.appointment.findFirst({
-                    where: {appointment_time:utcAdjusted,modality}
-            })
-            // console.log("Data: ",bgData)
-            
-            let colour= 'bg-slate-100'
-            // console.log("Calling get bg colour")
-            if(appointments){
-                switch(modality){
-                    case 'Mammogram': 
-                        colour = 'bg-pink-100'
-                        break;
-                    case 'MRI':
-                        colour = 'bg-blue-100'
-                        break;
-                    case 'CT':
-                        colour = 'bg-red-100'
-                        break;
-                    case 'UltraSound':
-                        colour = 'bg-green-100'
-                        break;
-                    case 'Xray':
-                        colour = 'bg-yellow-100'
-                        break;
-                    default:
-                        colour = 'slate'
-                        break;
-                }
-            } 
-    
-            console.log("Appointment exists: ",colour,appointments)
-            setBgColour(colour)
-        };
-    
-        getBg(null,null);
-        // console.log("Set appt index: ",appointmentIndex)
-      }, [bgData]);
 
      return (
         <div className='h-screen flex flex-row'>
@@ -210,11 +154,10 @@ const Calendar = ({appointments}) => {
             {date?.justDate &&
             
             <div className='flex flex-col w-3/4 m-3'>
-                {appointments.appointment_time == date.justDate ? "appt and date match" : `appt doesnt match date, ${date.justDate} ${appointments.appointment_time}`}
+                {appointments.appointment_time == date.justDate ? "appt and date match" : `appt doesnt match date, ${date.justDate} ${appointments}`}
                 <div className='grid grid-cols-5 gap-2 text-center p-1'>
                     {MODALITIES?.map((modality,i) => (
                     <div key={`modality-${i}`}>
-                        {/* {handleAppointmentIndex(getAppointmentIndex(modality))} */}
                         {modality}
                         {times?.map((time, i) => (
                             <>
