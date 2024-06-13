@@ -15,9 +15,10 @@ interface DateType {
     dateTime: Date | null
 }
 
-interface BgData {
-    time: Date | null
+interface Appt {
+    date: Date | null
     modality: string
+    index: number | null
 }
 
 interface AppointmentProps {
@@ -34,6 +35,11 @@ const Calendar = (props:AppointmentProps) => {
     const [date, setDate] = useState<DateType>({
         justDate: null,
         dateTime: null
+    })
+    const [appointment, setAppointment] = useState<Appt>({
+        date: null,
+        index: null,
+        modality: ""
     })
 
     console.log(date.justDate)
@@ -120,6 +126,21 @@ const Calendar = (props:AppointmentProps) => {
         }else{ return }
     }
 
+    const getAppointmentForSelectedDate = () => {
+        props.appointments?.map(appt => {
+            if(date.justDate?.getDate() === appt.date?.getDate()){
+                setAppointment(appt)
+                console.log("Appointment: ",appt)
+            }
+        })
+        
+        return ''
+    }
+
+    useEffect(() => {
+        getAppointmentForSelectedDate()
+      }, [date.justDate])
+
      return (
         <div className='h-screen flex flex-row'>
             <div className='flex flex-col w-1/4 m-3'>
@@ -143,14 +164,14 @@ const Calendar = (props:AppointmentProps) => {
             {date?.justDate &&
             
             <div className='flex flex-col w-3/4 m-3'>
-                {props.appointments?.map(i => handleApptColour(i.index,i.modality,i.date) )}
+                {/* {`${getAppointmentForSelectedDate()}`} */}
                 <div className='grid grid-cols-5 gap-2 text-center p-1'>
                     {MODALITIES?.map((modality,i) => (
                     <div key={`modality-${i}`}>
                         {modality}
                         {times?.map((time, i) => (
                             <>
-                            <div key={`time-${i}`} className={`rounded-sm p-2 m-2 ${i===appointmentIndex ? bgColour : 'bg-red-100'} cursor:pointer hover:bg-sky-600 hover:text-white `} onClick={()=>setSelectedModality(modality)} >
+                            <div key={`time-${i}`} className={`rounded-sm p-2 m-2 ${i===appointment.index && modality === appointment.modality? handleApptColour(appointment.index,appointment.modality,appointment.date) : 'bg-slate-100'} cursor:pointer hover:bg-sky-600 hover:text-white `} onClick={()=>setSelectedModality(modality)} >
                                 <button id={`${modality}-timeslot`} className={`rounded-sm`} type='button' onClick={()=> handleSelectedTimeslot(time,i)}>
                                 {format(time,'h:mm aa')}
                                 </button>
