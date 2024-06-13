@@ -7,10 +7,8 @@ import { add, format, sub } from 'date-fns'
 import { BUSINESS_HOURS_INTERVAL, CLOSING_HOURS, COUNTRY_CODE, MODALITIES, OPENING_HOURS } from '@/config'
 import { FaCalendar } from 'react-icons/fa6'
 import AppointmentModal from '@/ui/modals/appointment-modal'
-import DailyAppointments from './ui/daybook'
-import {Colour} from '@/components/background-colour'
 import { getBgColour } from '@/types/appointment'
-import { appointmentExists, getAppointmentTime, getApptIndex, getExistingAppointment } from '@/data/appointment'
+import { getApptIndex } from '@/data/appointment'
 
 interface DateType {
     justDate: Date | null
@@ -30,10 +28,6 @@ const Calendar = (props:AppointmentProps) => {
     console.log("Appointments props from daybook: ",props.appointments)
     const [selectedModality, setSelectedModality] = useState("")
     const [bgColour, setBgColour] = useState("")
-    const [bgData, setBgData] = useState<BgData>({
-        time: null,
-        modality: ""
-    })
     const [showModal, setShowModal] = useState(false);
     const [appointmentIndex, setAppointmentIndex] = useState<number | undefined>(undefined)
     const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined)
@@ -43,10 +37,8 @@ const Calendar = (props:AppointmentProps) => {
     })
 
     console.log(date.justDate)
-    // console.log(date.dateTime)
 
     const closeModal = () => {
-
         setShowModal(false);
     }
     
@@ -107,23 +99,6 @@ const Calendar = (props:AppointmentProps) => {
         return nextMonth;
     }
 
-    const getAppointmentIndex = (modality:string) =>{
-        let index = undefined
-        if(date.justDate){
-            index = getApptIndex(date.justDate,modality).then((res)=>{console.log("Set appt index: ",res)})
-        }
-        return index
-    }
-
-    const handleAppointmentIndex = (index:any) => {
-        console.log("index: ",index)
-        if(typeof index === 'number'){
-            setAppointmentIndex(index)
-            console.log("set index: ",appointmentIndex)
-        }
-        return null
-    }
-
     const handleSelectedTimeslot = (time: Date, index: number) => {
         const utcAdjusted = sub(time, {hours: 5})
         setDate((prev)=>({...prev,dateTime:utcAdjusted}))
@@ -133,6 +108,16 @@ const Calendar = (props:AppointmentProps) => {
 
     const handleSelectedDate = (date: Date) => {
         setDate((prev)=>({...prev,justDate:date}))
+    }
+
+    const handleApptColour = (index:number, modality:string, apptDate: Date) => {
+        if(date.justDate?.getDate() === apptDate.getDate()){
+            const colour = getBgColour(modality)
+            console.log("Appointment colour set to ",colour,index)
+            //setBgColour(colour)
+            //setAppointmentIndex(index)
+            return colour
+        }else{ return }
     }
 
      return (
@@ -158,14 +143,14 @@ const Calendar = (props:AppointmentProps) => {
             {date?.justDate &&
             
             <div className='flex flex-col w-3/4 m-3'>
-                {props.appointments?.map(i => `appt doesnt match date, ${i.modality} ${i.date}`)}
+                {props.appointments?.map(i => handleApptColour(i.index,i.modality,i.date) )}
                 <div className='grid grid-cols-5 gap-2 text-center p-1'>
                     {MODALITIES?.map((modality,i) => (
                     <div key={`modality-${i}`}>
                         {modality}
                         {times?.map((time, i) => (
                             <>
-                            <div key={`time-${i}`} className={`rounded-sm p-2 m-2 ${i===appointmentIndex ? getBgColour(modality) : console.log("Index not match ",i)} cursor:pointer hover:bg-sky-600 hover:text-white `} onClick={()=>setSelectedModality(modality)} >
+                            <div key={`time-${i}`} className={`rounded-sm p-2 m-2 ${i===appointmentIndex ? bgColour : 'bg-red-100'} cursor:pointer hover:bg-sky-600 hover:text-white `} onClick={()=>setSelectedModality(modality)} >
                                 <button id={`${modality}-timeslot`} className={`rounded-sm`} type='button' onClick={()=> handleSelectedTimeslot(time,i)}>
                                 {format(time,'h:mm aa')}
                                 </button>
