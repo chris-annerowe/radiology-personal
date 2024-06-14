@@ -19,6 +19,7 @@ interface Appt {
     date: Date | null
     modality: string
     index: number | null
+    data: any
 }
 
 interface AppointmentProps {
@@ -32,6 +33,7 @@ const Calendar = (props:AppointmentProps) => {
     const [showModal, setShowModal] = useState(false);
     const [appointmentIndex, setAppointmentIndex] = useState<number | undefined>(undefined)
     const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined)
+    //const [appointmentArray, setAppointmentArray] = useState([])
     const [date, setDate] = useState<DateType>({
         justDate: null,
         dateTime: null
@@ -39,8 +41,11 @@ const Calendar = (props:AppointmentProps) => {
     const [appointment, setAppointment] = useState<Appt>({
         date: null,
         index: null,
-        modality: ""
+        modality: "",
+        data: null
     })
+
+    let appointmentArray: any[] = []
 
     console.log(date.justDate)
 
@@ -79,7 +84,7 @@ const Calendar = (props:AppointmentProps) => {
             console.log("JM Holidays: ",URL,holidays)
 
             //extract date value from holidays array
-            let dates = []
+            let dates: any[] = []
             holidays?.map(holiday => (
                 dates.push(holiday.date)
             ))
@@ -116,30 +121,59 @@ const Calendar = (props:AppointmentProps) => {
         setDate((prev)=>({...prev,justDate:date}))
     }
 
+    // const handleAddAppointmentToArray = (i: number, modality: string, apptDate: Date) => {
+    //     setAppointmentArray((prev)=> [
+    //         ...prev,
+    //         {
+    //             index: i,
+    //             modality: modality,
+    //             date: apptDate
+    //         },
+    //     ])
+    // }
+
     const handleApptColour = (index:number, modality:string, apptDate: Date) => {
         if(date.justDate?.getDate() === apptDate.getDate()){
             const colour = getBgColour(modality)
             console.log("Appointment colour set to ",colour,index)
-            //setBgColour(colour)
-            //setAppointmentIndex(index)
             return colour
         }else{ return }
     }
 
+    const checkAppointmentArray = (i:number, modality:string) => {
+        console.log("Checking appt array")
+        appointmentArray.map(appt => {
+            console.log("Array ",i,modality)
+            if(i===appt.index && modality===appt.modality){
+                console.log("Appt from array: ",appt)
+                return true
+            }            
+        })
+        return false
+    }
+
     const getAppointmentForSelectedDate = () => {
-        props.appointments?.map(appt => {
+        props.appointments?.map((appt, i) => {
             if(date.justDate?.getDate() === appt.date?.getDate()){
                 setAppointment(appt)
                 console.log("Appointment: ",appt)
+                appointmentArray.push(appt)
             }
         })
-        
+        console.log("Appointment array: ",appointmentArray)
         return ''
     }
 
     useEffect(() => {
         getAppointmentForSelectedDate()
       }, [date.justDate])
+
+      useEffect(() => {
+            appointmentArray.map(appt=>{
+                setAppointment(appt)
+                console.log("Mapping appts ",appointment,appt)
+            })
+        }, [handleApptColour])
 
      return (
         <div className='h-screen flex flex-row'>
@@ -164,18 +198,19 @@ const Calendar = (props:AppointmentProps) => {
             {date?.justDate &&
             
             <div className='flex flex-col w-3/4 m-3'>
-                {/* {`${getAppointmentForSelectedDate()}`} */}
                 <div className='grid grid-cols-5 gap-2 text-center p-1'>
                     {MODALITIES?.map((modality,i) => (
                     <div key={`modality-${i}`}>
                         {modality}
                         {times?.map((time, i) => (
                             <>
-                            <div key={`time-${i}`} className={`rounded-sm p-2 m-2 ${i===appointment.index && modality === appointment.modality? handleApptColour(appointment.index,appointment.modality,appointment.date) : 'bg-slate-100'} cursor:pointer hover:bg-sky-600 hover:text-white `} onClick={()=>setSelectedModality(modality)} >
+                            {/* {appointmentArray.map(appt => ( */}
+                            <div key={`time-${i}`} className={`rounded-sm p-2 m-2 ${ i===appointment.index && modality===appointment.modality ? handleApptColour(appointment.index,appointment.modality,appointment.date) : 'bg-slate-100'} cursor:pointer hover:bg-sky-600 hover:text-white `} onClick={()=>setSelectedModality(modality)} >
                                 <button id={`${modality}-timeslot`} className={`rounded-sm`} type='button' onClick={()=> handleSelectedTimeslot(time,i)}>
                                 {format(time,'h:mm aa')}
                                 </button>
                             </div>
+                            {/* ))} */}
                             </>
                         ))}
                     </div>   

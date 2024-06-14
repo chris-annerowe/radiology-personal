@@ -31,7 +31,7 @@ export const getBgColour = (modality:string) => {
             colour = 'bg-yellow-100'
             break;
         default:
-            colour = 'slate'
+            colour = 'bg-slate-100'
             break;
     }
     console.log("Bg colour ",colour)
