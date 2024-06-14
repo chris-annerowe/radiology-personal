@@ -1,25 +1,16 @@
 "use client"
 import ReactCalendar from 'react-calendar'
 
-import { db } from "@/lib/db"
 import React, { useState, useEffect } from 'react'
 import { add, format, sub } from 'date-fns'
 import { BUSINESS_HOURS_INTERVAL, CLOSING_HOURS, COUNTRY_CODE, MODALITIES, OPENING_HOURS } from '@/config'
 import { FaCalendar } from 'react-icons/fa6'
 import AppointmentModal from '@/ui/modals/appointment-modal'
 import { getBgColour } from '@/types/appointment'
-import { getApptIndex } from '@/data/appointment'
 
 interface DateType {
     justDate: Date | null
     dateTime: Date | null
-}
-
-interface Appt {
-    date: Date | null
-    modality: string
-    index: number | null
-    data: any
 }
 
 interface AppointmentProps {
@@ -28,24 +19,14 @@ interface AppointmentProps {
 
 const Calendar = (props:AppointmentProps) => {
     console.log("Appointments props from daybook: ",props.appointments)
+
     const [selectedModality, setSelectedModality] = useState("")
-    const [bgColour, setBgColour] = useState("")
     const [showModal, setShowModal] = useState(false);
-    const [appointmentIndex, setAppointmentIndex] = useState<number | undefined>(undefined)
     const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined)
-    //const [appointmentArray, setAppointmentArray] = useState([])
     const [date, setDate] = useState<DateType>({
         justDate: null,
         dateTime: null
     })
-    const [appointment, setAppointment] = useState<Appt>({
-        date: null,
-        index: null,
-        modality: "",
-        data: null
-    })
-
-    let appointmentArray: any[] = []
 
     console.log(date.justDate)
 
@@ -121,59 +102,23 @@ const Calendar = (props:AppointmentProps) => {
         setDate((prev)=>({...prev,justDate:date}))
     }
 
-    // const handleAddAppointmentToArray = (i: number, modality: string, apptDate: Date) => {
-    //     setAppointmentArray((prev)=> [
-    //         ...prev,
-    //         {
-    //             index: i,
-    //             modality: modality,
-    //             date: apptDate
-    //         },
-    //     ])
-    // }
-
-    const handleApptColour = (index:number, modality:string, apptDate: Date) => {
-        if(date.justDate?.getDate() === apptDate.getDate()){
+    const handleApptColour = (modality:string) => {
             const colour = getBgColour(modality)
-            console.log("Appointment colour set to ",colour,index)
             return colour
-        }else{ return }
     }
 
-    const checkAppointmentArray = (i:number, modality:string) => {
-        console.log("Checking appt array")
-        appointmentArray.map(appt => {
-            console.log("Array ",i,modality)
-            if(i===appt.index && modality===appt.modality){
-                console.log("Appt from array: ",appt)
-                return true
-            }            
-        })
-        return false
-    }
-
-    const getAppointmentForSelectedDate = () => {
+    const getAppointmentForSelectedDate = (index:number, modality:string) => {
+        let colour = 'bg-slate-100'
         props.appointments?.map((appt, i) => {
-            if(date.justDate?.getDate() === appt.date?.getDate()){
-                setAppointment(appt)
-                console.log("Appointment: ",appt)
-                appointmentArray.push(appt)
-            }
+            if(index === appt.index && modality === appt.modality){
+                if(date.justDate?.getDate() === appt.date?.getDate()){
+                    colour = handleApptColour(modality)
+                }
+            }  
         })
-        console.log("Appointment array: ",appointmentArray)
-        return ''
+        return colour
     }
 
-    useEffect(() => {
-        getAppointmentForSelectedDate()
-      }, [date.justDate])
-
-      useEffect(() => {
-            appointmentArray.map(appt=>{
-                setAppointment(appt)
-                console.log("Mapping appts ",appointment,appt)
-            })
-        }, [handleApptColour])
 
      return (
         <div className='h-screen flex flex-row'>
@@ -204,13 +149,11 @@ const Calendar = (props:AppointmentProps) => {
                         {modality}
                         {times?.map((time, i) => (
                             <>
-                            {/* {appointmentArray.map(appt => ( */}
-                            <div key={`time-${i}`} className={`rounded-sm p-2 m-2 ${ i===appointment.index && modality===appointment.modality ? handleApptColour(appointment.index,appointment.modality,appointment.date) : 'bg-slate-100'} cursor:pointer hover:bg-sky-600 hover:text-white `} onClick={()=>setSelectedModality(modality)} >
+                            <div key={`time-${i}`} className={`rounded-sm p-2 m-2 ${ getAppointmentForSelectedDate(i,modality)} cursor:pointer hover:bg-sky-600 hover:text-white `} onClick={()=>setSelectedModality(modality)} >
                                 <button id={`${modality}-timeslot`} className={`rounded-sm`} type='button' onClick={()=> handleSelectedTimeslot(time,i)}>
                                 {format(time,'h:mm aa')}
                                 </button>
                             </div>
-                            {/* ))} */}
                             </>
                         ))}
                     </div>   
