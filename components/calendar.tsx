@@ -2,11 +2,12 @@
 import ReactCalendar from 'react-calendar'
 
 import React, { useState, useEffect } from 'react'
-import { add, format, sub } from 'date-fns'
-import { BUSINESS_HOURS_INTERVAL, CLOSING_HOURS, COUNTRY_CODE, MODALITIES, OPENING_HOURS } from '@/config'
+import { sub } from 'date-fns'
+import { COUNTRY_CODE } from '@/config'
 import { FaCalendar } from 'react-icons/fa6'
 import AppointmentModal from '@/ui/modals/appointment-modal'
 import { getBgColour } from '@/types/appointment'
+import DailyAppointments from './ui/daybook'
 
 interface DateType {
     justDate: Date | null
@@ -34,24 +35,6 @@ const Calendar = (props:AppointmentProps) => {
         setShowModal(false);
     }
     
-    const getTimes = () => {
-        if(!date.justDate) return
-
-        const {justDate} = date
-        const startTime = add(justDate, {hours: OPENING_HOURS}) //sets opening time to 9:00AM
-        const end = add(justDate, {hours: CLOSING_HOURS})  //sets closing time to 5:00PM
-        const interval = BUSINESS_HOURS_INTERVAL //in minutes. Sets time slot in 30 min intervals
-    
-        const times = []
-        for(let i=startTime; i<=end; i=add(i,{minutes:interval})){
-            times.push(i)
-        }
-
-        return times
-    }
-
-    const times = getTimes()
-
     const getHolidays = async () => {
         const URL = `https://date.nager.at/api/v3/publicholidays/${new Date().getFullYear()}/${COUNTRY_CODE}`
         try{
@@ -113,12 +96,12 @@ const Calendar = (props:AppointmentProps) => {
             if(index === appt.index && modality === appt.modality){
                 if(date.justDate?.getDate() === appt.date?.getDate()){
                     colour = handleApptColour(modality)
+                    console.log("Appointment exists for selected date ",appt.date)
                 }
             }  
         })
         return colour
     }
-
 
      return (
         <div className='h-screen flex flex-row'>
@@ -141,27 +124,12 @@ const Calendar = (props:AppointmentProps) => {
                 />
             </div>
             {date?.justDate &&
-            
-            <div className='flex flex-col w-3/4 m-3'>
-                <div className='grid grid-cols-5 gap-2 text-center p-1'>
-                    {MODALITIES?.map((modality,i) => (
-                    <div key={`modality-${i}`}>
-                        {modality}
-                        {times?.map((time, i) => (
-                            <>
-                            <div key={`time-${i}`} className={`rounded-sm p-2 m-2 ${ getAppointmentForSelectedDate(i,modality)} cursor:pointer hover:bg-sky-600 hover:text-white `} onClick={()=>setSelectedModality(modality)} >
-                                <button id={`${modality}-timeslot`} className={`rounded-sm`} type='button' onClick={()=> handleSelectedTimeslot(time,i)}>
-                                {format(time,'h:mm aa')}
-                                </button>
-                            </div>
-                            </>
-                        ))}
-                    </div>   
-                    ))}
-                </div>
-            </div>
-            
-        
+                 <DailyAppointments 
+                    calendarDate={date.justDate} 
+                    handleSelectedTimeslot={handleSelectedTimeslot} 
+                    getAppointmentForSelectedDate={getAppointmentForSelectedDate}
+                    setSelectedModality={setSelectedModality}
+                />
             }
             {date?.dateTime && date?.justDate &&
                 <>

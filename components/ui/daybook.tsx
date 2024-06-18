@@ -1,106 +1,65 @@
 "use client"
 
+import { BUSINESS_HOURS_INTERVAL, CLOSING_HOURS, MODALITIES, OPENING_HOURS } from "@/config"
 import { Appointment } from "@/types/appointment"
-import { format } from "date-fns"
+import { add, format } from "date-fns"
 import { Pagination, Popover, Table } from "flowbite-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { HiNewspaper, HiOutlinePencilAlt } from "react-icons/hi"
 
 interface AppointmentProps {
-    appointments: Appointment[]
+    appointments?: Appointment[],
+    calendarDate: Date,
+    setSelectedModality: (modality:string)=>void,
+    handleSelectedTimeslot: (time:Date, index:number)=>void,
+    getAppointmentForSelectedDate: (index:number,modality:string)=>{}
 }
 
 export default function DailyAppointments(props: AppointmentProps) {
 
     const router = useRouter();
 
-    // const onPageChange = (page: number) => {
-    //     const search = props.search;
-    //     if(props.search)
-    //         router.push(`/dashboard/patient?search=${search}&page=${page}`);
-    //     else
-    //     router.push(`/dashboard/patient?page=${page}`);
-    // }
+    const getTimes = () => {
+        if(!props.calendarDate) return
 
-    // const totalPages = Math.ceil(props.patientCount / props.limit);
+        const justDate = props.calendarDate
+        const startTime = add(justDate, {hours: OPENING_HOURS}) //sets opening time to 9:00AM
+        const end = add(justDate, {hours: CLOSING_HOURS})  //sets closing time to 5:00PM
+        const interval = BUSINESS_HOURS_INTERVAL //in minutes. Sets time slot in 30 min intervals
+    
+        const times = []
+        for(let i=startTime; i<=end; i=add(i,{minutes:interval})){
+            times.push(i)
+        }
 
-    // const appointments = async () => {
-    //     const appts = await getAppointments()
-    //     let dailyAppointments = []
-    //     appts?.map(appt=>{
-    //         dailyAppointments.push(appt)
-    //     })
-    //     return dailyAppointments
-    // }
+        return times
+    }
+
+    const times = getTimes()
+
+    
 
 
     return (
-        <div className="overflow-x-auto">
-            {/* <Table striped>
-                <Table.Head>
-                    <Table.HeadCell>Last Name</Table.HeadCell>
-                    <Table.HeadCell>First Name</Table.HeadCell>
-                    <Table.HeadCell>Date Of Birth</Table.HeadCell>
-                    <Table.HeadCell>Gender</Table.HeadCell>
-                    <Table.HeadCell>Tel Number</Table.HeadCell>
-                    <Table.HeadCell>Modality</Table.HeadCell>
-                    <Table.HeadCell>
-                        <span className="sr-only">Edit</span>
-                    </Table.HeadCell>
-                    <Table.HeadCell>
-                        <span className="sr-only">Accession</span>
-                    </Table.HeadCell>
-                </Table.Head>
-                <Table.Body className="divide-y">
-                    {
-                        props.appointments.map((appt, index) => (
-                            <Table.Row key={index} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                <Table.Cell>{appt.lastName}</Table.Cell>
-                                <Table.Cell>{appt.firstName}</Table.Cell>
-                                <Table.Cell>{appt.dob ? format(appt.dob.toString(), "dd/MM/yyyy") : ""}</Table.Cell>
-                                <Table.Cell>{appt.sex}</Table.Cell>
-                                <Table.Cell>{appt.tel}</Table.Cell>
-                                <Table.Cell>{appt.modality}</Table.Cell>
-                                <Table.Cell>
-                                    <Popover
-                                        trigger="hover"
-                                        content={
-                                            (<div className="p-2">
-                                                Edit
-                                            </div>)}>
-                                                //TODO: update link 
-                                        <Link href={`/dashboard/patient/edit/${appt.appointment_id}`} className="font-medium text-cyan-600 dark:text-cyan-500 text-center">
-                                            <HiOutlinePencilAlt size={18} className="mx-auto" />
-                                        </Link>
-                                    </Popover>
-                                </Table.Cell>
-
-                                <Table.Cell>
-                                    <Popover
-                                        trigger="hover"
-                                        content={
-                                            (<div className="p-2">
-                                                Accession
-                                            </div>)}>
-                                        <Link href={`#`} className="font-medium text-cyan-600 dark:text-cyan-500 text-center">
-                                            <HiNewspaper size={18} className="mx-auto" />
-                                        </Link>
-                                    </Popover>
-                                </Table.Cell>
-                            </Table.Row>
-                        ))
-                    }
-
-                </Table.Body>
-            </Table>
-        */}
-
-            {/* <div className="flex overflow-x-auto sm:justify-center">
-                <Pagination currentPage={props.activePage} totalPages={totalPages < 1 ? 1 : totalPages} onPageChange={onPageChange} />
-            </div> */}
-
-        </div> 
+        <div className='flex flex-col w-3/4 m-3'>
+        <div className='grid grid-cols-5 gap-2 text-center p-1'>
+            {MODALITIES?.map((modality,i) => (
+            <div key={`modality-${i}`}>
+                {modality}
+                {times?.map((time, i) => (
+                    <>
+                    <div key={`time-${i}`} className={`rounded-sm p-2 m-2 ${ props.getAppointmentForSelectedDate(i,modality)} cursor:pointer hover:bg-sky-600 hover:text-white `} onClick={()=>props.setSelectedModality(modality)} >
+                        <button id={`${modality}-timeslot`} className={`rounded-sm`} type='button' onClick={()=> props.handleSelectedTimeslot(time,i)}>
+                        {format(time,'h:mm aa')}
+                        </button>
+                    </div>
+                    </>
+                ))}
+            </div>   
+            ))}
+        </div>
+    </div>
     )
 
 }
