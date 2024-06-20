@@ -106,7 +106,9 @@ const Calendar = (props:AppointmentProps) => {
         let colour = 'bg-slate-100'
         props.appointments?.map((appt, i) => {
             if(index === appt.index && modality === appt.modality){
-                if(date.justDate?.getDate() === appt.date?.getDate()){
+                if(date.justDate?.getDate() === appt.date?.getDate() &&
+                date.justDate?.getMonth() === appt.date?.getMonth() &&
+                date.justDate?.getFullYear() === appt.date?.getFullYear()){
                     colour = handleApptColour(modality)
                     console.log("Appointment exists for selected date ",appt.date)
                 }
