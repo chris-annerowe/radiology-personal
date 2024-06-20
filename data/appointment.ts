@@ -1,7 +1,6 @@
 "use server"
 
 import { db } from "@/lib/db"
-import { getBgColour } from "@/types/appointment"
 import { add, sub } from "date-fns"
 
 export const createAppointment = async (
@@ -45,75 +44,6 @@ export const appointmentExists = async(time: Date, modality: string) => {
         ))
         console.log("Selected timeslot already exists: ",apptExists)
         return apptExists
-    }catch{ return }
-}
-
-export const getApptIndex = async(date: Date, modality: string) => {
-    try{
-        const utcAdjusted = add(date,{hours: 6})
-        const appointments = await db.appointment.findMany()
-        let index = null
-        console.log("Appt date: ",date,utcAdjusted)
-        
-        appointments?.map(appt => (
-            appt.appointment_time?.getDate() === utcAdjusted.getDate() && modality === appt.modality ? index = appt.index : null
-        ))
-        console.log("Appt index: ",index)
-        return index
-    }catch{ return }
-}
-
-export const getAppointmentTime = async(time: Date, modality: string) => {
-    try{
-        //const utcAdjusted = sub(time,{hours: 10})
-        const appointments = await db.appointment.findMany()
-        let apptExists = null
-        console.log(time)
-        
-        appointments?.map(appt => (
-            // console.log(time,appointments)
-            appt.appointment_time?.getTime() === time.getTime() && modality === appt.modality ? apptExists = appt.appointment_time : null
-        ))
-        console.log("Selected timeslot already exists: ",apptExists)
-        return apptExists
-    }catch{ return }
-}
-
-export const getExistingAppointment = async(time: Date, modality: string) => {
-    try{
-        const utcAdjusted = sub(time,{hours: 10})
-        const appointments = await db.appointment.findFirst({
-            where: {appointment_time:utcAdjusted,modality}
-        })
-        
-        let colour= 'bg-slate-100'
-        
-        if(appointments){
-            switch(modality){
-                case 'Mammogram': 
-                    colour = 'bg-pink-100'
-                    break;
-                case 'MRI':
-                    colour = 'bg-blue-100'
-                    break;
-                case 'CT':
-                    colour = 'bg-red-100'
-                    break;
-                case 'UltraSound':
-                    colour = 'bg-green-100'
-                    break;
-                case 'Xray':
-                    colour = 'bg-yellow-100'
-                    break;
-                default:
-                    colour = 'slate'
-                    break;
-            }
-        } 
-
-        console.log("Appointment exists: ",colour,appointments)
-        return colour
-        
     }catch{ return }
 }
 

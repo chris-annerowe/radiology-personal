@@ -1,5 +1,3 @@
-import { getApptIndex } from "@/data/appointment";
-
 export interface Appointment {
     firstName: string | null,
     lastName: string | null,

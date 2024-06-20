@@ -7,7 +7,7 @@ import { COUNTRY_CODE, PUBLIC_HOLIDAYS_URL } from '@/config'
 import { FaCalendar } from 'react-icons/fa6'
 import AppointmentModal from '@/ui/modals/appointment-modal'
 import { getBgColour } from '@/types/appointment'
-import DailyAppointments from './ui/daybook'
+import AppointmentTimes from './ui/daybook'
 import HolidayModal from '@/ui/modals/holiday-modal'
 
 interface DateType {
@@ -143,28 +143,21 @@ const Calendar = (props:AppointmentProps) => {
                 />
             </div>
             {date?.justDate &&
-                 <DailyAppointments 
+                 <AppointmentTimes
                     calendarDate={date.justDate} 
                     handleSelectedTimeslot={handleSelectedTimeslot} 
                     getAppointmentForSelectedDate={getAppointmentForSelectedDate}
                     setSelectedModality={setSelectedModality}
                 />
             }
-            {date?.dateTime && date?.justDate &&
-                <>
-                {/* {appointmentExists(date.dateTime, selectedModality)  && null //TODO: create modal to notify an appointment already exists for that slot
-                } */}
-                <AppointmentModal 
-                        show={showModal} 
-                        onClose={closeModal} 
-                        date={date.dateTime} 
-                        modality={selectedModality} 
-                        index={selectedIndex}
-                        holiday={holiday}
-                />
-                </>
-             
-           }
+            <AppointmentModal 
+                show={showModal} 
+                onClose={closeModal} 
+                date={date.dateTime} 
+                modality={selectedModality} 
+                index={selectedIndex}
+                holiday={holiday}
+            />
            <HolidayModal
                 show={isHoliday}
                 onClose={closeHoliday}

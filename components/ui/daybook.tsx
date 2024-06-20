@@ -16,7 +16,7 @@ interface AppointmentProps {
     getAppointmentForSelectedDate: (index:number,modality:string)=>{}
 }
 
-export default function DailyAppointments(props: AppointmentProps) {
+export default function AppointmentTimes(props: AppointmentProps) {
 
     const router = useRouter();
 
