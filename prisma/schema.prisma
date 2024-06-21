@@ -34,6 +34,14 @@ model appointment {
   appointment_id   BigInt    @id @default(autoincrement())
   appointment_time DateTime? @db.Timestamp(6)
   patientid        String?   @db.VarChar(40)
+  firstName        String?   @db.VarChar(40)
+  lastName         String?   @db.VarChar(40)
+  description      String?   @db.VarChar(240)
+  modality         String?   @db.VarChar(20)
+  dob              DateTime? @db.Timestamp(6)
+  tel              String?   @db.VarChar(10)
+  sex              String?   @db.VarChar(10)
+  index            Int?
 }
 
 model order {
