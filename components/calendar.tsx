@@ -26,6 +26,7 @@ const Calendar = (props:AppointmentProps) => {
     const [showModal, setShowModal] = useState(false);
     const [isHoliday, setIsHoliday] = useState(false)
     const [holiday, setHoliday] = useState("")
+    const [dark, setDark] = useState("")
     const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined)
     const [date, setDate] = useState<DateType>({
         justDate: null,
@@ -99,11 +100,13 @@ const Calendar = (props:AppointmentProps) => {
 
     const handleApptColour = (modality:string) => {
             const colour = getBgColour(modality)
+            setDark('dark:'+colour)
+            console.log("Dark mode: ",dark)
             return colour
     }
 
     const getAppointmentForSelectedDate = (index:number, modality:string) => {
-        let colour = 'bg-slate-100'
+        let colour = 'bg-slate-100 dark:bg-gray-800'
         props.appointments?.map((appt, i) => {
             if(index === appt.index && modality === appt.modality){
                 if(date.justDate?.getDate() === appt.date?.getDate() &&
@@ -130,13 +133,13 @@ const Calendar = (props:AppointmentProps) => {
                         Select Date 
                 </h2>
                 <ReactCalendar
-                    className="REACT-CALENDAR p-2 dark:bg-slate-500 dark:text-white"
+                    className="REACT-CALENDAR p-2 dark:bg-gray-700 dark:text-white"
                     minDate={new Date()}
                     view='month'
                     onClickDay={(date)=>{handleSelectedDate(date)}}
                 />
                 <ReactCalendar
-                    className="REACT-CALENDAR p-2 mt-6 dark:bg-slate-500 dark:text-white"
+                    className="REACT-CALENDAR p-2 mt-6 dark:bg-gray-700 dark:text-white"
                     activeStartDate={getNextMonth()}
                     view='month'
                     onClickDay={(date)=>{handleSelectedDate(date)}}
@@ -148,6 +151,7 @@ const Calendar = (props:AppointmentProps) => {
                     handleSelectedTimeslot={handleSelectedTimeslot} 
                     getAppointmentForSelectedDate={getAppointmentForSelectedDate}
                     setSelectedModality={setSelectedModality}
+                    darkMode={dark}
                 />
             }
             <AppointmentModal 
