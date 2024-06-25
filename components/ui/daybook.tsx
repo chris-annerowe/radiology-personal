@@ -49,7 +49,7 @@ export default function AppointmentTimes(props: AppointmentProps) {
                 {modality}
                 {times?.map((time, i) => (
                     <>
-                    <div key={`time-${i}`} className={`rounded-sm p-2 m-2 ${ props.getAppointmentForSelectedDate(i,modality)} cursor:pointer hover:bg-sky-600 hover:text-white `} onClick={()=>props.setSelectedModality(modality)} >
+                    <div key={`time-${i}`} className={`rounded-sm p-2 m-2 ${ props.getAppointmentForSelectedDate(i,modality)} cursor:pointer hover:bg-sky-600 hover:text-white dark:bg-slate-500 dark:text-white`} onClick={()=>props.setSelectedModality(modality)} >
                         <button id={`${modality}-timeslot`} className={`rounded-sm`} type='button' onClick={()=> props.handleSelectedTimeslot(time,i)}>
                         {format(time,'h:mm aa')}
                         </button>

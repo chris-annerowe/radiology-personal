@@ -130,13 +130,13 @@ const Calendar = (props:AppointmentProps) => {
                         Select Date 
                 </h2>
                 <ReactCalendar
-                    className="REACT-CALENDAR p-2"
+                    className="REACT-CALENDAR p-2 dark:bg-slate-500 dark:text-white"
                     minDate={new Date()}
                     view='month'
                     onClickDay={(date)=>{handleSelectedDate(date)}}
                 />
                 <ReactCalendar
-                    className="REACT-CALENDAR p-2 mt-6"
+                    className="REACT-CALENDAR p-2 mt-6 dark:bg-slate-500 dark:text-white"
                     activeStartDate={getNextMonth()}
                     view='month'
                     onClickDay={(date)=>{handleSelectedDate(date)}}
