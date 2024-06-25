@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import React from 'react'
 import { Sidebar, SidebarItems, SidebarItemGroup, SidebarItem } from 'flowbite-react';
+import ThemeSwitch from '@/components/themeSwitch';
 
 const Sidebar1 = () => {
   return (
@@ -37,6 +38,7 @@ const Sidebar2 = () => {
   return (
     <aside id="default-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
       <Sidebar className='h-screen' aria-label="Default sidebar example">
+        <ThemeSwitch/>
         <SidebarItems>
           <SidebarItemGroup>
             <SidebarItem href="/dashboard/daybook">

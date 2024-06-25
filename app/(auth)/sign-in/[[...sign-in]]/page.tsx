@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import React from 'react'
 import { compare } from 'bcrypt'
 import { Button, Card, FloatingLabel } from 'flowbite-react'
+import ThemeSwitch from '@/components/themeSwitch'
 
 const SignIn = () => {
 
@@ -38,8 +39,10 @@ const SignIn = () => {
         }
         throw new Error("Credentials do not match. Please try again")
     }
+
     return (
         <div className='flex bg-transparent px-30 py-30 pt-20 items-center justify-center'>
+            <ThemeSwitch />
             <Card className='w-72'>
                 <form action={createUser} className='flex gap-2 flex-col '>
                     <FloatingLabel variant='outlined' label='Username' type='text' name='username' />

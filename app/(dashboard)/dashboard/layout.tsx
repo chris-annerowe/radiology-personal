@@ -1,3 +1,4 @@
+import ThemeSwitch from '@/components/themeSwitch'
 import Sidebar from '@/ui/dashboard/layout/sidebar'
 import React from 'react'
 
