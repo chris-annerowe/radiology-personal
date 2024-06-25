@@ -10,8 +10,7 @@ interface AppointmentProps {
     calendarDate: Date,
     setSelectedModality: (modality:string)=>void,
     handleSelectedTimeslot: (time:Date, index:number)=>void,
-    getAppointmentForSelectedDate: (index:number,modality:string)=>{},
-    darkMode: string
+    getAppointmentForSelectedDate: (index:number,modality:string)=>{}
 }
 
 export default function AppointmentTimes(props: AppointmentProps) {

@@ -26,7 +26,6 @@ const Calendar = (props:AppointmentProps) => {
     const [showModal, setShowModal] = useState(false);
     const [isHoliday, setIsHoliday] = useState(false)
     const [holiday, setHoliday] = useState("")
-    const [dark, setDark] = useState("")
     const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined)
     const [date, setDate] = useState<DateType>({
         justDate: null,
@@ -100,8 +99,6 @@ const Calendar = (props:AppointmentProps) => {
 
     const handleApptColour = (modality:string) => {
             const colour = getBgColour(modality)
-            setDark('dark:'+colour)
-            console.log("Dark mode: ",dark)
             return colour
     }
 
@@ -151,7 +148,6 @@ const Calendar = (props:AppointmentProps) => {
                     handleSelectedTimeslot={handleSelectedTimeslot} 
                     getAppointmentForSelectedDate={getAppointmentForSelectedDate}
                     setSelectedModality={setSelectedModality}
-                    darkMode={dark}
                 />
             }
             <AppointmentModal 
