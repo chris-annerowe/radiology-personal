@@ -2,6 +2,7 @@
 
 import { BUSINESS_HOURS_INTERVAL, CLOSING_HOURS, MODALITIES, OPENING_HOURS } from "@/config"
 import { Appointment } from "@/types/appointment"
+import AppointmentSearch from "@/ui/dashboard/appointment/appointment-search"
 import { add, format } from "date-fns"
 import { useRouter } from "next/navigation"
 
@@ -40,6 +41,9 @@ export default function AppointmentTimes(props: AppointmentProps) {
 
     return (
         <div className='flex flex-col w-3/4 m-3'>
+        <h2 className='flex justify-end m-2 w-64'>
+            <AppointmentSearch />
+        </h2>
         <div className='grid grid-cols-5 gap-2 text-center p-1'>
             {MODALITIES?.map((modality,i) => (
             <div key={`modality-${i}`}>

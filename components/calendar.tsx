@@ -9,6 +9,7 @@ import AppointmentModal from '@/ui/modals/appointment-modal'
 import { getBgColour } from '@/types/appointment'
 import AppointmentTimes from './ui/daybook'
 import HolidayModal from '@/ui/modals/holiday-modal'
+import AppointmentSearch from '@/ui/dashboard/appointment/appointment-search'
 
 interface DateType {
     justDate: Date | null
