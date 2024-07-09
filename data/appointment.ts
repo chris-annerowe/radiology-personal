@@ -1,6 +1,7 @@
 "use server"
 
 import { db } from "@/lib/db"
+import { randomUUID } from "crypto"
 import { add, sub } from "date-fns"
 
 export const createAppointment = async (
@@ -19,6 +20,7 @@ export const createAppointment = async (
             data: {
                 lastName, 
                 firstName,
+                patientid: randomUUID(),
                 appointment_time: date,
                 description,
                 modality: modality,
@@ -35,6 +37,7 @@ export const createAppointment = async (
 
 export const updateAppointment = async (
     id: bigint,
+    patientid: string,
     time: Date,
     lastName: string,
     firstName: string,
@@ -52,6 +55,7 @@ export const updateAppointment = async (
             data: {
                 lastName, 
                 firstName,
+                patientid,
                 appointment_time: sub(time,{hours: 5}),
                 description,
                 tel,
