@@ -131,7 +131,7 @@ export default function AppointmentModal(props: ApptModalProps) {
             //check if appointment already exists
             if(props.appt){
                 console.log("Update existing appointment")
-                await updateAppointment(props.appt.appointment_id, time, lastName,firstName, description, props.modality, tel, dob, sex, index)
+                await updateAppointment(props.appt.appointment_id, time, lastName,firstName, description, tel, dob, sex, index)
             }else{
                 await createAppointment(lastName,firstName, description, props.date, props.modality, tel, dob, sex, props.index)
             }
