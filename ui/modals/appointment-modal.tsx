@@ -94,8 +94,6 @@ export default function AppointmentModal(props: ApptModalProps) {
             const timeString = data.get('appt_time')?.valueOf()
             const sex = data.get('sex')?.valueOf()
 
-            console.log("Time as string: ",timeString)
-
             if (typeof firstName !== 'string' || firstName?.length === 0) {
                 throw new Error("Invalid First Name")
             }
@@ -111,7 +109,7 @@ export default function AppointmentModal(props: ApptModalProps) {
             if (typeof dobString !== 'string') {
                 throw new Error("Invalid DOB")
             }
-            if (typeof timeString !== 'string') {
+            if (typeof timeString !== 'string' && timeString) {
                 throw new Error("Invalid Appointment Time")
             }
             if (typeof sex !== 'string') {
@@ -123,13 +121,12 @@ export default function AppointmentModal(props: ApptModalProps) {
 
             const dob = new Date(dobString)
             const time = new Date(timeString)
-            console.log("Time as date: ",time.getHours(),time.getMinutes())
 
             //assign index based on updated time
             const index = getIndex(time.getHours(), time.getMinutes())
 
             //check if appointment already exists
-            if(props.appt){
+            if(props.appt?.appointment_id){
                 console.log("Update existing appointment")
                 await updateAppointment(props.appt.appointment_id, time, lastName,firstName, description, tel, dob, sex, index)
             }else{
@@ -182,21 +179,19 @@ export default function AppointmentModal(props: ApptModalProps) {
                         />
                     </div>
 
+                    {/* Show appointment time input only if updating existing appointment */}
+                    {props.appt?.appointment_id ? (
                     <div>
                         <div className="mb-2 block">
                             <Label htmlFor="appt_time" value="Appointment Time" />
                         </div>
-                        {/* <Datepicker name="appt_time" 
-                            maxDate={new Date()} 
-                            defaultDate={typeof props.appt?.appointment_time !== 'string' && typeof props.appt?.appointment_time !== 'number' && props.appt?.appointment_time !== null && typeof props.appt?.appointment_time !== 'undefined' ? new Date(props.appt?.appointment_time) : undefined} 
-                            onSelectedDateChanged={()=>setTime}
-                        /> */}
                         <TextInput id="appt_time" name="appt_time" type="" placeholder="" defaultValue={props.appt?.appointment_time ? format(add(props.appt?.appointment_time,{hours: 5}), 'MM/dd/yyyy h:mm aa') : ""} required shadow
                             helperText={
                                 errors?.tel && 'Required'
                             }
                         />
                     </div>
+                    ) : null }
 
                     <div>
                         <div className="mb-2 block">

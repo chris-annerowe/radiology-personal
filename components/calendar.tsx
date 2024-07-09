@@ -34,6 +34,18 @@ interface Appointment{
     modality: string | null
 }
   
+const resetAppointment:Appointment = {
+    firstName: null,
+    lastName: null,
+    tel: null,
+    sex: null,
+    dob: null,
+    appointment_id: null,
+    appointment_time: null,
+    description: null,
+    index: null,
+    modality: null
+}
 
 const Calendar = (props:AppointmentProps) => {
     console.log("Appointments props from daybook: ",props.appointments)
@@ -43,18 +55,7 @@ const Calendar = (props:AppointmentProps) => {
     const [isHoliday, setIsHoliday] = useState(false)
     const [holiday, setHoliday] = useState("")
     const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined)
-    const [appointmentEdit, setAppointmentEdit] = useState<Appointment>({
-        firstName: null,
-        lastName: null,
-        tel: null,
-        sex: null,
-        dob: null,
-        appointment_id: null,
-        appointment_time: null,
-        description: null,
-        index: null,
-        modality: null
-    })
+    const [appointmentEdit, setAppointmentEdit] = useState<Appointment>(resetAppointment)
     const [date, setDate] = useState<DateType>({
         justDate: null,
         dateTime: null
@@ -151,6 +152,7 @@ const Calendar = (props:AppointmentProps) => {
       }, [date.justDate])
 
     useEffect(() => {
+        setAppointmentEdit(resetAppointment)
         props.appointments?.map(appt=>{
         if(appt.appointment_time?.getDate() === date.dateTime?.getDate() &&
         appt.appointment_time?.getTime() === date.dateTime?.getTime()){
