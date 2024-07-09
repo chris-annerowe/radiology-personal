@@ -36,24 +36,48 @@ export default function AppointmentModal(props: ApptModalProps) {
 
     },[errors])
 
-    const getIndex = (time: number) => {
-        switch(time){
+    const getIndex = (hour: number, mins: number) => {
+        switch(hour){
             case 9: 
-                return 0
-            case 10: 
-                return 2
-            case 11:
-                return 4
-            case 12:
-                return 6
-            case 13:
-                return 8
-            case 14:
-                return 10
-            case 15:
-                return 12
-            case 16:
-                return 14
+                if(mins === 0)
+                    return 0
+                else
+                    return 1
+            case 10:  
+                if(mins === 0)
+                    return 2
+                else
+                    return 3
+            case 11: 
+                if(mins === 0)
+                    return 4
+                else
+                    return 5
+            case 12: 
+                if(mins === 0)
+                    return 6
+                else
+                    return 7
+            case 13: 
+                if(mins === 0)
+                    return 8
+                else
+                    return 9
+            case 14: 
+                if(mins === 0)
+                    return 10
+                else
+                    return 11
+            case 15: 
+                if(mins === 0)
+                    return 12
+                else
+                    return 13
+            case 16: 
+                if(mins === 0)
+                    return 14
+                else
+                    return 15
             case 17:
                 return 16
         }
@@ -99,10 +123,10 @@ export default function AppointmentModal(props: ApptModalProps) {
 
             const dob = new Date(dobString)
             const time = new Date(timeString)
-            console.log("Time as date: ",time.getHours())
+            console.log("Time as date: ",time.getHours(),time.getMinutes())
 
             //assign index based on updated time
-            const index = getIndex(time.getHours())
+            const index = getIndex(time.getHours(), time.getMinutes())
 
             //check if appointment already exists
             if(props.appt){
