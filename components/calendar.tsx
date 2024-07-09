@@ -138,7 +138,7 @@ const Calendar = (props:AppointmentProps) => {
                 date.justDate?.getMonth() === appt.appointment_time?.getMonth() &&
                 date.justDate?.getFullYear() === appt.appointment_time?.getFullYear()){
                     colour = handleApptColour(modality)
-                    console.log("Appointment exists for selected date ",appt.date)
+                    console.log("Appointment exists for selected date ",appt.appointment_time)
                 }
             }  
         })

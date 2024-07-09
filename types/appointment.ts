@@ -31,7 +31,6 @@ export const getBgColour = (modality:string) => {
             colour = 'bg-yellow-100 dark:bg-amber-900'
             break;
     }
-    console.log("Bg colour ",colour)
         
     return colour
 }

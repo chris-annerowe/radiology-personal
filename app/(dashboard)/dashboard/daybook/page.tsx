@@ -1,9 +1,9 @@
 "use server"
 
 import Calendar from '@/components/calendar'
-import React, { useEffect } from 'react'
+import React from 'react'
 import "@/styles/calendar.css"
-import { getAppointmentByName, getAppointmentCount, getAppointmentSearchCount, getAppointments, getAppointmentsByPagination } from '@/data/appointment'
+import { getAppointmentsByName, getAppointmentSearchCount, getAppointmentsByPagination, getUpcomingAppointmentsCount } from '@/data/appointment'
 import AppointmentList from '@/ui/dashboard/appointment/appointment-list'
 import { Appointment } from '@/types/appointment'
 
@@ -80,7 +80,7 @@ const Daybook = async ({
     search = Array.isArray(searchParam) ? searchParam[0] : searchParam
     console.log(search)
     //Get appointments by name
-    const appointments = await getAppointmentByName(search)
+    const appointments = await getAppointmentsByName(search)
     console.log("appointments by name: ",appointments)
     //clear any previous search results
     searchAppointments = []
@@ -113,7 +113,7 @@ const Daybook = async ({
   }
   
   // const appointmentsList = search ? await getAppointmentByName(search) : await getAppointmentsByPagination(pageNumber,limit)
-  const appointmentCount = search ? await getAppointmentSearchCount(search) : await getAppointmentCount();
+  const appointmentCount = search ? await getAppointmentSearchCount(search) : await getUpcomingAppointmentsCount();
   // const appointments = JSON.parse(JSON.stringify(appointmentsList));
 
   

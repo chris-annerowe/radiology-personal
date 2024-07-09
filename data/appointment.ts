@@ -47,21 +47,49 @@ export const appointmentExists = async(time: Date, modality: string) => {
     }catch{ return }
 }
 
-export const getAppointments = async() => {
+export const getAllAppointments = async() => {
     try{
         const appointments = await db.appointment.findMany()
 
-        console.log("Appointments retrieved successfully: ",appointments)
+        console.log("All appointments retrieved successfully: ",appointments)
        
         return appointments
     }catch{ return }
 }
 
-export const getAppointmentCount = async () => {
+export const getUpcomingAppointments = async() => {
+    try{
+        const appointments = await db.appointment.findMany({
+            where: {
+                appointment_time: {
+                    gte: new Date()
+                }
+            }
+        })
+
+        console.log("Upcoming appointments retrieved successfully: ",appointments)
+       
+        return appointments
+    }catch{ return }
+}
+
+export const getAllAppointmentsCount = async () => {
     const appointmentCount = await db.appointment.count();
     return appointmentCount;
 }
 
+export const getUpcomingAppointmentsCount = async () => {
+    const appointmentCount = await db.appointment.count({
+        where: {
+            appointment_time: {
+                gte: new Date()
+            }
+        }
+    })
+    return appointmentCount
+}
+
+//TODO: re-evaluate this
 export const getAppointmentSearchCount = async (searchName: string) => {
     const appointmentCount = await db.appointment.count({
         where: {
@@ -76,13 +104,18 @@ export const getAppointmentSearchCount = async (searchName: string) => {
 export const getAppointmentsByPagination = async (page: number, limit: number) => {
     const appointments = await db.appointment.findMany({
         skip: ((page - 1) * limit),
-        take: limit
+        take: limit,
+        where: {
+            appointment_time: {
+                gte: new Date()
+            }
+        }
     });
 
     return appointments
 }
 
-export const getAppointmentByName = async(name:string) => {
+export const getAppointmentsByName = async(name:string) => {
     const appointments = await db.appointment.findMany({
         where: {
             OR: [
@@ -95,6 +128,14 @@ export const getAppointmentByName = async(name:string) => {
                     lastName: {
                         search: name,
                     },
+                }
+            ],
+            //Check that appointment date is greater than today's date
+            AND: [
+                {
+                    appointment_time: {
+                        gte: new Date()
+                    }
                 }
             ]
         },
