@@ -37,7 +37,7 @@ console.log("Appointment list props: ",props.appointments)
     const onPageChange = (page: number) => {
         const search = props.search;
         if(props.search)
-            router.push(`/dashboard/daybook?search=${search}&page=${page}`);    //TODO
+            router.push(`/dashboard/daybook/search?search=${search}&page=${page}`);    //TODO
         else
         router.push(`/dashboard/daybook?page=${page}`);                 //TODO
     }
