@@ -1,8 +1,11 @@
 'use client'
 
+import { findAllStudies } from "@/actions/studies";
+import { Study } from "@/types/studies";
+import { Prisma } from "@prisma/client";
 import { AutoComplete } from "antd";
 import { Modal, Pagination, Table, TextInput } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 
@@ -40,6 +43,12 @@ export default function AddStudyModal(props: AddStudyModalProps) {
 
     const [totalPages, setTotalPages] = useState(1);
 
+    const [studies, setStudies] = useState<Study[]>([])
+
+    useEffect(()=>{
+        getStudiesList();
+    },[])
+
 
 
     const searchPatients = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -58,6 +67,14 @@ export default function AddStudyModal(props: AddStudyModalProps) {
 
     const onPageChange = (page: number) => {
         setActivePage(page);
+    }
+
+    const getStudiesList = () => {
+        console.log("Called");
+        findAllStudies().then(res=>{
+            console.log(res);
+            setStudies(res)
+        })
     }
 
 
@@ -99,7 +116,15 @@ export default function AddStudyModal(props: AddStudyModalProps) {
                                 </Table.HeadCell>
                             </Table.Head>
                             <Table.Body className="divide-y">
-
+                                {studies.map((study, index)=>{
+                                    return (
+                                        <Table.Row key={index}>
+                                            <Table.Cell>{study.cpt_code}</Table.Cell>
+                                            <Table.Cell>{study.study_name}</Table.Cell>
+                                            <Table.Cell>{study.modality_code}</Table.Cell>
+                                        </Table.Row>
+                                    )
+                                })}
                             </Table.Body>
                         </Table>
                         <div className="flex overflow-x-auto sm:justify-center">
