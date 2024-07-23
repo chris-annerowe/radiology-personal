@@ -2,13 +2,15 @@
 import ReactCalendar from 'react-calendar'
 
 import React, { useState, useEffect } from 'react'
-import { format, sub } from 'date-fns'
+import { add, format, sub } from 'date-fns'
 import { COUNTRY_CODE, PUBLIC_HOLIDAYS_URL } from '@/config'
 import { FaCalendar } from 'react-icons/fa6'
 import AppointmentModal from '@/ui/modals/appointment-modal'
 import { getBgColour } from '@/types/appointment'
 import AppointmentTimes from './ui/daybook'
 import HolidayModal from '@/ui/modals/holiday-modal'
+import AppointmentSearch from '@/ui/dashboard/appointment/appointment-search'
+import { number } from 'zod'
 
 interface DateType {
     justDate: Date | null
@@ -19,6 +21,32 @@ interface AppointmentProps {
     appointments: any[]
 }
 
+interface Appointment{
+    firstName: string | null,
+    lastName: string | null,
+    appointment_id: bigint | null,
+    dob: Date | null,
+    tel: string | null,
+    sex: string | null,
+    appointment_time: Date | null,
+    description: string | null,
+    index: number | null,
+    modality: string | null
+}
+  
+const resetAppointment:Appointment = {
+    firstName: null,
+    lastName: null,
+    tel: null,
+    sex: null,
+    dob: null,
+    appointment_id: null,
+    appointment_time: null,
+    description: null,
+    index: null,
+    modality: null
+}
+
 const Calendar = (props:AppointmentProps) => {
     console.log("Appointments props from daybook: ",props.appointments)
 
@@ -27,6 +55,7 @@ const Calendar = (props:AppointmentProps) => {
     const [isHoliday, setIsHoliday] = useState(false)
     const [holiday, setHoliday] = useState("")
     const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined)
+    const [appointmentEdit, setAppointmentEdit] = useState<Appointment>(resetAppointment)
     const [date, setDate] = useState<DateType>({
         justDate: null,
         dateTime: null
@@ -106,11 +135,11 @@ const Calendar = (props:AppointmentProps) => {
         let colour = 'bg-slate-100 dark:bg-gray-800'
         props.appointments?.map((appt, i) => {
             if(index === appt.index && modality === appt.modality){
-                if(date.justDate?.getDate() === appt.date?.getDate() &&
-                date.justDate?.getMonth() === appt.date?.getMonth() &&
-                date.justDate?.getFullYear() === appt.date?.getFullYear()){
+                if(date.justDate?.getDate() === appt.appointment_time?.getDate() &&
+                date.justDate?.getMonth() === appt.appointment_time?.getMonth() &&
+                date.justDate?.getFullYear() === appt.appointment_time?.getFullYear()){
                     colour = handleApptColour(modality)
-                    console.log("Appointment exists for selected date ",appt.date)
+                    console.log("Appointment exists for selected date ",appt.appointment_time)
                 }
             }  
         })
@@ -121,6 +150,20 @@ const Calendar = (props:AppointmentProps) => {
        getHolidays()
         
       }, [date.justDate])
+
+    useEffect(() => {
+        setAppointmentEdit(resetAppointment)
+        props.appointments?.map(appt=>{
+        if(appt.appointment_time?.getDate() === date.dateTime?.getDate() &&
+        appt.appointment_time?.getTime() === date.dateTime?.getTime() && appt.modality === selectedModality){
+            if(date.dateTime !== null){
+            console.log("Appointment matches selected timeslot",date.dateTime,appt.appointment_time)
+            setAppointmentEdit(appt)
+            }
+        }
+        })
+         
+       }, [handleSelectedTimeslot])
 
      return (
         <div className='h-screen flex flex-row'>
@@ -157,6 +200,7 @@ const Calendar = (props:AppointmentProps) => {
                 modality={selectedModality} 
                 index={selectedIndex}
                 holiday={holiday}
+                appt={appointmentEdit}
             />
            <HolidayModal
                 show={isHoliday}
