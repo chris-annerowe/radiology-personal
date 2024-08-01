@@ -10,7 +10,7 @@ import AddStudyModal from "./add-study-modal";
 
 
 interface StudiesTabProps {
-    studies: Study[],
+    studies: void,
     setStudies: Dispatch<SetStateAction<Study[]>>,
     tabsRef: RefObject<TabsRef>,
     activeTab: number, 
@@ -26,6 +26,7 @@ export default function StudiesTab(props: StudiesTabProps) {
     const closeSearchModal = () => {
         setOpenSearchModal(false);
     }
+
 
 
     return (
@@ -52,7 +53,7 @@ export default function StudiesTab(props: StudiesTabProps) {
                         </Table.HeadCell>
                     </Table.Head>
                     <Table.Body className="divide-y">
-                        {
+                        {/* {
                             props.studies.map((study, index) => (
                                 <Table.Row key={index} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell>{study.cpt_code}</Table.Cell>
@@ -61,7 +62,7 @@ export default function StudiesTab(props: StudiesTabProps) {
 
                                 </Table.Row>
                             ))
-                        }
+                        } */}
 
                     </Table.Body>
                 </Table>

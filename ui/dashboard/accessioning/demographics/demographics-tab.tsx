@@ -5,7 +5,7 @@ import { telephoneMask } from "@/lib/masks";
 import { ActionResponse } from "@/types/action";
 import BasicModal from "@/ui/common/basic-modal";
 import FormLoadingModal from "@/ui/common/form-loading-modal";
-import patient from "@/zod/schemas/patient";
+import * as patientZod from "@/zod/schemas/patient";
 import { useMaskito } from "@maskito/react";
 import { Label, TextInput, Select, Datepicker, Button, TabsRef } from "flowbite-react";
 import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
@@ -13,6 +13,7 @@ import { useFormState } from "react-dom";
 import { HiSearch, HiX } from "react-icons/hi";
 import PatientSearchModal from "./patient-search-modal";
 import { Patient } from "@/types/patient";
+import { patient } from "@prisma/client";
 
 
 const initialState: ActionResponse = {

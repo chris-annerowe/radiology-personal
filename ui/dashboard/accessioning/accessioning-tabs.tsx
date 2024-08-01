@@ -7,15 +7,23 @@ import DemographicsTab from "./demographics/demographics-tab";
 import { useRef, useState } from "react";
 import { Study } from "@/types/studies";
 import StudiesTab from "./studies/studies-tab";
+import { Patient } from "@/types/patient";
+import { findStudyByPatientId } from "@/actions/studies";
 
 
 
 export default function AccessioningTabs() {
-
     const tabsRef = useRef<TabsRef>(null);
     const [activeTab, setActiveTab] = useState(0);
 
     const [studies, setStudies] = useState<Study[]>([]);
+
+    const patientStudies = () => {
+        findStudyByPatientId('patientid').then(res=>{
+            console.log('Patient study: ',res);
+            // setStudies(res)
+        })
+    }
 
     return (
         <Tabs aria-label="Default tabs" style="default" ref={tabsRef} onActiveTabChange={(tab) => setActiveTab(tab)}>
@@ -26,7 +34,7 @@ export default function AccessioningTabs() {
             </Tabs.Item>
             <Tabs.Item title="Studies" icon={MdDashboard}>
                 <div className="p-4">
-                    <StudiesTab tabsRef={tabsRef} activeTab={activeTab} setActiveTab={setActiveTab} studies={studies} setStudies={setStudies}/>
+                    <StudiesTab tabsRef={tabsRef} activeTab={activeTab} setActiveTab={setActiveTab} studies={patientStudies()} setStudies={setStudies}/>
                 </div>
             </Tabs.Item>
             <Tabs.Item title="Payment" icon={HiAdjustments}>
