@@ -1,6 +1,7 @@
 'use client'
 
 import { addPatientStudy, findAllStudies } from "@/actions/studies";
+import { Patient } from "@/types/patient";
 import { Study } from "@/types/studies";
 import { Prisma } from "@prisma/client";
 import { AutoComplete } from "antd";
@@ -13,7 +14,9 @@ import { useEffect, useState } from "react";
 interface AddStudyModalProps {
     open: boolean,
     onClose: () => void,
-    onSelect: () => void
+    onSelect: () => void,
+    patient: Patient,
+    study: Study[]
 }
 
 export default function AddStudyModal(props: AddStudyModalProps) {
@@ -83,9 +86,10 @@ export default function AddStudyModal(props: AddStudyModalProps) {
         console.log("Study selected: ",study)
 
         //add study to patient_study table
-        addPatientStudy('patientid',10,study.study_name ? study.study_name : 'name',study.cpt_code).then(res=>{
+        addPatientStudy(props.patient.patient_id,study.study_id,study.study_name ? study.study_name : 'name',study.cpt_code).then(res=>{
             console.log('Patient study resp',res)
         })
+        props.onClose()
     }
 
 

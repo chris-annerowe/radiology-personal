@@ -48,7 +48,7 @@ const patientInitialState = {
 
 }
 
-export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,activeTab: number, setActiveTab:Dispatch<SetStateAction<number>>}) {
+export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,activeTab: number, setActiveTab:Dispatch<SetStateAction<number>>,setSelectedPatient:(patient:Patient)=>void}) {
 
     const [state, formAction] = useFormState(savePatient, initialState)
 
@@ -100,6 +100,7 @@ export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,acti
 
     const selectPatient = (patient: Patient) => {
         setPatient(patient);
+        props.setSelectedPatient(patient);
         setPatientFormDisabled(true)
         closeSearchModal();
         console.log(patient);

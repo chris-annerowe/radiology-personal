@@ -5,13 +5,15 @@ import { Button, Table, TabsRef, } from "flowbite-react";
 import { Dispatch, RefObject, SetStateAction, useState } from "react";
 import { HiPlus, HiSearch } from "react-icons/hi";
 import AddStudyModal from "./add-study-modal";
+import { Patient } from "@/types/patient";
 
 
 
 
 interface StudiesTabProps {
-    studies: void,
+    studies: Study[],
     setStudies: Dispatch<SetStateAction<Study[]>>,
+    patient: Patient,
     tabsRef: RefObject<TabsRef>,
     activeTab: number, 
     setActiveTab:Dispatch<SetStateAction<number>>
@@ -31,8 +33,9 @@ export default function StudiesTab(props: StudiesTabProps) {
 
     return (
         <>
+        {console.log("Studies tab: ",props.studies)}
             <div>
-                <AddStudyModal open={openSearchModal} onClose={closeSearchModal} onSelect={()=>{}}/>
+                <AddStudyModal open={openSearchModal} onClose={closeSearchModal} onSelect={()=>{}} patient={props.patient} study={props.studies}/>
                 <div className="flex space-x-4">
                     <Button className="mb-4" onClick={() => setOpenSearchModal(true)}>
                         <HiPlus className="mr-2 h-5 w-5" />
@@ -53,16 +56,18 @@ export default function StudiesTab(props: StudiesTabProps) {
                         </Table.HeadCell>
                     </Table.Head>
                     <Table.Body className="divide-y">
-                        {/* {
+                        {
                             props.studies.map((study, index) => (
                                 <Table.Row key={index} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell>{study.cpt_code}</Table.Cell>
                                     <Table.Cell>{study.study_name}</Table.Cell>
                                     <Table.Cell>{study.modality_code}</Table.Cell>
-
+                                    <Table.Cell>{study.price}</Table.Cell>
+                                    <Table.Cell></Table.Cell>
+                                    <Table.Cell></Table.Cell>
                                 </Table.Row>
                             ))
-                        } */}
+                        } 
 
                     </Table.Body>
                 </Table>
