@@ -1,11 +1,12 @@
 'use client'
 
 import { Study } from "@/types/studies";
-import { Button, Table, TabsRef, } from "flowbite-react";
+import { Button, Popover, Table, TabsRef, } from "flowbite-react";
 import { Dispatch, RefObject, SetStateAction, useState } from "react";
-import { HiPlus, HiSearch } from "react-icons/hi";
+import { HiPlus, HiSearch, HiTrash } from "react-icons/hi";
 import AddStudyModal from "./add-study-modal";
 import { Patient } from "@/types/patient";
+import { deletePatientStudy, findPatientStudyByStudyId } from "@/actions/studies";
 
 
 
@@ -29,7 +30,17 @@ export default function StudiesTab(props: StudiesTabProps) {
         setOpenSearchModal(false);
     }
 
+    const goToNext = () => {
+        props.tabsRef.current?.setActiveTab(props.activeTab+1)
+    }
 
+    const handleDelete = (id:bigint) => {
+        //get Patient_Study using study_id from Studies
+        const patient_study = findPatientStudyByStudyId(id).then(res=>{
+            console.log("Study to delete: ",res[0])
+            deletePatientStudy(res[0].id)
+        })
+    }
 
     return (
         <>
@@ -52,7 +63,7 @@ export default function StudiesTab(props: StudiesTabProps) {
                             <span className="sr-only">Edit</span>
                         </Table.HeadCell>
                         <Table.HeadCell>
-                            <span className="sr-only">Accession</span>
+                            <span className="sr-only">Delete</span>
                         </Table.HeadCell>
                     </Table.Head>
                     <Table.Body className="divide-y">
@@ -64,13 +75,38 @@ export default function StudiesTab(props: StudiesTabProps) {
                                     <Table.Cell>{study.modality_code}</Table.Cell>
                                     <Table.Cell>{study.price}</Table.Cell>
                                     <Table.Cell></Table.Cell>
-                                    <Table.Cell></Table.Cell>
+                                    <Table.Cell>
+                                    <Popover
+                                        trigger="hover"
+                                        content={
+                                            (<div className="p-2">
+                                                Delete
+                                            </div>)}>
+                                        {/* <Link href={`#`} className="font-medium text-cyan-600 dark:text-cyan-500 text-center">
+                                            <HiTrash size={18} className="mx-auto" />
+                                        </Link> */}
+                                        <Button className="font-medium text-cyan-600 dark:text-cyan-500 text-center dark:bg-gray-800" onClick={()=>{handleDelete(study.study_id)}} >
+                                            <HiTrash size={18} className="mx-auto" />
+                                        </Button>
+
+                                    </Popover>
+                                </Table.Cell>
                                 </Table.Row>
                             ))
                         } 
 
                     </Table.Body>
                 </Table>
+                <div className="flex my-8 justify-end">
+                    {props.patient.patient_id ?
+                    (<Button className="w-40" color="blue" onClick={()=>goToNext()}>Continue</Button>)
+                    :
+                    (
+                        <Button className="w-40" type="submit" color="blue">Continue</Button>
+                    )
+                    }
+                    
+                </div>
             </div>
         </>
     )

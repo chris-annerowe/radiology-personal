@@ -45,3 +45,22 @@ export const findStudyById = async (id: bigint) => {
     })
     return studies
 }
+
+export const findPatientStudyByStudyId = async (id: bigint) => {
+    const studies = await db.patient_studies.findMany({
+        where: {
+            study_id: id
+        }
+    })
+    return studies
+}
+
+export const deletePatientStudy = async (id: bigint) => {
+    await db.patient_studies.delete({
+        where: {
+            id: id
+        }
+    })
+    console.log("Patient Study successfully deleted.")
+    return
+}

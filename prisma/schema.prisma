@@ -108,7 +108,7 @@ model patient_studies {
   id         BigInt @id @default(autoincrement())
   patient_id String @db.VarChar(40)
   study_name String? @db.VarChar(255)
-  study_id   Int
+  study_id   BigInt
   cpt_code   String?  @db.VarChar(5)
 }
 
