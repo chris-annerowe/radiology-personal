@@ -134,7 +134,7 @@ export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,acti
             <form action={formAction} autoComplete="off">
 
                 {/** Demographics Section */}
-                <h3 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-2xl mb-3">Demographics</h3>
+                <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-cyan-500 sm:text-2xl mb-3">Patient Data</h3>
                 <div className="grid grid-flow-row grid-cols-2 justify-stretch gap-3">
                     <div>
                         <div className="mb-2 block">
@@ -169,18 +169,6 @@ export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,acti
 
                     <div>
                         <div className="mb-2 block">
-                            <Label htmlFor="title" value="Title" />
-                        </div>
-                        <Select id="title" name="title" defaultValue={(patient && patient.title) ? patient.title : ''} disabled={patientFormDisabled} required>
-                            <option value={'Mr.'}>Mr.</option>
-                            <option value={'Mrs.'}>Mrs.</option>
-                            <option value={'Ms.'}>Ms.</option>
-                            <option value={'Dr.'}>Dr.</option>
-                        </Select>
-                    </div>
-
-                    <div>
-                        <div className="mb-2 block">
                             <Label htmlFor="dob" value="Date Of Birth" />
                         </div>
                         <Datepicker name="dob" maxDate={new Date()} defaultDate={patientDOB ? patientDOB : undefined} disabled={patientFormDisabled} />
@@ -193,70 +181,24 @@ export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,acti
                         <Select id="sex" name="sex" defaultValue={(patient && patient.sex) ? patient.sex : ''} disabled={patientFormDisabled} required>
                             <option value={'M'}>Male</option>
                             <option value={'F'}>Female</option>
+                            <option value={'Other'}>Other</option>
                         </Select>
                     </div>
 
-
-                    <div>
+                    <div >
                         <div className="mb-2 block">
-                            <Label htmlFor="height" value="Height" />
+                            <Label htmlFor="email" value="Email" />
                         </div>
-                        <TextInput id="height" name="height" type="number" step={'0.01'} placeholder="" color={errors?.last_name ? "failure" : "gray"} onChange={() => resetField("height")} defaultValue={(patient && patient.height) ? patient.height.toString() : ""} disabled={patientFormDisabled} required shadow
+                        <TextInput id="email" name="email" type="" placeholder="" color={errors?.email ? "failure" : "gray"} onChange={() => resetField("email")} defaultValue={(patient && patient.email) ? patient.email : ""} disabled={patientFormDisabled} required shadow
                             helperText={
-                                errors?.height && errors?.height[0]
-                            } />
+                                errors?.email && errors?.email[0]
+                            }
+                        />
                     </div>
 
-                    <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="weight" value="Weight" />
-                        </div>
-                        <TextInput id="weight" name="weight" type="number" step={'0.01'} placeholder="" color={errors?.last_name ? "failure" : "gray"} onChange={() => resetField("weight")} defaultValue={(patient && patient.weight) ? patient.weight.toString() : ""} disabled={patientFormDisabled} required shadow
-                            helperText={
-                                errors?.height && errors?.height[0]
-                            } />
-                    </div>
-
-                    <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="allergies" value="Allergies" />
-                        </div>
-                        <TextInput id="allergies" name="allergies" placeholder="" color={errors?.allergies ? "failure" : "gray"} onChange={() => resetField("allergies")} defaultValue={(patient && patient.allergies) ? patient.allergies.toString() : ""} disabled={patientFormDisabled} required shadow
-                            helperText={
-                                errors?.allergies && errors?.allergies[0]
-                            } />
-                    </div>
-
-                    <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="nationality" value="Nationality" />
-                        </div>
-                        <TextInput id="nationality" name="nationality" type="" placeholder="" color={errors?.nationality ? "failure" : "gray"} onChange={() => resetField("nationality")} defaultValue={(patient && patient.nationality) ? patient.nationality : ""} disabled={patientFormDisabled} required shadow
-                            helperText={
-                                errors?.nationality && errors?.nationality[0]
-                            } />
-                    </div>
-
-                    <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="next_kin" value="Next Of Kin" />
-                        </div>
-                        <TextInput id="next_kin" name="next_kin" type="" placeholder="" color={errors?.next_kin ? "failure" : "gray"} onChange={() => resetField("next_kin")} defaultValue={(patient && patient.next_kin) ? patient.next_kin : ""} disabled={patientFormDisabled} required shadow
-                            helperText={
-                                errors?.next_kin && errors?.next_kin[0]
-                            } />
-                    </div>
-
-
-                </div>
-                <div className="border-t border-2 border-gray-200 my-7"></div>
-
-                {/** Address Section */}
-                <h3 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-2xl mb-3">Address</h3>
-                <div className="grid grid-flow-row grid-cols-2 justify-stretch gap-3">
                     <div className="col-span-2">
                         <div className="mb-2 block">
-                            <Label htmlFor="address_1" value="Address 1" />
+                            <Label htmlFor="address_1" value="Address" />
                         </div>
                         <TextInput id="address_1" name="address_1" type="" placeholder="" color={errors?.address_1 ? "failure" : "gray"} onChange={() => resetField("address_1")} defaultValue={(patient && patient.address_1) ? patient.address_1 : ""} disabled={patientFormDisabled} required shadow
                             helperText={
@@ -264,49 +206,27 @@ export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,acti
                             }
                         />
                     </div>
-
-                    <div className="col-span-2">
-                        <div className="mb-2 block">
-                            <Label htmlFor="address_2" value="Address 2" />
-                        </div>
-                        <TextInput id="address_2" name="address_2" type="" placeholder="" color={errors?.address_2 ? "failure" : "gray"} onChange={() => resetField("address_2")} defaultValue={(patient && patient.address_2) ? patient.address_2 : ""} disabled={patientFormDisabled} required shadow
-                            helperText={
-                                errors?.address_2 && errors?.address_2[0]
-                            }
-                        />
-                    </div>
-
                     <div >
                         <div className="mb-2 block">
-                            <Label htmlFor="city" value="City" />
+                            <Label htmlFor="id_type" value="ID Type" />
                         </div>
-                        <TextInput id="city" name="city" type="" placeholder="" color={errors?.city ? "failure" : "gray"} onChange={() => resetField("city")} defaultValue={(patient && patient.city) ? patient.city : ""} disabled={patientFormDisabled} required shadow
-                            helperText={
-                                errors?.city && errors?.city[0]
-                            }
-                        />
+                        <Select id="id_type" name="id_type" defaultValue={(patient && patient.id_type) ? patient.id_type : ''} disabled={patientFormDisabled} required>
+                            <option value={'DL'}>Driver's License</option>
+                            <option value={'PP'}>Passport</option>
+                            <option value={'NI'}>National ID</option>
+                        </Select>
                     </div>
 
-                    <div >
+                    <div>
                         <div className="mb-2 block">
-                            <Label htmlFor="parish" value="Parish" />
+                            <Label htmlFor="idnum" value="ID Number" />
                         </div>
-                        <TextInput id="parish" name="parish" type="" placeholder="" color={errors?.parish ? "failure" : "gray"} onChange={() => resetField("parish")} defaultValue={(patient && patient.parish) ? patient.parish : ""} disabled={patientFormDisabled} required shadow
+                        <TextInput id="idnum" name="idnum" type="" placeholder="" color={errors?.idnum ? "failure" : "gray"} onChange={() => resetField("idnum")} defaultValue={(patient && patient.idnum) ? patient.idnum : ""} disabled={patientFormDisabled} required shadow
                             helperText={
-                                errors?.parish && errors?.parish[0]
+                                errors?.idnum && errors?.idnum[0]
                             }
                         />
                     </div>
-
-
-
-
-                </div>
-                <div className="border-t border-2 border-gray-200 my-7"></div>
-
-                {/** Contact Section */}
-                <h3 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-2xl mb-3">Contact</h3>
-                <div className="grid grid-flow-row grid-cols-2 justify-stretch gap-3">
                     <div >
                         <div className="mb-2 block">
                             <Label htmlFor="telephone_1" value="Telephone 1" />
@@ -340,45 +260,128 @@ export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,acti
                         />
                     </div>
 
-                    <div >
+                </div>
+
+                {/* <div className="border-t border-2 border-gray-200 my-7"></div> */}
+
+                {/** Address Section */}
+                {/* <h3 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-2xl mb-3">Address</h3> */}
+                
+                    {/* <div className="col-span-2">
                         <div className="mb-2 block">
-                            <Label htmlFor="email" value="Email" />
+                            <Label htmlFor="address_2" value="Address 2" />
                         </div>
-                        <TextInput id="email" name="email" type="" placeholder="" color={errors?.email ? "failure" : "gray"} onChange={() => resetField("email")} defaultValue={(patient && patient.email) ? patient.email : ""} disabled={patientFormDisabled} required shadow
+                        <TextInput id="address_2" name="address_2" type="" placeholder="" color={errors?.address_2 ? "failure" : "gray"} onChange={() => resetField("address_2")} defaultValue={(patient && patient.address_2) ? patient.address_2 : ""} disabled={patientFormDisabled} required shadow
                             helperText={
-                                errors?.email && errors?.email[0]
+                                errors?.address_2 && errors?.address_2[0]
                             }
                         />
                     </div>
 
+                    <div >
+                        <div className="mb-2 block">
+                            <Label htmlFor="city" value="City" />
+                        </div>
+                        <TextInput id="city" name="city" type="" placeholder="" color={errors?.city ? "failure" : "gray"} onChange={() => resetField("city")} defaultValue={(patient && patient.city) ? patient.city : ""} disabled={patientFormDisabled} required shadow
+                            helperText={
+                                errors?.city && errors?.city[0]
+                            }
+                        />
+                    </div>
+
+                    <div >
+                        <div className="mb-2 block">
+                            <Label htmlFor="parish" value="Parish" />
+                        </div>
+                        <TextInput id="parish" name="parish" type="" placeholder="" color={errors?.parish ? "failure" : "gray"} onChange={() => resetField("parish")} defaultValue={(patient && patient.parish) ? patient.parish : ""} disabled={patientFormDisabled} required shadow
+                            helperText={
+                                errors?.parish && errors?.parish[0]
+                            }
+                        />
+                    </div>
+
+
+ */}
+
+                <div className="border-t border-2 border-gray-200 my-7"></div>
+
+                {/** Contact Section */}
+                //TODO: update db tables to store referring doctor info
+                <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-cyan-500 sm:text-2xl mb-3">Referring Doctor</h3>
+                <div className="grid grid-flow-row grid-cols-2 justify-stretch gap-3">
+                <div>
+                        <div className="mb-2 block">
+                            <Label htmlFor="doctor_name" value="Name" />
+                        </div>
+                        <TextInput id="doctor_name" name="doctor_name" type="" placeholder="" color={errors?.first_name ? "failure" : "gray"} onChange={() => resetField("doctor_name")} defaultValue={""} disabled={patientFormDisabled} required shadow
+                            helperText={
+                                errors?.doctor_name && errors?.doctor_name[0]
+                            }
+                        />
+                    </div>
+                    <div >
+                        <div className="mb-2 block">
+                            <Label htmlFor="telephone_1" value="Telephone" />
+                        </div>
+                        <TextInput ref={tel1InputRef} id="telephone_1" name="telephone_1" type="" placeholder="" color={errors?.telephone_1 ? "failure" : "gray"} onChange={() => resetField("telephone_1")} defaultValue={(patient && patient.telephone_1) ? patient.telephone_1 : ""} disabled={patientFormDisabled} required shadow
+                            helperText={
+                                errors?.telephone_1 && errors?.telephone_1[0]
+                            }
+                        />
+                    </div>
+                    <div className="col-span-2">
+                        <div className="mb-2 block">
+                            <Label htmlFor="address_1" value="Address" />
+                        </div>
+                        <TextInput id="address_1" name="address_1" type="" placeholder="" color={errors?.address_1 ? "failure" : "gray"} onChange={() => resetField("address_1")} defaultValue={(patient && patient.address_1) ? patient.address_1 : ""} disabled={patientFormDisabled} required shadow
+                            helperText={
+                                errors?.address_1 && errors?.address_1[0]
+                            }
+                        />
+                    </div>
+                    <div >
+                        <div className="mb-2 block">
+                            <Label htmlFor="fax" value="Fax" />
+                        </div>
+                        <TextInput ref={tel1InputRef} id="fax" name="fax" type="" placeholder="" color={errors?.fax ? "failure" : "gray"} onChange={() => resetField("fax")} defaultValue={(patient && patient.telephone_1) ? patient.telephone_1 : ""} disabled={patientFormDisabled} required shadow
+                            helperText={
+                                errors?.fax && errors?.fax[0]
+                            }
+                        />
+                    </div>
+                    <div>
+                        <div className="mb-2 block">
+                            <Label htmlFor="refDate" value="Referral Date" />
+                        </div>
+                        <Datepicker name="refDate" maxDate={new Date()} defaultDate={undefined} disabled={patientFormDisabled} />
+                    </div>
                 </div>
                 <div className="border-t border-2 border-gray-200 my-7"></div>
 
                 {/** Identification Section */}
-                <h3 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-2xl mb-3">Identification</h3>
+                <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-cyan-500 sm:text-2xl mb-3">Examination Required</h3>
                 <div className="grid grid-flow-row grid-cols-2 justify-stretch gap-3">
-                    <div >
+                    
+                <div >
                         <div className="mb-2 block">
-                            <Label htmlFor="id_type" value="ID Type" />
+                            <Label htmlFor="priority" value="Priority" />
                         </div>
-                        <Select id="id_type" name="id_type" defaultValue={(patient && patient.id_type) ? patient.id_type : ''} disabled={patientFormDisabled} required>
-                            <option value={'DL'}>Driver's License</option>
-                            <option value={'PP'}>Passport</option>
-                            <option value={'NI'}>National ID</option>
+                        <Select id="priority" name="priority" defaultValue={'RT'} disabled={patientFormDisabled} required>
+                            <option value={'RT'}>Routine</option>
+                            <option value={'URG'}>Urgent</option>
                         </Select>
                     </div>
 
                     <div>
                         <div className="mb-2 block">
-                            <Label htmlFor="idnum" value="ID Number" />
+                            <Label htmlFor="study" value="Study Name" />
                         </div>
-                        <TextInput id="idnum" name="idnum" type="" placeholder="" color={errors?.idnum ? "failure" : "gray"} onChange={() => resetField("idnum")} defaultValue={(patient && patient.idnum) ? patient.idnum : ""} disabled={patientFormDisabled} required shadow
+                        <TextInput id="study" name="study" type="" placeholder="" color={errors?.idnum ? "failure" : "gray"} onChange={() => resetField("study")} defaultValue={""} disabled={patientFormDisabled} required shadow
                             helperText={
-                                errors?.idnum && errors?.idnum[0]
+                                errors?.study && errors?.study[0]
                             }
                         />
                     </div>
-
 
                 </div>
 
