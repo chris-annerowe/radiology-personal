@@ -12,36 +12,30 @@ import Payments from "./payments";
 
 
 interface PaymentTabProps {
-    studies: Study[],
-    patient: Patient,
-    tabsRef: RefObject<TabsRef>,
-    activeTab: number, 
-    setActiveTab:Dispatch<SetStateAction<number>>
+    studies?: Study[],
+    patient?: Patient,
+    // tabsRef: RefObject<TabsRef>,
+    // activeTab: number, 
+    // setActiveTab:Dispatch<SetStateAction<number>>
 }
 
 export default function PaymentTab(props: PaymentTabProps) {
 
 
-    const goToNext = () => {
-        props.tabsRef.current?.setActiveTab(props.activeTab+1)
-    }
+    // const goToNext = () => {
+    //     props.tabsRef.current?.setActiveTab(props.activeTab+1)
+    // }
 
     
     return (
         <>
         <div>
-              <Table striped>
+              <Table >
                         <Table.Head>
-                            <Table.HeadCell colSpan={2}>Item</Table.HeadCell>
-                            <Table.HeadCell colSpan={2}>Insurance</Table.HeadCell>
-                            <Table.HeadCell>Patient</Table.HeadCell>
-                            <Table.HeadCell></Table.HeadCell>
-                        </Table.Head>
-                        <Table.Head>
-                            <Table.HeadCell>Description</Table.HeadCell>
+                            <Table.HeadCell>Item Description</Table.HeadCell>
                             <Table.HeadCell>Price</Table.HeadCell>
-                            <Table.HeadCell>Provider</Table.HeadCell>
-                            <Table.HeadCell>%</Table.HeadCell>
+                            <Table.HeadCell>Ins Provider</Table.HeadCell>
+                            <Table.HeadCell>Ins %</Table.HeadCell>
                             <Table.HeadCell>Balance</Table.HeadCell>
                         <Table.HeadCell>
                             <span className="sr-only">Add</span>
@@ -49,7 +43,7 @@ export default function PaymentTab(props: PaymentTabProps) {
                         </Table.Head>
                         <Table.Body className="divide-y">
                         {
-                            props.studies.map((study,index)=>(
+                            props.studies?.map((study,index)=>(
 <Table.Row key={index} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell>{study.study_name}</Table.Cell>
                                     <Table.Cell>{study.price}</Table.Cell>
@@ -64,7 +58,8 @@ export default function PaymentTab(props: PaymentTabProps) {
                                                 Add
                                             </div>)}>
                                         <Button className="font-medium text-cyan-600 dark:text-cyan-500 text-center dark:bg-gray-800" onClick={()=>{null}} >
-                                            <HiPlus size={18} className="mx-auto" />
+                                            Add Insurance 
+                                            {/* <HiPlus size={18} className="mx-auto" /> */}
                                         </Button>
 
                                     </Popover>

@@ -7,6 +7,7 @@ import { HiPlus, HiSearch, HiTrash } from "react-icons/hi";
 import AddStudyModal from "./add-study-modal";
 import { Patient } from "@/types/patient";
 import { deletePatientStudy, findPatientStudyByStudyId } from "@/actions/studies";
+import { useRouter } from "next/navigation"
 
 
 
@@ -21,7 +22,8 @@ interface StudiesTabProps {
 }
 
 export default function StudiesTab(props: StudiesTabProps) {
-
+    const router = useRouter();
+    
 
     const [openSearchModal, setOpenSearchModal] = useState(false);
     
@@ -108,7 +110,7 @@ export default function StudiesTab(props: StudiesTabProps) {
                 </Table>
                 <div className="flex my-8 justify-end">
                     {props.patient.patient_id ?
-                    (<Button className="w-40" color="blue" onClick={()=>goToNext()}>Continue</Button>)
+                    (<Button className="w-40" color="blue" onClick={()=>router.push("/dashboard/pos")}>Go to Payment</Button>)
                     :
                     (
                         <Button className="w-40" type="submit" color="blue">Continue</Button>

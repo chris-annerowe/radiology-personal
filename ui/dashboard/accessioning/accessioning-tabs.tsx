@@ -86,19 +86,11 @@ export default function AccessioningTabs() {
                     <StudiesTab tabsRef={tabsRef} activeTab={activeTab} setActiveTab={setActiveTab} studies={studies} setStudies={setStudies} patient={selectedPatient}/>
                 </div>
             </Tabs.Item>
-            <Tabs.Item title="Payment" icon={HiAdjustments}>
+            {/* <Tabs.Item title="Payment" icon={HiAdjustments}>
                 <div className="p-4">
                     <PaymentTab tabsRef={tabsRef} activeTab={activeTab} setActiveTab={setActiveTab} studies={studies} patient={selectedPatient}/>
                 </div>
-            </Tabs.Item>
-            <Tabs.Item title="Contacts" icon={HiClipboardList}>
-                This is <span className="font-medium text-gray-800 dark:text-white">Contacts tab's associated content</span>.
-                Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to
-                control the content visibility and styling.
-            </Tabs.Item>
-            <Tabs.Item disabled title="Disabled">
-                Disabled content
-            </Tabs.Item>
+            </Tabs.Item> */}
         </Tabs>
     )
 

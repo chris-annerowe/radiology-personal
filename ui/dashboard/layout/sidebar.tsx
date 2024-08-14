@@ -47,6 +47,9 @@ const Sidebar2 = () => {
             <SidebarItem href="/dashboard/accessioning" >
               Accessioning
             </SidebarItem>
+            <SidebarItem href="/dashboard/pos" >
+              Payment
+            </SidebarItem>
             <SidebarItem href="/dashboard/patient">
               Patient Management
             </SidebarItem>
