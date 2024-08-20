@@ -66,13 +66,7 @@ export default function StudiesTab(props: StudiesTabProps) {
                     </Button>
                     
                     {/* TODO: style label properly */}
-                    <div className="mb-2 block">
-                            <Label htmlFor="priority" value="Priority" />
-                        </div>
-                        <Select id="priority" name="priority" defaultValue={'RT'} required>
-                            <option value={'RT'}>Routine</option>
-                            <option value={'URG'}>Urgent</option>
-                        </Select>
+                    
                 </div>
                 <Table striped>
                     <Table.Head>
@@ -80,9 +74,7 @@ export default function StudiesTab(props: StudiesTabProps) {
                         <Table.HeadCell>Study Name</Table.HeadCell>
                         <Table.HeadCell>Modality</Table.HeadCell>
                         <Table.HeadCell>Price</Table.HeadCell>
-                        <Table.HeadCell>
-                            <span className="sr-only">Edit</span>
-                        </Table.HeadCell>
+                        <Table.HeadCell>Priority</Table.HeadCell>
                         <Table.HeadCell>
                             <span className="sr-only">Delete</span>
                         </Table.HeadCell>
@@ -95,7 +87,20 @@ export default function StudiesTab(props: StudiesTabProps) {
                                     <Table.Cell>{study.study_name}</Table.Cell>
                                     <Table.Cell>{study.modality_code}</Table.Cell>
                                     <Table.Cell>{study.price}</Table.Cell>
-                                    <Table.Cell></Table.Cell>
+                                    <Table.Cell>
+                                    <Popover
+                                        trigger="hover"
+                                        content={
+                                            (<div className="p-2">
+                                                Priority
+                                            </div>)}>
+                                     
+                                         <Select id="priority" name="priority" defaultValue={'RT'} required>
+                                            <option value={'RT'}>Routine</option>
+                                            <option value={'URG'}>Urgent</option>
+                                        </Select>
+                                    </Popover>
+                                    </Table.Cell>
                                     <Table.Cell>
                                     <Popover
                                         trigger="hover"

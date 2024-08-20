@@ -11,7 +11,8 @@ export default function Billable(props:BillableProps) {
     }
 
     let billable = props.subtotal ? props.subtotal : 0.00 //the subtotal minus insurance
-    let total = billable
+    let netTotal = billable
+    let total = netTotal
     
     return (
         <>
@@ -49,7 +50,7 @@ export default function Billable(props:BillableProps) {
                                     Net Total
                                 </Table.Cell>
                                 <Table.Cell>
-                                    0.00
+                                    {netTotal}
                                 </Table.Cell>
                             </Table.Row>
                             <Table.Row>
