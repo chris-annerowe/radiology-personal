@@ -22,6 +22,13 @@ interface PaymentModalProps {
 
 export default function PaymentModal(props: PaymentModalProps) {
 
+    let subtotal = 0.00
+    let insurance = 0.00
+
+    const calculateSubtotal = (price:number) => {
+        subtotal = subtotal + price
+        return("")
+    }
     
     return (
         <>
@@ -48,7 +55,8 @@ export default function PaymentModal(props: PaymentModalProps) {
                                     <Table.Cell>{study.price}</Table.Cell>
                                     <Table.Cell></Table.Cell>
                                     <Table.Cell></Table.Cell>
-                                    <Table.Cell>{study.price}</Table.Cell>                                    
+                                    <Table.Cell>{study.price}</Table.Cell> 
+                                    {study.price !== null ? calculateSubtotal(study.price) : null}                                  
                                     <Table.Cell>
                                     <Popover
                                         trigger="hover"
@@ -73,7 +81,7 @@ export default function PaymentModal(props: PaymentModalProps) {
 
                      <div className="flex space-x-4">
                         <Payments />
-                        <Billable />
+                        <Billable subtotal={subtotal} insurance={insurance}/>
                      </div>
                     </div>
                     </Modal.Body>
