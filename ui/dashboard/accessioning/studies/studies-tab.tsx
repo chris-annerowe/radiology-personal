@@ -119,13 +119,8 @@ export default function StudiesTab(props: StudiesTabProps) {
                     </Table.Body>
                 </Table>
                 <div className="flex my-8 justify-end">
-                    {props.patient.patient_id ?
-                    (<Button className="w-40" color="blue" onClick={()=>setOpenPaymentModal(true)}>Go to Payment</Button>)
-                    :
-                    (
-                        <Button className="w-40" type="submit" color="blue">Continue</Button>
-                    )
-                    }
+                    <Button className="w-40 m-3" color="blue" onClick={()=>setOpenPaymentModal(true)}>Go to Payment</Button>
+                    <Button className="w-40 m-3" type="submit" onClick={()=>{}} color="red">Finish</Button>
                     
                 </div>
                 <PaymentModal open={openPaymentModal} onClose={closePaymentModal} studies={props.studies} patient={props.patient} />
