@@ -8,6 +8,8 @@ import { Patient } from "@/types/patient";
 import { deletePatientStudy, findPatientStudyByStudyId } from "@/actions/studies";
 import Payments from "./payments";
 import Billable from "./billable";
+import InsuranceModal from "./insurance-modal";
+import { FaHandHoldingMedical } from "react-icons/fa6";
 
 
 
@@ -21,9 +23,14 @@ interface PaymentModalProps {
 }
 
 export default function PaymentModal(props: PaymentModalProps) {
+    const [openInsuranceModal, setOpenInsuranceModal] = useState(false)
 
     let subtotal = 0.00
     let insurance = 0.00
+
+    const closeInsuranceModal = () => {
+        setOpenInsuranceModal(false);
+    }
 
     const calculateSubtotal = (price:number) => {
         subtotal = subtotal + price
@@ -32,8 +39,9 @@ export default function PaymentModal(props: PaymentModalProps) {
     
     return (
         <>
+        <InsuranceModal open={openInsuranceModal} onClose={closeInsuranceModal} />
         <Modal show={props.open} size="4xl" onClose={props.onClose} popup>
-                <Modal.Header />
+                <Modal.Header>Payment</Modal.Header>
                 <Modal.Body className="min-h-full">
               <div>
               <Table striped>
@@ -62,11 +70,10 @@ export default function PaymentModal(props: PaymentModalProps) {
                                         trigger="hover"
                                         content={
                                             (<div className="p-2">
-                                                Add
+                                                Add Insurance
                                             </div>)}>
-                                        <Button className="font-medium text-cyan-600 dark:text-cyan-500 text-center dark:bg-gray-800" onClick={()=>{null}} >
-                                            Add Insurance 
-                                            {/* <HiPlus size={18} className="mx-auto" /> */}
+                                        <Button className="font-medium text-cyan-600 dark:text-cyan-500 text-center dark:bg-gray-800" onClick={()=>setOpenInsuranceModal(true)} >
+                                            <FaHandHoldingMedical size={18} className="mx-auto" />
                                         </Button>
 
                                     </Popover>
