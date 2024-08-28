@@ -11,9 +11,9 @@ export default function Billable(props:BillableProps) {
         console.log("Paid")
     }
 
-    let billable = props.subtotal ? props.subtotal : 0.00 //the subtotal minus insurance
-    let netTotal = billable
-    let total = netTotal - (props.taxable ? (props.taxable * 0.15) : 0.00)
+    let billable = props.subtotal ? props.subtotal - (props.insurance ? props.insurance : 0.00) : 0.00 //the subtotal minus insurance
+    let netTotal = billable 
+    let total = netTotal + (props.taxable ? (props.taxable * 0.15) : 0.00)
     
     return (
         <>
@@ -31,7 +31,7 @@ export default function Billable(props:BillableProps) {
                             <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell>{props.subtotal ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(props.subtotal) : new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(billable)}</Table.Cell>
                                     <Table.Cell>{props.insurance ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(props.insurance) : 0.00}</Table.Cell>
-                                    <Table.Cell>{props.insurance ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(billable-props.insurance) : new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(billable)}</Table.Cell> 
+                                    <Table.Cell>{props.insurance ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(billable) : new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(billable)}</Table.Cell> 
                             </Table.Row>
                         </Table.Body>
                 </Table>

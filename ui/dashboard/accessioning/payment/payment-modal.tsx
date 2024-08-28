@@ -25,8 +25,8 @@ interface PaymentModalProps {
 export default function PaymentModal(props: PaymentModalProps) {
     const [openInsuranceModal, setOpenInsuranceModal] = useState(false)
     
-    let subtotal = 0.00
-    let insurance = 0.00
+    let subtotal = 0.80
+    let insurance = 0.75
     let taxable = 0.00
     
     const closeInsuranceModal = () => {
@@ -99,7 +99,9 @@ export default function PaymentModal(props: PaymentModalProps) {
 
                      <div className="flex space-x-4">
                         <Payments />
-                        <div className="flex"></div>
+                        <div className="flex">
+                            {/* Added soley for styling purposes */}
+                        </div>
                         <Billable subtotal={subtotal} insurance={insurance} taxable={taxable}/>
                      </div>
                     </div>

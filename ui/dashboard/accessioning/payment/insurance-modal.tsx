@@ -130,7 +130,7 @@ export default function InsuranceModal (props: InsuranceModalProps) {
                                 
                             />
                         </div> 
-                        <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-cyan-500 sm:text-2xl mb-3">Coverage</h3>
+                        <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-cyan-500 sm:text-2xl mb-2">Coverage</h3>
                         <div className="grid grid-cols-3">
                             <div>
                                 <Label className="m-2" htmlFor="amt" value="Amount" />
