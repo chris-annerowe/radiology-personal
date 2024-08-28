@@ -10,8 +10,8 @@ import Payments from "./payments";
 import Billable from "./billable";
 import InsuranceModal from "./insurance-modal";
 import { FaHandHoldingMedical } from "react-icons/fa6";
-
-
+import { getClientProviders } from "@/actions/pos";
+import { ClientProvider } from "@/types/pos";
 
 
 interface PaymentModalProps {
@@ -24,10 +24,11 @@ interface PaymentModalProps {
 
 export default function PaymentModal(props: PaymentModalProps) {
     const [openInsuranceModal, setOpenInsuranceModal] = useState(false)
-
+    
     let subtotal = 0.00
     let insurance = 0.00
-
+    let taxable = 0.00
+    
     const closeInsuranceModal = () => {
         setOpenInsuranceModal(false);
     }
@@ -36,9 +37,16 @@ export default function PaymentModal(props: PaymentModalProps) {
         subtotal = subtotal + price
         return("")
     }
+
+    const calculateTaxable = (price:number) => {
+        taxable = taxable + price
+        return("")
+    }
+
     
     return (
         <>
+        {/* {getProviders()} */}
         <InsuranceModal open={openInsuranceModal} onClose={closeInsuranceModal} />
         <Modal show={props.open} size="4xl" onClose={props.onClose} popup>
                 <Modal.Header>Payment</Modal.Header>
@@ -66,6 +74,7 @@ export default function PaymentModal(props: PaymentModalProps) {
                                     <Table.Cell>{study.price}</Table.Cell> 
                                     {study.price !== null ? calculateSubtotal(study.price) : null}                                  
                                     <Table.Cell>
+                                    {study.isInsurable && study.isInsurable !== null ? (
                                     <Popover
                                         trigger="hover"
                                         content={
@@ -77,6 +86,8 @@ export default function PaymentModal(props: PaymentModalProps) {
                                         </Button>
 
                                     </Popover>
+                                    ) : "" }
+                                    {study.isTaxable && study.isTaxable !== null && study.price !== null ? calculateTaxable(study.price) : ""}
                                 </Table.Cell>
                                 </Table.Row>
                             ))}
@@ -88,7 +99,8 @@ export default function PaymentModal(props: PaymentModalProps) {
 
                      <div className="flex space-x-4">
                         <Payments />
-                        <Billable subtotal={subtotal} insurance={insurance}/>
+                        <div className="flex"></div>
+                        <Billable subtotal={subtotal} insurance={insurance} taxable={taxable}/>
                      </div>
                     </div>
                     </Modal.Body>

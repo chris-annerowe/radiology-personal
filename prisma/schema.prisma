@@ -110,6 +110,8 @@ model patient_studies {
   study_name String? @db.VarChar(255)
   study_id   BigInt
   cpt_code   String?  @db.VarChar(5)
+  isInsurable Boolean?
+  isTaxable   Boolean?
 }
 
 model studies {
@@ -121,6 +123,8 @@ model studies {
   modality_code     String         @map("modality_code")
   price             Float?
   order_studies     order_study[]
+  isInsurable       Boolean?
+  isTaxable         Boolean?
 }
 
 model order_study {
@@ -182,6 +186,30 @@ model pos_insurance {
   ins_abbreviation String?  @db.VarChar(10)
   bin_nos          String?  @db.VarChar(100)
   bin_codes        String?  @db.VarChar(100)
+}
+
+// model pos_insurance {
+//   insurance_id      BigInt  @id @default(autoincrement())
+//   insurance_name    String  @db.VarChar(50)
+//   insurance_abbrev  String  @db.VarChar(10)
+// }
+
+model pos_clientProviders_type {
+  type_id         Int      @id @default(autoincrement())
+  type_desc       String   @db.VarChar(50)
+  user_id         Int
+  last_modified   DateTime @default(now())
+
+  pos_clientProviders pos_clientProviders[]
+}
+
+model pos_clientProviders {
+  clientprov_id     BigInt  @id @default(autoincrement())
+  clientprov_name   String  @db.VarChar(50)
+  clientprov_desc   String  @db.VarChar(255)
+  type   pos_clientProviders_type  @relation(fields: [clientprov_type], references: [type_id])
+  clientprov_type   Int     @map("type_id")
+  active            Boolean
 }
 
 model pos_payment_options {

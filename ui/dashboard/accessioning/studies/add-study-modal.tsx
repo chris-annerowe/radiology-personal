@@ -86,7 +86,7 @@ export default function AddStudyModal(props: AddStudyModalProps) {
         console.log("Study selected: ",study)
 
         //add study to patient_study table
-        addPatientStudy(props.patient.patient_id,study.study_id,study.study_name ? study.study_name : 'name',study.cpt_code).then(res=>{
+        addPatientStudy(props.patient.patient_id,study.study_id,study.study_name ? study.study_name : 'name',study.cpt_code, study.isInsurable, study.isTaxable).then(res=>{
             console.log('Patient study resp',res)
         })
         props.onClose()

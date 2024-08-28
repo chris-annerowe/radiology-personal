@@ -2,7 +2,8 @@ import { Button, Table } from "flowbite-react";
 
 interface BillableProps{
     subtotal?: number,
-    insurance?: number
+    insurance?: number,
+    taxable?: number
 }
 
 export default function Billable(props:BillableProps) {
@@ -12,15 +13,15 @@ export default function Billable(props:BillableProps) {
 
     let billable = props.subtotal ? props.subtotal : 0.00 //the subtotal minus insurance
     let netTotal = billable
-    let total = netTotal
+    let total = netTotal - (props.taxable ? (props.taxable * 0.15) : 0.00)
     
     return (
         <>
             <div>
                 <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-cyan-500 sm:text-2xl mb-3">Billable</h3>
                 
-                <div className="border-t border-2 border-transparent my-4"></div>
-                <Table >
+                <div className="border-t border-2 border-transparent my-2"></div>
+                <Table className=" text-right">
                         <Table.Head>
                             <Table.HeadCell>Total Cost</Table.HeadCell>
                             <Table.HeadCell>Insurance (-) </Table.HeadCell>
@@ -28,13 +29,13 @@ export default function Billable(props:BillableProps) {
                         </Table.Head>
                         <Table.Body className="divide-y">
                             <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                    <Table.Cell>{props.subtotal}</Table.Cell>
-                                    <Table.Cell>{props.insurance}</Table.Cell>
-                                    <Table.Cell>{props.insurance ? billable-props.insurance : billable}</Table.Cell> 
+                                    <Table.Cell>{props.subtotal ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(props.subtotal) : new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(billable)}</Table.Cell>
+                                    <Table.Cell>{props.insurance ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(props.insurance) : 0.00}</Table.Cell>
+                                    <Table.Cell>{props.insurance ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(billable-props.insurance) : new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(billable)}</Table.Cell> 
                             </Table.Row>
                         </Table.Body>
                 </Table>
-                <div className="flex pt-2 justify-end">
+                <div className="flex pt-2 text-right justify-end justify-items-end ">
                     <Table>
                         <Table.Body>
                             <Table.Row>
@@ -50,7 +51,7 @@ export default function Billable(props:BillableProps) {
                                     Net Total
                                 </Table.Cell>
                                 <Table.Cell>
-                                    {netTotal}
+                                    {new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(netTotal)}
                                 </Table.Cell>
                             </Table.Row>
                             <Table.Row>
@@ -58,7 +59,7 @@ export default function Billable(props:BillableProps) {
                                     Tax
                                 </Table.Cell>
                                 <Table.Cell>
-                                    0.00
+                                    {props.taxable ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(props.taxable * 0.15) : 0.00}
                                 </Table.Cell>
                             </Table.Row>
                             <Table.Row>
@@ -66,7 +67,7 @@ export default function Billable(props:BillableProps) {
                                     Total Billable
                                 </Table.Cell>
                                 <Table.Cell>
-                                    {total}
+                                    {new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(total )}
                                 </Table.Cell>
                             </Table.Row>
                         </Table.Body>

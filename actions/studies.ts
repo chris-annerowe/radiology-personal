@@ -22,14 +22,16 @@ export const findStudyByPatientId = async (patientId:string) => {
     return studies
 }
 
-export const addPatientStudy = async (patient_id:string, study_id:bigint, study_name: string, cpt_code:string) => {
+export const addPatientStudy = async (patient_id:string, study_id:bigint, study_name: string, cpt_code:string, isInsurable:boolean, isTaxable:boolean) => {
     try{
         await db.patient_studies.create({
             data: {
                 patient_id,
                 study_id,
                 study_name,
-                cpt_code
+                cpt_code,
+                isInsurable,
+                isTaxable
             }
         })
         console.log("Patient study created successfully")
