@@ -1,17 +1,19 @@
 "use client"
 import { getClientProviders } from "@/actions/pos";
 import { db } from "@/lib/db";
-import { ClientProvider } from "@/types/pos";
+import { ClientProvider, InsuranceProvider } from "@/types/pos";
 import { Button, Label, Modal, Select, TextInput } from "flowbite-react";
 import { useEffect, useState } from "react";
 
 interface InsuranceModalProps {
     open: boolean,
-    onClose: () => void
+    onClose: () => void,
+    setInsurance: (insurance:InsuranceProvider) => void
 }
 
 export default function InsuranceModal (props: InsuranceModalProps) {
     const [clientProviders, setClientProviders] = useState<ClientProvider[]>([])
+    const [insuranceAmt, setInsuranceAmt] = useState(null)
 
     async function getProviders() {
         await getClientProviders().then(res=>{
@@ -35,43 +37,44 @@ export default function InsuranceModal (props: InsuranceModalProps) {
     async function handleSave(data: FormData) {
         console.log("Handling save")
 
-        // const lastName = data.get('lastName')?.valueOf()
-        // const firstName = data.get('firstName')?.valueOf()
-        // const description = data.get('description')?.valueOf()           
-        // const tel = data.get('tel')?.valueOf()
-        // const dobString = data.get('dob')?.valueOf()
-        // const timeString = data.get('appt_time')?.valueOf()
-        // const sex = data.get('sex')?.valueOf()
+        let cardNo = data.get('cardNo')?.valueOf()
+        const insuranceProv = data.get('insurance')?.valueOf()
+        const policyNo = data.get('policyNo')?.valueOf()           
+        let amt = data.get('amt')?.valueOf()
+        // const insPercent = data.get('insPercent')?.valueOf()
+        let ceiling = data.get('ceiling')?.valueOf()
 
-        // if (typeof firstName !== 'string' || firstName?.length === 0) {
-        //     throw new Error("Invalid First Name")
+        cardNo = typeof cardNo === 'string' ? parseInt(cardNo) : cardNo
+        amt = typeof amt === 'string' ? parseFloat(amt) : amt
+        ceiling = typeof ceiling === 'string' ? parseFloat(ceiling) : ceiling
+        
+        //TODO: check for 4 digits 
+        if (typeof cardNo !== 'number' ) {
+            throw new Error("Invalid Card Number")
+        }
+        // if (typeof insuranceProv !== 'string' || insuranceProv?.length === 0) {
+        //     throw new Error("Invalid Insurance Provider")
         // }
-        // if (typeof lastName !== 'string' || lastName?.length === 0) {
-        //     throw new Error("Invalid Last Name")
-        // }
-        // if (typeof tel !== 'string' || tel?.length === 0) {
-        //     throw new Error("Invalid Telephone Number")
-        // }
-        // if (typeof description !== 'string') {
-        //     throw new Error("Invalid Description")
-        // }
-        // if (typeof dobString !== 'string') {
-        //     throw new Error("Invalid DOB")
-        // }
-        // if (typeof timeString !== 'string' && timeString) {
-        //     throw new Error("Invalid Appointment Time")
-        // }
-        // if (typeof sex !== 'string') {
-        //     throw new Error("Invalid Sex")
-        // }
-        // if (typeof props.index !== 'number'){
-        //     throw new Error("Invalid index")
-        // }
-
+        if (typeof policyNo !== 'string' || policyNo?.length === 0) {
+            throw new Error("Invalid Policy Number")
+        }
+        if (typeof amt !== 'number') {
+            throw new Error("Invalid Amount")
+        }
+        if (typeof ceiling !== 'number') {
+            throw new Error("Invalid Ceiling")
+        }
 
         //save insurance data
-        // await createPatientByName(lastName,1,5)
-        
+        const insurance: InsuranceProvider = {
+            cardNo: cardNo,
+            insuranceProv: '',
+            policyNo: policyNo,
+            amt: amt,
+            ceiling: ceiling
+        }
+        props.setInsurance(insurance)
+        props.onClose()
     }
 
     // const getProviders = async () => {
@@ -134,16 +137,17 @@ export default function InsuranceModal (props: InsuranceModalProps) {
                         <div className="grid grid-cols-3">
                             <div>
                                 <Label className="m-2" htmlFor="amt" value="Amount" />
-                                <TextInput className="m-1" id="amt" name="amt" type="" sizing='xs' placeholder="" color={"gray"} defaultValue={""} disabled={false} required shadow
+                                <TextInput className="m-1" id="amt" name="amt" type="number" sizing='xs' placeholder="" color={"gray"} defaultValue={""} disabled={false} required shadow
                                     
                                 />
                             </div>
-                            <div>
+                            {/* <div>
                                 <Label className="m-2" htmlFor="insPercent" value="Covered %" />
-                                <TextInput className="m-1" id="insPercent" name="insPercent" type="" sizing='xs' placeholder="" color={"gray"} defaultValue={""} disabled={false} required shadow
+                                 <TextInput className="m-1" id="insPercent" name="insPercent" type="" sizing='xs' placeholder="" color={"gray"} defaultValue={""} disabled={false} required shadow
                                     
-                                />
-                            </div>
+                                /> 
+                                {insuranceAmt !== null ? insuranceAmt * 0.1 : ""}
+                            </div> */}
                             <div>
                                 <Label className="m-2" htmlFor="ceiling" value="Ceiling" />
                                 <TextInput className="m-1" id="ceiling" name="ceiling" type="" sizing='xs' placeholder="" color={"gray"} defaultValue={""} disabled={false} required shadow

@@ -1,8 +1,9 @@
 import { Button, Table } from "flowbite-react";
+import { Dispatch, SetStateAction } from "react";
 
 interface BillableProps{
     subtotal?: number,
-    insurance?: number,
+    insurance?: (number),
     taxable?: number
 }
 
@@ -11,16 +12,16 @@ export default function Billable(props:BillableProps) {
         console.log("Paid")
     }
 
-    let billable = props.subtotal ? props.subtotal - (props.insurance ? props.insurance : 0.00) : 0.00 //the subtotal minus insurance
+    let billable = props.subtotal ? props.subtotal - (typeof props.insurance === 'number' ? props.insurance : 0.00) : 0.00 //the subtotal minus insurance
     let netTotal = billable 
     let total = netTotal + (props.taxable ? (props.taxable * 0.15) : 0.00)
-    
+    {console.log("insurance props: ",props.insurance)}
     return (
         <>
             <div>
                 <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-cyan-500 sm:text-2xl mb-3">Billable</h3>
                 
-                <div className="border-t border-2 border-transparent my-2"></div>
+                <div className="border-t border-2 border-transparent my-2 mr-0"></div>
                 <Table className=" text-right">
                         <Table.Head>
                             <Table.HeadCell>Total Cost</Table.HeadCell>
@@ -30,7 +31,7 @@ export default function Billable(props:BillableProps) {
                         <Table.Body className="divide-y">
                             <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell className="text-right">{props.subtotal ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(props.subtotal) : new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(billable)}</Table.Cell>
-                                    <Table.Cell className="text-right">{props.insurance ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(props.insurance) : 0.00}</Table.Cell>
+                                    <Table.Cell className="text-right">{typeof props.insurance === 'number' ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(props.insurance) : new Intl.NumberFormat('en-IN',{style:'currency',currency:'USD'}).format(0.00)}</Table.Cell>
                                     <Table.Cell className="text-right">{props.insurance ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(billable) : new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(billable)}</Table.Cell> 
                             </Table.Row>
                         </Table.Body>
@@ -43,7 +44,7 @@ export default function Billable(props:BillableProps) {
                                     Discount (-)
                                 </Table.Cell>
                                 <Table.Cell className="text-right">
-                                    0.00
+                                    {new Intl.NumberFormat('en-IN',{style:'currency',currency:'USD'}).format(0.00)}
                                 </Table.Cell>
                             </Table.Row>
                             <Table.Row>
@@ -56,10 +57,10 @@ export default function Billable(props:BillableProps) {
                             </Table.Row>
                             <Table.Row>
                                 <Table.Cell>
-                                    Tax
+                                    Tax (+)
                                 </Table.Cell>
                                 <Table.Cell className="text-right">
-                                    {props.taxable ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(props.taxable * 0.15) : 0.00}
+                                    {props.taxable ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(props.taxable * 0.15) : new Intl.NumberFormat('en-IN',{style:'currency',currency:'USD'}).format(0.00)}
                                 </Table.Cell>
                             </Table.Row>
                             <Table.Row>

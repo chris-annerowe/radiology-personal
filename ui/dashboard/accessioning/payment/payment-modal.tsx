@@ -11,7 +11,7 @@ import Billable from "./billable";
 import InsuranceModal from "./insurance-modal";
 import { FaHandHoldingMedical } from "react-icons/fa6";
 import { getClientProviders } from "@/actions/pos";
-import { ClientProvider } from "@/types/pos";
+import { ClientProvider, InsuranceProvider } from "@/types/pos";
 
 
 interface PaymentModalProps {
@@ -24,9 +24,18 @@ interface PaymentModalProps {
 
 export default function PaymentModal(props: PaymentModalProps) {
     const [openInsuranceModal, setOpenInsuranceModal] = useState(false)
+    const [insuranceData, setInsuranceData] = useState<InsuranceProvider>({
+            cardNo: 0,
+            insuranceProv: "",
+            policyNo: "",
+            amt: 0.00,
+            ceiling: 0
+    })
+    const [tempPrice, setTempPrice] = useState(0)
+    const [insuranceAmt, setInsuranceAmt] = useState(0)
     
     let subtotal = 0.00
-    let insurance = 0.00
+    // let insurance = 0.00
     let taxable = 0.00
     
     const closeInsuranceModal = () => {
@@ -43,11 +52,29 @@ export default function PaymentModal(props: PaymentModalProps) {
         return("")
     }
 
+    const handleOpenInsuranceModal = (price:number) => {
+        setTempPrice(price)
+        setOpenInsuranceModal(true)
+    }
+
+    const handleInsurance = (insurance:InsuranceProvider) => {
+        setInsuranceData(insurance)
+        console.log("Payment modal insurance data: ",insuranceData)
+        setInsuranceAmt(insurance.amt)
+    }
+
+    const calculatePercent = () => {
+        //calculate insurance amount
+        console.log("Study price: ",tempPrice,insuranceData)
+        const percent = (insuranceData.amt * 100) / tempPrice
+        return (new Intl.NumberFormat('en-In',{maximumFractionDigits:1}).format(percent))
+    }
+
     
     return (
         <>
         {/* {getProviders()} */}
-        <InsuranceModal open={openInsuranceModal} onClose={closeInsuranceModal} />
+        <InsuranceModal open={openInsuranceModal} onClose={closeInsuranceModal} setInsurance={handleInsurance}/>
         <Modal show={props.open} size="4xl" onClose={props.onClose} popup>
                 <Modal.Header>Payment</Modal.Header>
                 <Modal.Body className="min-h-full">
@@ -69,8 +96,8 @@ export default function PaymentModal(props: PaymentModalProps) {
 <Table.Row key={index} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell>{study.study_name}</Table.Cell>
                                     <Table.Cell className="text-right">{new Intl.NumberFormat('en-In', {style:'currency', currency:'USD'}).format(study.price ? study.price : 0)}</Table.Cell>
-                                    <Table.Cell></Table.Cell>
-                                    <Table.Cell></Table.Cell>
+                                    <Table.Cell>{study.isInsurable ? insuranceData.insuranceProv : ""}</Table.Cell>
+                                    <Table.Cell className="text-right">{study.isInsurable ? (insuranceData.amt > 0 ? new Intl.NumberFormat('en-In',{maximumFractionDigits:1}).format(insuranceData.amt * 100 / (study.price ? study.price : 0)) : 0) : ""}</Table.Cell>
                                     <Table.Cell className="text-right">{new Intl.NumberFormat('en-In', {style:'currency', currency:'USD'}).format(study.price ? study.price : 0)}</Table.Cell> 
                                     {study.price !== null ? calculateSubtotal(study.price) : null}                                  
                                     <Table.Cell>
@@ -81,7 +108,7 @@ export default function PaymentModal(props: PaymentModalProps) {
                                             (<div className="p-2">
                                                 Add Insurance
                                             </div>)}>
-                                        <Button className="font-medium text-cyan-600 dark:text-cyan-500 text-center dark:bg-gray-800" onClick={()=>setOpenInsuranceModal(true)} >
+                                        <Button className="font-medium text-cyan-600 dark:text-cyan-500 text-center dark:bg-gray-800" onClick={()=>handleOpenInsuranceModal(study.price ? study.price : 0)} >
                                             <FaHandHoldingMedical size={18} className="mx-auto" />
                                         </Button>
 
@@ -102,7 +129,7 @@ export default function PaymentModal(props: PaymentModalProps) {
                         <div className="flex">
                             {/* Added soley for styling purposes */}
                         </div>
-                        <Billable subtotal={subtotal} insurance={insurance} taxable={taxable}/>
+                        <Billable subtotal={subtotal} insurance={insuranceAmt} taxable={taxable}/>
                      </div>
                     </div>
                     </Modal.Body>
