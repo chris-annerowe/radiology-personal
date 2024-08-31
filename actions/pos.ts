@@ -5,3 +5,9 @@ export const getClientProviders = async () => {
 
     return providers
 }
+
+export const getInsuranceProviders = async () => {
+    const providers = await db.pos_insurance.findMany()
+
+    return providers
+}

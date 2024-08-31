@@ -1,6 +1,13 @@
+import { ClientProvider } from "@/types/pos";
 import { Label, Select, TextInput } from "flowbite-react";
 
-export default function Payments() {
+interface PaymentProps {
+    clientProviders: ClientProvider[]
+}
+
+export default function Payments(props:PaymentProps) {
+    
+    console.log("Insurance modal client prov ",props.clientProviders)
     return (
         <div>
             <div>
@@ -9,11 +16,9 @@ export default function Payments() {
                             <Label htmlFor="provider" value="Client Provider" />
                         </div>
                         <Select id="provider" name="provider" defaultValue={'P'}  sizing='sm' disabled={false} required>
-                            <option value={'M'}>I</option>
-                            <option value={'F'}>Am</option>
-                            <option value={'Other'}>A</option>
-                            <option value={'F'}>Client</option>
-                            <option value={'P'}>Provider</option>
+                        {props.clientProviders.map(prov=> (
+                            <option value={prov.clientprov_name}>{prov.clientprov_desc}</option>
+                        ))}
                         </Select>
                         
             </div>

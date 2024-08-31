@@ -1,12 +1,13 @@
 'use server'
 
 import AccessioningTabs from "@/ui/dashboard/accessioning/accessioning-tabs";
-import { getClientProviders } from "@/actions/pos";
-import { ClientProvider } from "@/types/pos";
+import { getClientProviders, getInsuranceProviders } from "@/actions/pos";
+import { ClientProvider, InsuranceProvider } from "@/types/pos";
 
 
 export default async function Accessioning(){
     let clientProviders:ClientProvider[] = []
+    let insuranceProviders:InsuranceProvider[] = []
 
     const fetchClientProviders = async () => {
         const providers = await getClientProviders()
@@ -31,11 +32,42 @@ export default async function Accessioning(){
             console.log("Accession page client prov ",clientProviders)
         return clientProviders
     }
-    const call = await fetchClientProviders()
+
+    const fetchInsuranceProviders = async () => {
+        const providers = await getInsuranceProviders()
+        insuranceProviders = []
+        providers.map(prov=> {
+            let temp:InsuranceProvider = {
+                    insurance_id: '',
+                    insurance_name: '',
+                    user_id: null,
+                    last_modified: null,
+                    in_use: null,
+                    ins_abbreviation: '',
+                    bin_nos: '',
+                    bin_codes: ''
+            }
+            temp.insurance_id = prov.insurance_id
+            temp.insurance_name = prov.insurance_name
+            temp.user_id = prov.user_id
+            temp.last_modified = prov.last_modified
+            temp.in_use = prov.in_use
+            temp.ins_abbreviation = prov.ins_abbreviation
+            temp.bin_nos = prov.bin_nos
+            temp.bin_codes = prov.bin_codes
+
+            insuranceProviders.push(temp)
+        })
+        console.log("Accession page insurance prov ",insuranceProviders)
+        return insuranceProviders
+    }
+
+    const client = await fetchClientProviders()
+    const insurance = await fetchInsuranceProviders()
 
     return (
         <>
-            <AccessioningTabs clientProviders={clientProviders}/>
+            <AccessioningTabs clientProviders={clientProviders} insuranceProviders={insuranceProviders}/>
         </>
     )
 }

@@ -8,7 +8,7 @@ import AddStudyModal from "./add-study-modal";
 import { Patient } from "@/types/patient";
 import { deletePatientStudy, findPatientStudyByStudyId } from "@/actions/studies";
 import PaymentModal from "../payment/payment-modal";
-import { ClientProvider } from "@/types/pos";
+import { ClientProvider, InsuranceProvider } from "@/types/pos";
 
 
 interface StudiesTabProps {
@@ -18,7 +18,8 @@ interface StudiesTabProps {
     tabsRef: RefObject<TabsRef>,
     activeTab: number, 
     setActiveTab:Dispatch<SetStateAction<number>>,
-    clientProviders: ClientProvider[]
+    clientProviders: ClientProvider[],
+    insuranceProviders: InsuranceProvider[]
 }
 
 export default function StudiesTab(props: StudiesTabProps) {
@@ -111,7 +112,14 @@ export default function StudiesTab(props: StudiesTabProps) {
                     <Button className="w-40 m-3" type="submit" onClick={()=>{}} color="red">Finish</Button>
                     
                 </div>
-                <PaymentModal open={openPaymentModal} onClose={closePaymentModal} studies={props.studies} patient={props.patient} clientProviders={props.clientProviders}/>
+                <PaymentModal 
+                    open={openPaymentModal} 
+                    onClose={closePaymentModal} 
+                    studies={props.studies} 
+                    patient={props.patient} 
+                    clientProviders={props.clientProviders} 
+                    insuranceProviders={props.insuranceProviders}
+                />
             </div>
         </>
     )

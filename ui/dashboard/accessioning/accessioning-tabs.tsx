@@ -9,7 +9,7 @@ import { PatientStudy, Study } from "@/types/studies";
 import StudiesTab from "./studies/studies-tab";
 import { Patient } from "@/types/patient";
 import { findStudyById, findStudyByPatientId } from "@/actions/studies";
-import { ClientProvider } from "@/types/pos";
+import { ClientProvider, InsuranceProvider } from "@/types/pos";
 
 const patientInitialState = {
     patient_id: "",
@@ -39,7 +39,8 @@ const patientInitialState = {
 }
 
 interface AccessioningProps {
-    clientProviders: ClientProvider[]
+    clientProviders: ClientProvider[],
+    insuranceProviders: InsuranceProvider[]
 }
 
 
@@ -96,6 +97,7 @@ export default function AccessioningTabs(props:AccessioningProps) {
                         setStudies={setStudies} 
                         patient={selectedPatient}
                         clientProviders={props.clientProviders}
+                        insuranceProviders={props.insuranceProviders}
                     />
                 </div>
             </Tabs.Item>

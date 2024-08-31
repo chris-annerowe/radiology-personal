@@ -1,17 +1,17 @@
 "use client"
-import { ClientProvider, InsuranceProvider } from "@/types/pos";
+import { InsuranceData, InsuranceProvider } from "@/types/pos";
 import { Button, Label, Modal, Select, TextInput } from "flowbite-react";
 
 interface InsuranceModalProps {
     open: boolean,
     onClose: () => void,
-    setInsurance: (insurance:InsuranceProvider) => void,
-    clientProviders: ClientProvider[]
+    setInsurance: (insurance:InsuranceData) => void,
+    insuranceProviders: InsuranceProvider[]
 }
 
 export default function InsuranceModal (props: InsuranceModalProps) {
     
-    console.log("Insurance modal client prov ",props.clientProviders)
+    console.log("Insurance modal insurance prov ",props.insuranceProviders)
         
     
     async function handleSave(data: FormData) {
@@ -32,9 +32,9 @@ export default function InsuranceModal (props: InsuranceModalProps) {
         if (typeof cardNo !== 'number' ) {
             throw new Error("Invalid Card Number")
         }
-        // if (typeof insuranceProv !== 'string' || insuranceProv?.length === 0) {
-        //     throw new Error("Invalid Insurance Provider")
-        // }
+        if (typeof insuranceProv !== 'string') {
+            throw new Error("Invalid Insurance Provider")
+        }
         if (typeof policyNo !== 'string' || policyNo?.length === 0) {
             throw new Error("Invalid Policy Number")
         }
@@ -46,9 +46,9 @@ export default function InsuranceModal (props: InsuranceModalProps) {
         }
 
         //save insurance data
-        const insurance: InsuranceProvider = {
+        const insurance: InsuranceData = {
             cardNo: cardNo,
-            insuranceProv: '',
+            insuranceProv: insuranceProv,
             policyNo: policyNo,
             amt: amt,
             ceiling: ceiling
@@ -72,12 +72,11 @@ export default function InsuranceModal (props: InsuranceModalProps) {
                         </div>
                         <div className="flex">
                             <Label className="m-2" htmlFor="insurance" value="Insurance" />
-                            {props.clientProviders.map(prov =>
                             <Select id="insurance" name="insurance" defaultValue={''}  sizing='sm' disabled={false} required>
-                                <option value={prov.clientprov_name}>{prov.clientprov_desc}</option>  
-                                {/* TODO: add table for insurance and pull values from db */}
-                            </Select>
+                            {props.insuranceProviders.map(prov => 
+                                <option value={prov.ins_abbreviation !== null ? prov.ins_abbreviation : prov.insurance_name}>{prov.insurance_name}</option>  
                             )}
+                            </Select>
                         </div> 
                         <div className="flex">
                             <Label className="m-2" htmlFor="policyNo" value="Policy No" />

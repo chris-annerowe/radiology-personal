@@ -10,22 +10,21 @@ import Payments from "./payments";
 import Billable from "./billable";
 import InsuranceModal from "./insurance-modal";
 import { FaHandHoldingMedical } from "react-icons/fa6";
-import { getClientProviders } from "@/actions/pos";
-import { ClientProvider, InsuranceProvider } from "@/types/pos";
+import { ClientProvider, InsuranceData, InsuranceProvider } from "@/types/pos";
 
 
 interface PaymentModalProps {
     open: boolean,
     onClose: () => void,
-    // onSelect: () => void,
     patient: Patient,
     studies: Study[],
-    clientProviders: ClientProvider[]
+    clientProviders: ClientProvider[],
+    insuranceProviders: InsuranceProvider[]
 }
 
 export default function PaymentModal(props: PaymentModalProps) {
     const [openInsuranceModal, setOpenInsuranceModal] = useState(false)
-    const [insuranceData, setInsuranceData] = useState<InsuranceProvider>({
+    const [insuranceData, setInsuranceData] = useState<InsuranceData>({
             cardNo: 0,
             insuranceProv: "",
             policyNo: "",
@@ -36,7 +35,6 @@ export default function PaymentModal(props: PaymentModalProps) {
     const [insuranceAmt, setInsuranceAmt] = useState(0)
     
     let subtotal = 0.00
-    // let insurance = 0.00
     let taxable = 0.00
     
     const closeInsuranceModal = () => {
@@ -58,7 +56,7 @@ export default function PaymentModal(props: PaymentModalProps) {
         setOpenInsuranceModal(true)
     }
 
-    const handleInsurance = (insurance:InsuranceProvider) => {
+    const handleInsurance = (insurance:InsuranceData) => {
         setInsuranceData(insurance)
         console.log("Payment modal insurance data: ",insuranceData)
         setInsuranceAmt(insurance.amt)
@@ -74,8 +72,12 @@ export default function PaymentModal(props: PaymentModalProps) {
     
     return (
         <>
-        {/* {getProviders()} */}
-        <InsuranceModal open={openInsuranceModal} onClose={closeInsuranceModal} setInsurance={handleInsurance} clientProviders={props.clientProviders}/>
+        <InsuranceModal 
+            open={openInsuranceModal} 
+            onClose={closeInsuranceModal} 
+            setInsurance={handleInsurance} 
+            insuranceProviders={props.insuranceProviders}
+        />
         <Modal show={props.open} size="4xl" onClose={props.onClose} popup>
                 <Modal.Header>Payment</Modal.Header>
                 <Modal.Body className="min-h-full">
@@ -97,7 +99,7 @@ export default function PaymentModal(props: PaymentModalProps) {
 <Table.Row key={index} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell>{study.study_name}</Table.Cell>
                                     <Table.Cell className="text-right">{new Intl.NumberFormat('en-In', {style:'currency', currency:'USD'}).format(study.price ? study.price : 0)}</Table.Cell>
-                                    <Table.Cell>{study.isInsurable ? insuranceData.insuranceProv : ""}</Table.Cell>
+                                    <Table.Cell className="text-center">{study.isInsurable ? insuranceData.insuranceProv : ""}</Table.Cell>
                                     <Table.Cell className="text-right">{study.isInsurable ? (insuranceData.amt > 0 ? new Intl.NumberFormat('en-In',{maximumFractionDigits:1}).format(insuranceData.amt * 100 / (study.price ? study.price : 0)) : 0) : ""}</Table.Cell>
                                     <Table.Cell className="text-right">{new Intl.NumberFormat('en-In', {style:'currency', currency:'USD'}).format(study.price ? study.price : 0)}</Table.Cell> 
                                     {study.price !== null ? calculateSubtotal(study.price) : null}                                  
@@ -126,7 +128,7 @@ export default function PaymentModal(props: PaymentModalProps) {
                         <div className="border-t border-2 border-transparent my-7"></div>
 
                      <div className="flex space-x-4">
-                        <Payments />
+                        <Payments clientProviders={props.clientProviders}/>
                         <div className="flex">
                             {/* Added soley for styling purposes */}
                         </div>
