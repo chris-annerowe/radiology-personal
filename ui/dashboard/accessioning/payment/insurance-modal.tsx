@@ -75,6 +75,7 @@ export default function InsuranceModal (props: InsuranceModalProps) {
                             <Select id="insurance" name="insurance" defaultValue={''}  sizing='sm' disabled={false} required>
                             {props.insuranceProviders.map(prov => 
                                 <option value={prov.ins_abbreviation !== null ? prov.ins_abbreviation : prov.insurance_name}>{prov.insurance_name}</option>  
+                                // TODO: save insurance info to db
                             )}
                             </Select>
                         </div> 
