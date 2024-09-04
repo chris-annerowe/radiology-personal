@@ -1,16 +1,22 @@
+import { saveTransaction } from "@/actions/pos";
 import { Button, Table } from "flowbite-react";
-import { Dispatch, SetStateAction } from "react";
 
 interface BillableProps{
-    subtotal?: number,
-    insurance?: (number),
-    taxable?: number
+    subtotal: number,
+    insurance: (number),
+    taxable: number
 }
 
 export default function Billable(props:BillableProps) {
     const completeOrder = () => {
+        //Create new transaction record and save to db
+
+        //TODO: send patient info and amt paid, balance to db
+        saveTransaction(total, 0, props.insurance, props.taxable * 0.15, amtPaid, total-amtPaid).then(res => console.log(res))
         console.log("Paid")
     }
+
+    let amtPaid = 0
 
     let billable = props.subtotal ? props.subtotal - (typeof props.insurance === 'number' ? props.insurance : 0.00) : 0.00 //the subtotal minus insurance
     let netTotal = billable 

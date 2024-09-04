@@ -188,6 +188,20 @@ model pos_insurance {
   bin_codes        String?  @db.VarChar(100)
 }
 
+model pos_transactions {
+  transaction_id        Int        @id @default(autoincrement())
+  patient_last_name     String     @db.VarChar(50)
+  patient_first_name    String     @db.VarChar(50)
+  patient_id            String     @db.VarChar(40)
+  numOfStudies          Int
+  totalBillable         Float
+  discountAmt           Float?
+  insuranceAmt          Float
+  taxPaid               Float
+  amountPaid            Float
+  outstandingBalance    Float
+}
+
 // model pos_insurance {
 //   insurance_id      BigInt  @id @default(autoincrement())
 //   insurance_name    String  @db.VarChar(50)

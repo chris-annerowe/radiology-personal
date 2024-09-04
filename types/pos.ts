@@ -25,3 +25,17 @@ export interface InsuranceProvider {
     bin_nos: string | null,
     bin_codes: string | null
 }
+
+export interface POSTransaction {
+    transaction_id        :number ,    
+    patient_last_name     :string , 
+    patient_first_name    :string ,    
+    patient_id            :string ,    
+    numOfStudies          :number,
+    totalBillable         :number,
+    discountAmt           :number,
+    insuranceAmt          :number,
+    taxPaid               :number,
+    amountPaid            :number,
+    outstandingBalance    :number
+}
