@@ -1,6 +1,5 @@
 import { ClientProvider } from "@/types/pos";
 import { Button, Label, Select, TextInput } from "flowbite-react";
-import { useRouter } from "next/navigation";
 
 interface PaymentData {
     amt: number,
@@ -12,7 +11,6 @@ interface PaymentProps {
 }
 
 export default function Payments(props:PaymentProps) {
-    const router = useRouter()
     const savePayment = (data:FormData) => {
         let paidBy = data.get('paidBy')?.valueOf()
         let amtPaid = data.get('amount')?.valueOf()
@@ -30,10 +28,7 @@ export default function Payments(props:PaymentProps) {
         console.log("Payment Data ",amtPaid,paidBy)
     }
 
-    // const handleRedirect = () => {
-    //     router.push('/dashboard/accessioning')
-    // }
-
+    
     return (
         <div>
             <form action={savePayment} autoComplete="off" >

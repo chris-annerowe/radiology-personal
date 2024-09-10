@@ -1,16 +1,14 @@
 'use client'
 
 import { Study } from "@/types/studies";
-import { Button, Modal, Popover, Table, TabsRef, } from "flowbite-react";
-import { Dispatch, RefObject, SetStateAction, useState } from "react";
-import { HiPlus, HiSearch, HiTrash } from "react-icons/hi";
+import { Button, Modal, Popover, Table } from "flowbite-react";
+import { useState } from "react";
 import { Patient } from "@/types/patient";
-import { deletePatientStudy, findPatientStudyByStudyId } from "@/actions/studies";
 import Payments from "./payments";
 import Billable from "./billable";
 import InsuranceModal from "./insurance-modal";
 import { FaHandHoldingMedical } from "react-icons/fa6";
-import { ClientProvider, InsuranceData, InsuranceProvider, POSTransaction } from "@/types/pos";
+import { ClientProvider, InsuranceData, InsuranceProvider } from "@/types/pos";
 
 interface PaymentData {
     amt:number,
