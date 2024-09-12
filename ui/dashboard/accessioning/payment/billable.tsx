@@ -1,10 +1,12 @@
 import { Patient } from "@/types/patient";
+import { InsuranceData } from "@/types/pos";
 import { Button, Table } from "flowbite-react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface BillableProps{
     subtotal: number,
     insurance: (number),
+    insuranceData: InsuranceData,
     taxable: number,
     patient: Patient,
     numOfStudies: number,
@@ -29,7 +31,7 @@ export default function Billable(props:BillableProps) {
                 balance: total - props.amtPaid,
                 patient_last_name: props.patient.last_name,
                 patient_first_name: props.patient.first_name,
-                patient_id: props.patient.idnum,
+                patient_id: props.patient.patient_id,
                 numOfStudies: props.numOfStudies
               }),
             });
@@ -37,17 +39,17 @@ export default function Billable(props:BillableProps) {
             if (response.ok) {
               const result = await response.json();
               console.log('Paid', result);
-                redirect('/dashboard/accessioning')
+                router.push('/')
             } else {
               console.error('Failed to save transaction');
             }
           } catch (e) {
             console.log(e);
           }
-        
+        //TODO: save insurance data to db
     }
 
-    
+    console.log("Billable insurance data ",props.insuranceData)
     let billable = props.subtotal ? props.subtotal - (typeof props.insurance === 'number' ? props.insurance : 0.00) : 0.00 //the subtotal minus insurance
     let netTotal = billable 
     let total = netTotal + (props.taxable ? (props.taxable * 0.15) : 0.00)
@@ -107,11 +109,31 @@ export default function Billable(props:BillableProps) {
                                     {new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(total )}
                                 </Table.Cell>
                             </Table.Row>
+                            {props.amtPaid > 0 ? (
+                                <>
+                                <Table.Row>
+                                    <Table.Cell>
+                                        Payment
+                                    </Table.Cell>
+                                    <Table.Cell className="text-right">
+                                        {new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(props.amtPaid )}
+                                    </Table.Cell>
+                                </Table.Row>
+                                <Table.Row>
+                                    <Table.Cell className="text-red-700">
+                                        Outstanding Balance
+                                    </Table.Cell>
+                                    <Table.Cell className="text-right text-red-700">
+                                        {new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(total - props.amtPaid )}
+                                    </Table.Cell>
+                                </Table.Row>
+                                </>
+                            ) : null}
                         </Table.Body>
                     </Table>
                 </div>
                 <div className="flex my-8 justify-end">
-                        <Button className="w-40" type="submit" color="blue" onClick={()=>completeOrder()}>Pay</Button>
+                        <Button className="w-40" type="submit" color="blue" onClick={()=>completeOrder()}>{props.amtPaid > 0 ? 'Pay' : 'Save'}</Button>
                     
                 </div>
             </div>

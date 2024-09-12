@@ -37,5 +37,6 @@ export interface POSTransaction {
     insuranceAmt          :number,
     taxPaid               :number,
     amountPaid            :number,
-    outstandingBalance    :number
+    outstandingBalance    :number,
+    timestamp             :Date
 }

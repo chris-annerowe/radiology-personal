@@ -8,7 +8,7 @@ import Payments from "./payments";
 import Billable from "./billable";
 import InsuranceModal from "./insurance-modal";
 import { FaHandHoldingMedical } from "react-icons/fa6";
-import { ClientProvider, InsuranceData, InsuranceProvider } from "@/types/pos";
+import { ClientProvider, InsuranceData, InsuranceProvider, POSTransaction } from "@/types/pos";
 
 interface PaymentData {
     amt:number,
@@ -22,6 +22,7 @@ interface PaymentModalProps {
     studies: Study[],
     clientProviders: ClientProvider[],
     insuranceProviders: InsuranceProvider[],
+    outstandingTransaction?: POSTransaction
 }
 
 export default function PaymentModal(props: PaymentModalProps) {
@@ -74,7 +75,7 @@ export default function PaymentModal(props: PaymentModalProps) {
         setAmtPaid(data.amt)
         console.log("Amt paid: ",amtPaid)
     }
-
+console.log("Payment patient: ",props.patient)
         
     return (
         <>
@@ -138,7 +139,15 @@ export default function PaymentModal(props: PaymentModalProps) {
                         <div className="flex">
                             {/* Added soley for styling purposes */}
                         </div>
-                        <Billable subtotal={subtotal} insurance={insuranceAmt} taxable={taxable} patient={props.patient} numOfStudies={props.studies.length} amtPaid={amtPaid}/>
+                        <Billable 
+                            subtotal={subtotal} 
+                            insurance={insuranceAmt} 
+                            insuranceData={insuranceData}
+                            taxable={taxable} 
+                            patient={props.patient} 
+                            numOfStudies={props.studies.length} 
+                            amtPaid={amtPaid}
+                        />
                      </div>
                     </div>
                     </Modal.Body>

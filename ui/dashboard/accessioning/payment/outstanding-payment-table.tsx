@@ -1,20 +1,69 @@
 'use client'
-import { POSTransaction } from "@/types/pos";
+import { ClientProvider, InsuranceProvider, POSTransaction } from "@/types/pos";
 import { Table } from "flowbite-react";
+import { useState } from "react";
+import PaymentModal from "./payment-modal";
+import { format } from "date-fns";
 
 interface PaymentTableProps {
-    transactions:POSTransaction[]
+    transactions:POSTransaction[],
+    clientProviders:ClientProvider[],
+    insuranceProviders:InsuranceProvider[],
+}
+
+const patientInitialState = {
+    patient_id: "",
+    first_name: "",
+    last_name: "",
+    other_name: "",
+    title: "",
+    dob: new Date(),
+    age: 0,
+    sex: "",
+    height: 0,
+    weight: 0,
+    allergies: "",
+    nationality: "",
+    next_kin: "",
+    address_1: "",
+    address_2: "",
+    city: "",
+    parish: "",
+    telephone_1: "",
+    telephone_2: "",
+    cellular: "",
+    email: "",
+    id_type: "",
+    idnum: ""
+
 }
 
 export default function PaymentTable(props:PaymentTableProps) {
 console.log("Table: ",props.transactions)
+
+const [openPaymentModal, setOpenPaymentModal] = useState(false)
+const [selectedTransaction, setSelectedTransaction] = useState<POSTransaction>()
+
+const handleSelectedTransaction = (transaction:POSTransaction) => {
+    console.log("Selected transaction: ",transaction)
+    setSelectedTransaction(transaction)
+    setOpenPaymentModal(true)
+    //TODO: use patient_id to pull full patient info and patient studies from db, send to populate payment modal
+}
+
+const closePaymentModal = () => {
+    setOpenPaymentModal(false);
+}
+
+const date = format(new Date(),'dd/MM/yyyy')
+
     return (
         <>
             <div>
                 <Table striped>
                     <Table.Head>
-                        <Table.HeadCell>Patiet First Name</Table.HeadCell>
-                        <Table.HeadCell>Patiet Last Name</Table.HeadCell>
+                        <Table.HeadCell>Patient First Name</Table.HeadCell>
+                        <Table.HeadCell>Patient Last Name</Table.HeadCell>
                         <Table.HeadCell>Number of Studies</Table.HeadCell>
                         <Table.HeadCell>Amount Paid</Table.HeadCell>
                         <Table.HeadCell>Outstanding Balance</Table.HeadCell>
@@ -22,20 +71,28 @@ console.log("Table: ",props.transactions)
                     </Table.Head>
                     <Table.Body>
                         {props.transactions.map((transaction,index) => (
-                            <Table.Row key={index} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                <Table.Cell>{transaction.patient_first_name}</Table.Cell>
-                                <Table.Cell>{transaction.patient_last_name}</Table.Cell>
-                                <Table.Cell>{transaction.numOfStudies}</Table.Cell>
-                                <Table.Cell>{transaction.amountPaid}</Table.Cell>
-                                <Table.Cell>{transaction.outstandingBalance}</Table.Cell>
-                                <Table.Cell></Table.Cell>
-                                {/* TODO: add timestamp to transaction db */}
+                            <Table.Row key={index} className="bg-white dark:border-gray-700 dark:bg-gray-800" onClick={()=>handleSelectedTransaction(transaction)}>
+                                <Table.Cell className="text-center">{transaction.patient_first_name}</Table.Cell>
+                                <Table.Cell className="text-center">{transaction.patient_last_name}</Table.Cell>
+                                <Table.Cell className="text-center">{transaction.numOfStudies}</Table.Cell>
+                                <Table.Cell className="text-right">{new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(transaction.amountPaid)}</Table.Cell>
+                                <Table.Cell className="text-right">{new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(transaction.outstandingBalance)}</Table.Cell>
+                                <Table.Cell>{format(transaction.timestamp,'dd-MM-yyyy')}</Table.Cell>
                             </Table.Row>
                         ))}
                         
                     </Table.Body>
                 </Table>
             </div>
+            <PaymentModal 
+                open={openPaymentModal} 
+                onClose={closePaymentModal} 
+                patient={patientInitialState}
+                studies={[]}
+                clientProviders={props.clientProviders}
+                insuranceProviders={props.insuranceProviders}
+                outstandingTransaction={selectedTransaction}
+            />
         </>
     )
 }

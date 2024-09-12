@@ -200,6 +200,7 @@ model pos_transactions {
   taxPaid               Float
   amountPaid            Float
   outstandingBalance    Float
+  timestamp             DateTime  @default(now())
 }
 
 // model pos_insurance {

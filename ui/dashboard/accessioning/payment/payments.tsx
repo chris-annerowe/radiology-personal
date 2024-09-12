@@ -38,9 +38,9 @@ export default function Payments(props:PaymentProps) {
                         <div className="mb-2 block">
                             <Label htmlFor="provider" value="Client Provider" />
                         </div>
-                        <Select id="provider" name="provider" defaultValue={'P'}  sizing='sm' disabled={false} required>
-                        {props.clientProviders.map(prov=> (
-                            <option value={prov.clientprov_name}>{prov.clientprov_desc}</option>
+                        <Select id="provider" name="provider" defaultValue={''}  sizing='sm' disabled={false} required>
+                        {props.clientProviders.map((prov,index)=> (
+                            <option value={prov.clientprov_name} id={`clientProvider-${index}`}>{prov.clientprov_desc}</option>
                         ))}
                         </Select>
                         

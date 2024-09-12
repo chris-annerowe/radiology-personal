@@ -73,8 +73,8 @@ export default function InsuranceModal (props: InsuranceModalProps) {
                         <div className="flex">
                             <Label className="m-2" htmlFor="insurance" value="Insurance" />
                             <Select id="insurance" name="insurance" defaultValue={''}  sizing='sm' disabled={false} required>
-                            {props.insuranceProviders.map(prov => 
-                                <option value={prov.ins_abbreviation !== null ? prov.ins_abbreviation : prov.insurance_name}>{prov.insurance_name}</option>  
+                            {props.insuranceProviders.map((prov,index) => 
+                                <option value={prov.ins_abbreviation !== null ? prov.ins_abbreviation : prov.insurance_name} id={`insProvider-${index}`}>{prov.insurance_name}</option>  
                                 // TODO: save insurance info to db
                             )}
                             </Select>
