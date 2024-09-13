@@ -1,9 +1,11 @@
 'use client'
 import { ClientProvider, InsuranceProvider, POSTransaction } from "@/types/pos";
 import { Table } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PaymentModal from "./payment-modal";
 import { format } from "date-fns";
+import { findStudyById, findStudyByPatientId } from "@/actions/studies";
+import { PatientStudy, Study } from "@/types/studies";
 
 interface PaymentTableProps {
     transactions:POSTransaction[],
@@ -41,8 +43,11 @@ const patientInitialState = {
 export default function PaymentTable(props:PaymentTableProps) {
 console.log("Table: ",props.transactions)
 
+let temp:any[] = []
 const [openPaymentModal, setOpenPaymentModal] = useState(false)
 const [selectedTransaction, setSelectedTransaction] = useState<POSTransaction>()
+const [patientStudies, setPatientStudies] = useState<PatientStudy[]>([])
+const [studies, setStudies] = useState<Study[]>([]);
 
 const handleSelectedTransaction = (transaction:POSTransaction) => {
     console.log("Selected transaction: ",transaction)
@@ -54,6 +59,32 @@ const handleSelectedTransaction = (transaction:POSTransaction) => {
 const closePaymentModal = () => {
     setOpenPaymentModal(false);
 }
+
+const getPatientStudies = () => {
+    console.log("Finding studies for patient with id: ",selectedTransaction?.patient_id)
+    findStudyByPatientId(selectedTransaction?.patient_id !== undefined ? selectedTransaction.patient_id : '').then(res=>{
+        console.log('Patient study: ',res);
+        setPatientStudies(res)
+    })
+}
+
+useEffect(()=>{
+    getPatientStudies()
+
+},[selectedTransaction])
+
+useEffect(()=>{
+    console.log("Patient studies: ",patientStudies)
+    patientStudies.map(study=>{
+        findStudyById(study.study_id).then(res=>{
+            console.log("Response for study by id: ",res)
+            temp.push(res[0])
+        })
+        console.log("Temp array ",temp)
+        setStudies(temp)
+    })
+
+},[patientStudies])
 
 const date = format(new Date(),'dd/MM/yyyy')
 
@@ -88,7 +119,7 @@ const date = format(new Date(),'dd/MM/yyyy')
                 open={openPaymentModal} 
                 onClose={closePaymentModal} 
                 patient={patientInitialState}
-                studies={[]}
+                studies={studies}
                 clientProviders={props.clientProviders}
                 insuranceProviders={props.insuranceProviders}
                 outstandingTransaction={selectedTransaction}
