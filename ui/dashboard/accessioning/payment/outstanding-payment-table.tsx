@@ -6,6 +6,8 @@ import PaymentModal from "./payment-modal";
 import { format } from "date-fns";
 import { findStudyById, findStudyByPatientId } from "@/actions/studies";
 import { PatientStudy, Study } from "@/types/studies";
+import { findPatientById } from "@/actions/patient";
+import { Patient } from "@/types/patient";
 
 interface PaymentTableProps {
     transactions:POSTransaction[],
@@ -48,12 +50,12 @@ const [openPaymentModal, setOpenPaymentModal] = useState(false)
 const [selectedTransaction, setSelectedTransaction] = useState<POSTransaction>()
 const [patientStudies, setPatientStudies] = useState<PatientStudy[]>([])
 const [studies, setStudies] = useState<Study[]>([]);
+const [patient, setPatient] = useState<Patient>(patientInitialState)
 
 const handleSelectedTransaction = (transaction:POSTransaction) => {
     console.log("Selected transaction: ",transaction)
     setSelectedTransaction(transaction)
     setOpenPaymentModal(true)
-    //TODO: use patient_id to pull full patient info and patient studies from db, send to populate payment modal
 }
 
 const closePaymentModal = () => {
@@ -68,9 +70,17 @@ const getPatientStudies = () => {
     })
 }
 
+const getPatient = () => {
+    console.log("Get patient data for id ",selectedTransaction?.patient_id)
+    findPatientById(selectedTransaction?.patient_id !== undefined ? selectedTransaction.patient_id : '').then(res=>{
+        console.log("Patient data: ",res);
+        setPatient(res)
+    })
+    
+}
+
 useEffect(()=>{
     getPatientStudies()
-
 },[selectedTransaction])
 
 useEffect(()=>{
@@ -85,6 +95,10 @@ useEffect(()=>{
     })
 
 },[patientStudies])
+
+useEffect(()=>{
+    getPatient()
+},[studies])
 
 const date = format(new Date(),'dd/MM/yyyy')
 
@@ -118,7 +132,7 @@ const date = format(new Date(),'dd/MM/yyyy')
             <PaymentModal 
                 open={openPaymentModal} 
                 onClose={closePaymentModal} 
-                patient={patientInitialState}
+                patient={patient}
                 studies={studies}
                 clientProviders={props.clientProviders}
                 insuranceProviders={props.insuranceProviders}
