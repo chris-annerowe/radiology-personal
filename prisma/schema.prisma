@@ -200,6 +200,10 @@ model pos_transactions {
   taxPaid               Float
   amountPaid            Float
   outstandingBalance    Float
+  clientProvider        String?     @db.VarChar(40)
+  insuranceProvider     String?     @db.VarChar(10)
+  paymentType           String?     @db.VarChar(10)
+  paidBy                String?     @db.VarChar(10)
   timestamp             DateTime  @default(now())
 }
 

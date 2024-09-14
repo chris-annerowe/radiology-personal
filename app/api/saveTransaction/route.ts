@@ -14,7 +14,11 @@ export async function POST(req: Request) {
       patient_first_name,
       patient_last_name,
       patient_id,
-      numOfStudies
+      numOfStudies,
+      paidBy,
+      paymentType,
+      clientProvider,
+      insuranceProvider
      } = body;
     try {
       const transaction = await db.pos_transactions.create({
@@ -27,7 +31,11 @@ export async function POST(req: Request) {
           numOfStudies,
           patient_first_name,
           patient_last_name,
-          patient_id
+          patient_id,
+          paidBy,
+          paymentType,
+          clientProvider,
+          insuranceProvider
         },
       });
       return NextResponse.json({ transaction: transaction, message: 'Transaction saved successfully'}, {status: 201})

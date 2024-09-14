@@ -8,12 +8,7 @@ import Payments from "./payments";
 import Billable from "./billable";
 import InsuranceModal from "./insurance-modal";
 import { FaHandHoldingMedical } from "react-icons/fa6";
-import { ClientProvider, InsuranceData, InsuranceProvider, POSTransaction } from "@/types/pos";
-
-interface PaymentData {
-    amt:number,
-    paidBy: string
-}
+import { ClientProvider, InsuranceData, InsuranceProvider, POSTransaction, PaymentData } from "@/types/pos";
 
 interface PaymentModalProps {
     open: boolean,
@@ -38,7 +33,9 @@ export default function PaymentModal(props: PaymentModalProps) {
     const [insuranceAmt, setInsuranceAmt] = useState(0)
     const [paymentData, setPaymentData] = useState<PaymentData>({
         amt: 0,
-        paidBy: ''
+        paidBy: '',
+        paymentType: '',
+        provider: ''
     })
     const [amtPaid, setAmtPaid] = useState(0)
     
@@ -66,16 +63,13 @@ export default function PaymentModal(props: PaymentModalProps) {
 
     const handleInsurance = (insurance:InsuranceData) => {
         setInsuranceData(insurance)
-        console.log("Payment modal insurance data: ",insuranceData)
         setInsuranceAmt(insurance.amt)
     }
 
     const handlePaymentData = (data: PaymentData) => {
         setPaymentData(data)
         setAmtPaid(data.amt)
-        console.log("Amt paid: ",amtPaid)
     }
-console.log("Payment patient: ",props.patient)
         
     return (
         <>
@@ -103,7 +97,7 @@ console.log("Payment patient: ",props.patient)
                         <Table.Body className="divide-y">
                         {
                             props.studies?.map((study,index)=>(
-<Table.Row key={index} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                            <Table.Row key={index} className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                     <Table.Cell>{study.study_name}</Table.Cell>
                                     <Table.Cell className="text-right">{new Intl.NumberFormat('en-In', {style:'currency', currency:'USD'}).format(study.price ? study.price : 0)}</Table.Cell>
                                     <Table.Cell className="text-center">{study.isInsurable ? insuranceData.insuranceProv : ""}</Table.Cell>
@@ -147,6 +141,7 @@ console.log("Payment patient: ",props.patient)
                             patient={props.patient} 
                             numOfStudies={props.studies.length} 
                             amtPaid={amtPaid}
+                            paymentData={paymentData}
                         />
                      </div>
                     </div>

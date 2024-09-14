@@ -43,7 +43,6 @@ const patientInitialState = {
 }
 
 export default function PaymentTable(props:PaymentTableProps) {
-console.log("Table: ",props.transactions)
 
 let temp:any[] = []
 const [openPaymentModal, setOpenPaymentModal] = useState(false)
@@ -53,7 +52,6 @@ const [studies, setStudies] = useState<Study[]>([]);
 const [patient, setPatient] = useState<Patient>(patientInitialState)
 
 const handleSelectedTransaction = (transaction:POSTransaction) => {
-    console.log("Selected transaction: ",transaction)
     setSelectedTransaction(transaction)
     setOpenPaymentModal(true)
 }
@@ -65,7 +63,6 @@ const closePaymentModal = () => {
 const getPatientStudies = () => {
     console.log("Finding studies for patient with id: ",selectedTransaction?.patient_id)
     findStudyByPatientId(selectedTransaction?.patient_id !== undefined ? selectedTransaction.patient_id : '').then(res=>{
-        console.log('Patient study: ',res);
         setPatientStudies(res)
     })
 }
@@ -73,7 +70,6 @@ const getPatientStudies = () => {
 const getPatient = () => {
     console.log("Get patient data for id ",selectedTransaction?.patient_id)
     findPatientById(selectedTransaction?.patient_id !== undefined ? selectedTransaction.patient_id : '').then(res=>{
-        console.log("Patient data: ",res);
         setPatient(res)
     })
     
@@ -90,7 +86,6 @@ useEffect(()=>{
             console.log("Response for study by id: ",res)
             temp.push(res[0])
         })
-        console.log("Temp array ",temp)
         setStudies(temp)
     })
 

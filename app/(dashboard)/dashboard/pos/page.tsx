@@ -30,7 +30,6 @@ const Payment = async () => {
   
               clientProviders.push(temp)
           })
-          console.log("Accession page client prov ",clientProviders)
       return clientProviders
   }
 
@@ -59,7 +58,6 @@ const Payment = async () => {
 
           insuranceProviders.push(temp)
       })
-      console.log("Accession page insurance prov ",insuranceProviders)
       return insuranceProviders
   }
 
@@ -79,6 +77,10 @@ const Payment = async () => {
         discountAmt: 0,
         totalBillable: 0,
         transaction_id: 0,
+        paidBy: '',
+        paymentType: '',
+        clientProvider: '',
+        insuranceProvider: '',
         timestamp: new Date()
       }
   

@@ -26,6 +26,13 @@ export interface InsuranceProvider {
     bin_codes: string | null
 }
 
+export interface PaymentData {
+    amt:number,
+    paidBy: string,
+    paymentType: string,
+    provider: string
+}
+
 export interface POSTransaction {
     transaction_id        :number,    
     patient_last_name     :string , 
@@ -38,5 +45,9 @@ export interface POSTransaction {
     taxPaid               :number,
     amountPaid            :number,
     outstandingBalance    :number,
+    paidBy                :string | null,
+    paymentType           :string | null,
+    clientProvider        :string | null,
+    insuranceProvider     :string | null,
     timestamp             :Date
 }

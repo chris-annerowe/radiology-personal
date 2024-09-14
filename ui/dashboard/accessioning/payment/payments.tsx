@@ -1,11 +1,8 @@
-import { ClientProvider } from "@/types/pos";
+import { ClientProvider, PaymentData } from "@/types/pos";
 import { Button, Label, Select, TextInput } from "flowbite-react";
 import { HiPlus } from "react-icons/hi";
 
-interface PaymentData {
-    amt: number,
-    paidBy: string
-}
+
 interface PaymentProps {
     clientProviders: ClientProvider[],
     setPaymentData: (data:PaymentData) => void
@@ -13,20 +10,29 @@ interface PaymentProps {
 
 export default function Payments(props:PaymentProps) {
     const savePayment = (data:FormData) => {
-        let paidBy = data.get('paidBy')?.valueOf()
+        let paidBy = data.get('paidby')?.valueOf()
         let amtPaid = data.get('amount')?.valueOf()
+        let method = data.get('method')?.valueOf()
+        let provider = data.get('provider')?.valueOf()
 
         paidBy = typeof paidBy === 'string' ? paidBy : ""
         amtPaid = typeof amtPaid === 'string' ? parseFloat(amtPaid) : amtPaid
+        method = typeof method === 'string' ? method : ""
+        provider = typeof provider === 'string' ? provider : ""
         if (typeof amtPaid !== 'number' ) {
             throw new Error("Invalid Amount")
         }
         if (typeof paidBy !== 'string') {
             throw new Error("Invalid Text")
         }
+        if (typeof method !== 'string') {
+            throw new Error("Invalid Payment Type")
+        }
+        if (typeof provider !== 'string') {
+            throw new Error("Invalid Client Provider")
+        }
 
-        props.setPaymentData({amt:amtPaid,paidBy:paidBy})
-        console.log("Payment Data ",amtPaid,paidBy)
+        props.setPaymentData({amt:amtPaid,paidBy:paidBy,paymentType:method, provider: provider})
     }
 
     
@@ -49,6 +55,7 @@ export default function Payments(props:PaymentProps) {
                         <div className="mb-2 block">
                             <Label htmlFor="method" value="Method" />
                         </div>
+                        {/* TODO: create table of payment types, map over types */}
                         <Select id="method" name="method" defaultValue={''}  sizing='sm' disabled={false} required>
                             <option value={'cs'}>Cash</option>
                             <option value={'cc'}>Credit Card</option>

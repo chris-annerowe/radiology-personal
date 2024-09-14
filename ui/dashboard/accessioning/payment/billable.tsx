@@ -1,5 +1,5 @@
 import { Patient } from "@/types/patient";
-import { InsuranceData } from "@/types/pos";
+import { InsuranceData, PaymentData } from "@/types/pos";
 import { Button, Table } from "flowbite-react";
 import { useRouter } from "next/navigation";
 
@@ -10,7 +10,8 @@ interface BillableProps{
     taxable: number,
     patient: Patient,
     numOfStudies: number,
-    amtPaid: number
+    amtPaid: number,
+    paymentData: PaymentData
 }
 
 export default function Billable(props:BillableProps) {
@@ -32,7 +33,11 @@ export default function Billable(props:BillableProps) {
                 patient_last_name: props.patient.last_name,
                 patient_first_name: props.patient.first_name,
                 patient_id: props.patient.patient_id,
-                numOfStudies: props.numOfStudies
+                numOfStudies: props.numOfStudies,
+                paidBy: props.paymentData?.paidBy,
+                paymentType: props.paymentData?.paymentType,
+                insuranceProvider: props.insuranceData.insuranceProv,
+                clientProvider: props.paymentData.provider
               }),
             });
         
@@ -45,15 +50,12 @@ export default function Billable(props:BillableProps) {
             }
           } catch (e) {
             console.log(e);
-          }
-        //TODO: save insurance data to db
+        }
     }
 
-    console.log("Billable insurance data ",props.insuranceData)
     let billable = props.subtotal ? props.subtotal - (typeof props.insurance === 'number' ? props.insurance : 0.00) : 0.00 //the subtotal minus insurance
     let netTotal = billable 
     let total = netTotal + (props.taxable ? (props.taxable * 0.15) : 0.00)
-    {console.log("insurance props: ",props.insurance)}
     return (
         <>
             <div>
