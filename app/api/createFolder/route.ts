@@ -9,7 +9,6 @@ export async function POST(req:any) {
     
     // Define the path where you want to create the folder
     const dirPath = join("/", "patientData", folderName);
-    console.log("Path ",dirPath)
     
     // Check if the directory already exists
     if (!fs.existsSync(dirPath)) {

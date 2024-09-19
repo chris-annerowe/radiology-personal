@@ -122,20 +122,23 @@ export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,acti
         if(!file) return
         
       // Example usage
-      await createFolder('patient_id')
-      try{
-            const data = new FormData()
-            data.set("file",file)
-        
-            const response = await fetch("/api/uploadReferral",{
-                method: "POST",
-                body: data
-            })
+      if(patient.patient_id !== ''){
+        await createFolder(patient.patient_id)
+        try{
+                const data = new FormData()
+                data.set("file",file)
+                data.set("patientId", patient.patient_id)
+            
+                const response = await fetch("/api/uploadReferral",{
+                    method: "POST",
+                    body: data
+                })
 
-            if(!response.ok) throw new Error (await response.text())
-        }catch(e){
-            console.error(e)
-        }
+                if(!response.ok) throw new Error (await response.text())
+            }catch(e){
+                console.error(e)
+            }
+        }else { alert("No patient selected")}
     }
 
     async function createFolder(folderName:string) {
@@ -166,10 +169,9 @@ export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,acti
                     <HiSearch className="mr-2 h-5 w-5" />
                     Search Patients
                 </Button>
+                <input type="file" name="image" onChange={(e)=>setFile(e.target.files?.[0])} />
                 <form onSubmit={saveFile}>
-                    <input type="file" name="image" onChange={(e)=>setFile(e.target.files?.[0])} />
                     <Button className="mb-4" type="submit">
-                        <HiPlus className="mr-2 h-5 w-5" />
                         Upload Referral
                     </Button>
                 </form>
