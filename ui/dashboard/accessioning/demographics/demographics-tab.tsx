@@ -120,7 +120,10 @@ export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,acti
     const saveFile = async (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if(!file) return
-        try{
+        
+      // Example usage
+      await createFolder('patient_id')
+      try{
             const data = new FormData()
             data.set("file",file)
         
@@ -135,6 +138,20 @@ export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,acti
         }
     }
 
+    async function createFolder(folderName:string) {
+        const response = await fetch('/api/createFolder', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ folderName }),
+        });
+      
+        const data = await response.json();
+        console.log(data.message);
+      }
+      
+      
 
     return (
         <>

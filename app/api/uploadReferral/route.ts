@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(bytes)
 
     //File data is now in the buffer, you can save or send as email
-    const path = join('/','tmp','patientName', file.name)
+    const path = join('/','patientData','patient_id', file.name)
     await writeFile(path,buffer)
     console.log(`Open ${path} to see the uploaded file`)
 
