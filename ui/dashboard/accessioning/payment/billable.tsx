@@ -61,6 +61,9 @@ export default function Billable(props:BillableProps) {
             transaction.clientProvider = props.paymentData.provider
             transaction.paidBy = props.paymentData.paidBy
             transaction.paymentType = props.paymentData.paymentType
+            
+            console.log("Call update")
+            updateOrder()
             try {
                 const response = await fetch('/api/saveTransaction', {
                   method: 'POST',
@@ -103,6 +106,8 @@ export default function Billable(props:BillableProps) {
             }
         }
         else{
+
+         saveOrder()
          try {
             const response = await fetch('/api/saveTransaction', {
               method: 'POST',
@@ -140,6 +145,80 @@ export default function Billable(props:BillableProps) {
         }
     }
 
+    async function saveOrder() {
+        //if no existing order sent as prop, save as new order
+        if(!props.outstandingTransaction || props.outstandingTransaction.order_id === ""){
+            let payment_status = "Pending"
+            let balance = total
+            if(total - props.amtPaid === 0){
+                payment_status = "Completed"
+            }
+            if(props.outstandingTransaction?.outstandingBalance){
+                balance = props.outstandingTransaction?.outstandingBalance
+            }
+
+            try{
+                const response = await fetch('/api/saveOrder', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      order_id: props.order_id,
+                      patient_id: props.patient.patient_id,
+                      payment_status: payment_status,
+                      balance_outstanding: balance - props.amtPaid
+                    }),
+                  });
+              
+                  if (response.ok) {
+                    const result = await response.json();
+                    console.log('Order created', result)
+                  } else {
+                    console.error('Failed to save order');
+                  }
+            } catch(e){
+                console.log(e)
+            }
+        } 
+    }
+
+    async function updateOrder() {
+        if(props.outstandingTransaction && props.outstandingTransaction.order_id !== ""){
+            let payment_status = "Pending"
+            let balance = total
+            if(props.outstandingTransaction.outstandingBalance - props.amtPaid === 0){
+                payment_status = "Completed"
+            }
+            if(props.outstandingTransaction?.outstandingBalance){
+                balance = props.outstandingTransaction?.outstandingBalance
+            }
+
+            try{
+                const response = await fetch('/api/saveOrder', {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      order_id: props.order_id,
+                      payment_status: payment_status,
+                      balance_outstanding: balance - props.amtPaid
+                    }),
+                  });
+              
+                  if (response.ok) {
+                    const result = await response.json();
+                    console.log('Order updated', result)
+                  } else {
+                    console.error('Failed to save order');
+                  }
+            } catch(e){
+                console.log(e)
+            }
+        } 
+    }
+
     let billable = props.subtotal ? props.subtotal - (typeof props.insurance === 'number' ? props.insurance : 0.00) : 0.00 //the subtotal minus insurance
     let netTotal = billable 
     let total = netTotal + (props.taxable ? (props.taxable * 0.15) : 0.00)
@@ -163,10 +242,11 @@ export default function Billable(props:BillableProps) {
                             </Table.Row>
                         </Table.Body>
                 </Table>
-                {!props.outstandingTransaction && (
                 <div className="flex pt-2 text-right justify-end justify-items-end ">
                     <Table>
                         <Table.Body>
+                        {!props.outstandingTransaction && (
+                            <>
                             <Table.Row>
                                 <Table.Cell>
                                     Discount (-)
@@ -199,6 +279,8 @@ export default function Billable(props:BillableProps) {
                                     {new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(total )}
                                 </Table.Cell>
                             </Table.Row>
+                            </>
+                            )}
                             {props.amtPaid > 0 ? (
                                 <>
                                 <Table.Row>
@@ -214,7 +296,7 @@ export default function Billable(props:BillableProps) {
                                         Outstanding Balance
                                     </Table.Cell>
                                     <Table.Cell className="text-right text-red-700">
-                                        {new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(total - props.amtPaid )}
+                                        {props.outstandingTransaction ? new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(total - props.amtPaid - props.outstandingTransaction.amountPaid) : new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(total - props.amtPaid )}
                                     </Table.Cell>
                                 </Table.Row>
                                 </>
@@ -222,7 +304,7 @@ export default function Billable(props:BillableProps) {
                         </Table.Body>
                     </Table>
                 </div>
-                )}
+                
                 <div className="flex my-8 justify-end">
                         <Button className="w-40" type="submit" color="blue" onClick={()=>completeOrder()}>{props.amtPaid > 0 ? 'Pay' : 'Save'}</Button>
                     
