@@ -25,6 +25,21 @@ export const getTransactions = async () => {
     return transactions
 }
 
+export const getMostRecentPerOrderNo = async () => {
+    const transactions =await db.$queryRaw`
+    SELECT t1.*
+    FROM pos_transactions t1
+    INNER JOIN (
+      SELECT order_id, MAX(timestamp) as max_timestamp
+      FROM pos_transactions
+      GROUP BY order_id
+    ) t2
+    ON t1.order_id = t2.order_id AND t1.timestamp = t2.max_timestamp
+  `;
+    console.log("Last transaction per order: ",transactions)
+    return transactions
+}
+
 export const saveTransaction = async (
     total: number,
     discountAmt: number,

@@ -1,6 +1,6 @@
 'use server'
 
-import { getClientProviders, getInsuranceProviders, getTransactions } from '@/actions/pos'
+import { getClientProviders, getInsuranceProviders, getMostRecentPerOrderNo, getTransactions } from '@/actions/pos'
 import { ClientProvider, InsuranceProvider, POSTransaction } from '@/types/pos'
 import PaymentTable from '@/ui/dashboard/accessioning/payment/outstanding-payment-table'
 import React from 'react'
@@ -62,7 +62,7 @@ const Payment = async () => {
   }
 
   const getOutstanding = async () => {
-    const transactions = await getTransactions()
+    const transactions = await getMostRecentPerOrderNo()
     outstandingTransactions = []
     transactions.map(transaction => {
       let temp:POSTransaction = {
@@ -102,12 +102,15 @@ const Payment = async () => {
       temp.paidBy = transaction.paidBy,
       temp.paymentType = transaction.paymentType
 
-      outstandingTransactions.push(temp)
+      if(transaction.outstandingBalance > 0){
+        outstandingTransactions.push(temp)
+      }
     })
   }
   const call = await getOutstanding()
   const client = await fetchClientProviders()
   const insurance = await fetchInsuranceProviders()
+  const run = await getMostRecentPerOrderNo()
   
 
   return (
