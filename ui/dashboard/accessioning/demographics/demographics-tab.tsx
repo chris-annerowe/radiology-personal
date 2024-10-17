@@ -5,15 +5,14 @@ import { telephoneMask } from "@/lib/masks";
 import { ActionResponse } from "@/types/action";
 import BasicModal from "@/ui/common/basic-modal";
 import FormLoadingModal from "@/ui/common/form-loading-modal";
-import * as patientZod from "@/zod/schemas/patient";
 import { useMaskito } from "@maskito/react";
 import { Label, TextInput, Select, Datepicker, Button, TabsRef } from "flowbite-react";
 import { Dispatch, RefObject, SetStateAction, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
-import { HiPlus, HiSearch, HiX } from "react-icons/hi";
+import { HiSearch, HiX } from "react-icons/hi";
 import PatientSearchModal from "./patient-search-modal";
 import { Patient } from "@/types/patient";
-import { patient } from "@prisma/client";
+import DatePickerField from "./dob-datepicker";
 
 
 const initialState: ActionResponse = {
@@ -27,7 +26,7 @@ const patientInitialState = {
     last_name: "",
     other_name: "",
     title: "",
-    dob: new Date(),
+    dob: undefined,
     age: 0,
     sex: "",
     height: 0,
@@ -49,7 +48,6 @@ const patientInitialState = {
 }
 
 export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,activeTab: number, setActiveTab:Dispatch<SetStateAction<number>>,setSelectedPatient:(patient:Patient)=>void}) {
-
     const [state, formAction] = useFormState(savePatient, initialState)
 
     const [errors, setErrors] = useState<{ [key: string]: any }>({});
@@ -59,13 +57,11 @@ export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,acti
     const [openSearchModal, setOpenSearchModal] = useState(false);
 
     const [patient, setPatient] = useState<Patient>(patientInitialState);
+    const [patientDOB, setDOB] = useState<Date>()
 
     const [patientFormDisabled, setPatientFormDisabled] = useState(false);
     const [file, setFile] = useState<File>()
 
-    const patientDOB = (patient && patient.dob) ?
-        (patient.dob instanceof Date ? patient.dob : new Date(patient.dob))
-        : null;
 
     useEffect(() => {
         if (state.errors) {
@@ -101,6 +97,7 @@ export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,acti
 
     const selectPatient = (patient: Patient) => {
         setPatient(patient);
+        setDOB(new Date(patient.dob))
         props.setSelectedPatient(patient);
         setPatientFormDisabled(true)
         closeSearchModal();
@@ -223,12 +220,16 @@ export default function DemographicsTab(props: {tabsRef: RefObject<TabsRef>,acti
                         </Select>
                     </div>
 
-                    <div>
+                    {patient.patient_id === "" ? (
+                        <div>
                         <div className="mb-2 block">
                             <Label htmlFor="dob" value="Date Of Birth" />
                         </div>
-                        <Datepicker name="dob" maxDate={new Date()}  size={8} defaultDate={patientDOB ? patientDOB : undefined} disabled={patientFormDisabled} />
+                        <Datepicker id='dob' name="dob" maxDate={new Date()}  size={8} defaultDate={undefined} disabled={patientFormDisabled} required/>
                     </div>
+                    ) : (
+                        <DatePickerField dob={patientDOB} disabled={patientFormDisabled} />
+                    )}
 
                     <div>
                         <div className="mb-2 block">
