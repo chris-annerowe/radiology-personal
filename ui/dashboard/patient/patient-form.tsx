@@ -118,7 +118,7 @@ export default function PatientForm(props: PatientFormProps) {
                         <div className="mb-2 block">
                             <Label htmlFor="other_name" value="Other Name" />
                         </div>
-                        <TextInput id="other_name" name="other_name" type="" placeholder="" color={errors?.other_name ? "failure" : "gray"} onChange={() => resetField("other_name")} defaultValue={(patient && patient.other_name) ? patient.other_name : ""} required shadow
+                        <TextInput id="other_name" name="other_name" type="" placeholder="" color={errors?.other_name ? "failure" : "gray"} onChange={() => resetField("other_name")} defaultValue={(patient && patient.other_name) ? patient.other_name : ""}  shadow
                             helperText={
                                 errors?.other_name && errors?.other_name[0]
                             } />
@@ -154,11 +154,11 @@ export default function PatientForm(props: PatientFormProps) {
                     </div>
 
 
-                    <div>
+                    {/* <div>
                         <div className="mb-2 block">
                             <Label htmlFor="height" value="Height" />
                         </div>
-                        <TextInput id="height" name="height" type="number" step={'0.01'} placeholder="" color={errors?.last_name ? "failure" : "gray"} onChange={() => resetField("height")} defaultValue={(patient && patient.height) ? patient.height.toString() : ""} required shadow
+                        <TextInput id="height" name="height" type="number" step={'0.01'} placeholder="" color={errors?.last_name ? "failure" : "gray"} onChange={() => resetField("height")} defaultValue={(patient && patient.height) ? patient.height.toString() : ""} shadow
                             helperText={
                                 errors?.height && errors?.height[0]
                             } />
@@ -168,7 +168,7 @@ export default function PatientForm(props: PatientFormProps) {
                         <div className="mb-2 block">
                             <Label htmlFor="weight" value="Weight" />
                         </div>
-                        <TextInput id="weight" name="weight" type="number" step={'0.01'} placeholder="" color={errors?.last_name ? "failure" : "gray"} onChange={() => resetField("weight")} defaultValue={(patient && patient.weight) ? patient.weight.toString() : ""} required shadow
+                        <TextInput id="weight" name="weight" type="number" step={'0.01'} placeholder="" color={errors?.last_name ? "failure" : "gray"} onChange={() => resetField("weight")} defaultValue={(patient && patient.weight) ? patient.weight.toString() : ""} shadow
                             helperText={
                                 errors?.height && errors?.height[0]
                             } />
@@ -178,11 +178,11 @@ export default function PatientForm(props: PatientFormProps) {
                         <div className="mb-2 block">
                             <Label htmlFor="allergies" value="Allergies" />
                         </div>
-                        <TextInput id="allergies" name="allergies" placeholder="" color={errors?.allergies ? "failure" : "gray"} onChange={() => resetField("allergies")} defaultValue={(patient && patient.allergies) ? patient.allergies.toString() : ""} required shadow
+                        <TextInput id="allergies" name="allergies" placeholder="" color={errors?.allergies ? "failure" : "gray"} onChange={() => resetField("allergies")} defaultValue={(patient && patient.allergies) ? patient.allergies.toString() : ""} shadow
                             helperText={
                                 errors?.allergies && errors?.allergies[0]
                             } />
-                    </div>
+                    </div> */}
 
                     <div>
                         <div className="mb-2 block">
@@ -194,15 +194,15 @@ export default function PatientForm(props: PatientFormProps) {
                             } />
                     </div>
 
-                    <div>
+                    {/* <div>
                         <div className="mb-2 block">
                             <Label htmlFor="next_kin" value="Next Of Kin" />
                         </div>
-                        <TextInput id="next_kin" name="next_kin" type="" placeholder="" color={errors?.next_kin ? "failure" : "gray"} onChange={() => resetField("next_kin")} defaultValue={(patient && patient.next_kin) ? patient.next_kin : ""} required shadow
+                        <TextInput id="next_kin" name="next_kin" type="" placeholder="" color={errors?.next_kin ? "failure" : "gray"} onChange={() => resetField("next_kin")} defaultValue={(patient && patient.next_kin) ? patient.next_kin : ""} shadow
                             helperText={
                                 errors?.next_kin && errors?.next_kin[0]
                             } />
-                    </div>
+                    </div> */}
 
 
                 </div>
@@ -226,7 +226,7 @@ export default function PatientForm(props: PatientFormProps) {
                         <div className="mb-2 block">
                             <Label htmlFor="address_2" value="Address 2" />
                         </div>
-                        <TextInput id="address_2" name="address_2" type="" placeholder="" color={errors?.address_2 ? "failure" : "gray"} onChange={() => resetField("address_2")} defaultValue={(patient && patient.address_2) ? patient.address_2 : ""} required shadow
+                        <TextInput id="address_2" name="address_2" type="" placeholder="" color={errors?.address_2 ? "failure" : "gray"} onChange={() => resetField("address_2")} defaultValue={(patient && patient.address_2) ? patient.address_2 : ""} shadow
                             helperText={
                                 errors?.address_2 && errors?.address_2[0]
                             }
@@ -279,7 +279,7 @@ export default function PatientForm(props: PatientFormProps) {
                         <div className="mb-2 block">
                             <Label htmlFor="telephone_2" value="Telephone 2" />
                         </div>
-                        <TextInput ref={tel2InputRef} id="telephone_2" name="telephone_2" type="" placeholder="" color={errors?.telephone_2 ? "failure" : "gray"} onChange={() => resetField("telephone_2")} defaultValue={(patient && patient.telephone_2) ? patient.telephone_2 : ""} required shadow
+                        <TextInput ref={tel2InputRef} id="telephone_2" name="telephone_2" type="" placeholder="" color={errors?.telephone_2 ? "failure" : "gray"} onChange={() => resetField("telephone_2")} defaultValue={(patient && patient.telephone_2) ? patient.telephone_2 : ""} shadow
                             helperText={
                                 errors?.telephone_2 && errors?.telephone_2[0]
                             }
