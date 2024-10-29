@@ -1,6 +1,6 @@
 "use client";
 
-import { savePatient } from "@/actions/patient";
+import { savePatient, isExistingPatientAndSave } from "@/actions/patient";
 import { telephoneMask } from "@/lib/masks";
 import { ActionResponse } from "@/types/action";
 import BasicModal from "@/ui/common/basic-modal";
@@ -180,7 +180,7 @@ export default function DemographicsTab(props: {
                     </Button>
                 </form>
             </div>
-            <form action={formAction} autoComplete="off">
+            <form action={isExistingPatientAndSave} autoComplete="off">
 
                 {/** Demographics Section */}
                 <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-cyan-500 sm:text-2xl mb-3">Patient Data</h3>
@@ -220,6 +220,7 @@ export default function DemographicsTab(props: {
                         <div className="mb-2 block">
                             <Label htmlFor="sex" value="Gender" />
                         </div>
+                        //TODO: allow to display sex of selected patient
                         <Select id="sex" name="sex" defaultValue={(patient && patient.sex) ? patient.sex : ''}  sizing='sm' disabled={patientFormDisabled} required>
                             <option value={'M'}>Male</option>
                             <option value={'F'}>Female</option>
@@ -257,7 +258,7 @@ export default function DemographicsTab(props: {
                         <div className="mb-2 block">
                             <Label htmlFor="doctor_name" value="Name" />
                         </div>
-                        <TextInput id="doctor_name" name="doctor_name" type="" sizing='xs' placeholder="" color={errors?.first_name ? "failure" : "gray"} onChange={() => resetField("doctor_name")} defaultValue={""} disabled={patientFormDisabled} required shadow
+                        <TextInput id="doctor_name" name="doctor_name" type="" sizing='xs' placeholder="" color={errors?.first_name ? "failure" : "gray"} onChange={() => resetField("doctor_name")} defaultValue={""} disabled={false} required shadow
                             helperText={
                                 errors?.doctor_name && errors?.doctor_name[0]
                             }
@@ -265,21 +266,21 @@ export default function DemographicsTab(props: {
                     </div>
                     <div >
                         <div className="mb-2 block">
-                            <Label htmlFor="telephone_1" value="Telephone" />
+                            <Label htmlFor="doc_tel" value="Telephone" />
                         </div>
-                        <TextInput ref={tel1InputRef} id="telephone_1" name="telephone_1" type="" sizing='xs' placeholder="" color={errors?.telephone_1 ? "failure" : "gray"} onChange={() => resetField("telephone_1")} defaultValue={(patient && patient.telephone_1) ? patient.telephone_1 : ""} disabled={patientFormDisabled} required shadow
+                        <TextInput ref={tel1InputRef} id="doc_tel" name="doc_tel" type="" sizing='xs' placeholder="" color={errors?.doc_tel ? "failure" : "gray"} defaultValue={""} disabled={false} shadow
                             helperText={
-                                errors?.telephone_1 && errors?.telephone_1[0]
+                                errors?.doc_tel && errors?.doc_tel[0]
                             }
                         />
                     </div>
                     <div className="col-span-2">
                         <div className="mb-2 block">
-                            <Label htmlFor="address_1" value="Address" />
+                            <Label htmlFor="doc_address" value="Address" />
                         </div>
-                        <TextInput id="address_1" name="address_1" type="" sizing='xs' placeholder="" color={errors?.address_1 ? "failure" : "gray"} onChange={() => resetField("address_1")} defaultValue={(patient && patient.address_1) ? patient.address_1 : ""} disabled={patientFormDisabled} required shadow
+                        <TextInput id="doc_address" name="doc_address" type="" sizing='xs' placeholder="" color={errors?.doc_address ? "failure" : "gray"} defaultValue={""} disabled={false} shadow
                             helperText={
-                                errors?.address_1 && errors?.address_1[0]
+                                errors?.doc_address && errors?.doc_address[0]
                             }
                         />
                     </div>
@@ -287,7 +288,7 @@ export default function DemographicsTab(props: {
                         <div className="mb-2 block">
                             <Label htmlFor="fax" value="Fax" />
                         </div>
-                        <TextInput ref={tel1InputRef} id="fax" name="fax" type="" sizing='xs' placeholder="" color={errors?.fax ? "failure" : "gray"} onChange={() => resetField("fax")} defaultValue={(patient && patient.telephone_1) ? patient.telephone_1 : ""} disabled={patientFormDisabled} required shadow
+                        <TextInput ref={tel1InputRef} id="fax" name="fax" type="" sizing='xs' placeholder="" color={errors?.fax ? "failure" : "gray"} onChange={() => resetField("fax")} defaultValue={""} disabled={false} shadow
                             helperText={
                                 errors?.fax && errors?.fax[0]
                             }
@@ -297,16 +298,16 @@ export default function DemographicsTab(props: {
                         <div className="mb-2 block">
                             <Label htmlFor="doc_id" value="Doc ID" />
                         </div>
-                        <TextInput id="doc_id" name="doc_id" type="" placeholder="" sizing='xs' color={errors?.doc_id ? "failure" : "gray"} onChange={() => resetField("doc_id")} defaultValue={""} disabled={patientFormDisabled} required shadow
+                        <TextInput id="doc_id" name="doc_id" type="" placeholder="" sizing='xs' color={errors?.doc_id ? "failure" : "gray"} onChange={() => resetField("doc_id")} defaultValue={""} disabled={false} shadow
                             helperText={
                                 errors?.doc_id && errors?.doc_id[0]
                             } />
                     </div>
                     <div>
                         <div className="mb-2 block">
-                            <Label htmlFor="refDate" value="Referral Date" />
+                            <Label htmlFor="ref_date" value="Referral Date" />
                         </div>
-                        <Datepicker name="refDate" maxDate={new Date()}  sizing='xs' defaultDate={undefined} disabled={patientFormDisabled} />
+                        <Datepicker name="ref_date" maxDate={new Date()}  sizing='xs' defaultDate={undefined} disabled={false} />
                     </div>
                     <div  className="col-span-2">
                         <div className="mb-2 block">
@@ -349,7 +350,7 @@ export default function DemographicsTab(props: {
 
                 <div className="flex my-8 justify-end">
                     {patient.patient_id ?
-                    (<Button className="w-40" color="blue" onClick={()=>goToNext()}>Continue</Button>)
+                    (<Button className="w-40" color="blue" type="submit" onClick={()=>goToNext()}>Continue</Button>)
                     :
                     (
                         <Button className="w-40" type="submit" color="blue">Continue</Button>

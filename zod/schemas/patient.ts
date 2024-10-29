@@ -17,10 +17,10 @@ const PatientSchema = z.object({
     address_1: z.string().max(60),
     address_2: z.string().max(60) || null,
     city: z.string().max(20),
-    parish: z.string().max(25),
+    parish: z.string().max(25) || null,
     telephone_1: z.string().max(40),
-    telephone_2: z.string().max(40),
-    cellular: z.string().max(40),
+    telephone_2: z.string().max(40) || null,
+    cellular: z.string().max(40) || null,
     email: z.string().email(),
     id_type: z.string().max(3),
     idnum: z.string().max(40)

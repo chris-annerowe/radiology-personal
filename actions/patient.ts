@@ -173,6 +173,81 @@ export const getPatientSearchCount = async (searchName: string) => {
     return patientCount;
 }
 
+export const isExistingPatientAndSave = async (formData: FormData) => {
+    //grab referring doctor data from formData
+    const referringDoc = {
+        doctor_name: formData.get('doctor_name') as string,
+        doctor_tel: formData.get('doc_tel') as string,
+        doctor_address: formData.get("doc_address") as string,
+        fax: formData.get('fax') as string,
+        doctor_id: formData.get('doc_id') as string,
+        ref_date: formData.get('ref_date') as string,
+        diagnosis: formData.get('diagnosis') as string
+    }
+
+    console.log("Referring doctor deets ",referringDoc) 
+    
+    const patientData = {
+        patient_id: randomUUID(),
+        first_name: formData.get('first_name') as string,
+        last_name: formData.get('last_name') as string,
+        other_name: formData.get('other_name') as string,
+        title: formData.get('title') as string,
+        dob: new Date(formData.get('dob') as string),
+        age: getAge(formData.get('dob') as string),
+        sex: formData.get('sex') as string,
+        height: parseFloat(formData.get('height') as string),
+        weight: parseFloat(formData.get('weight') as string),
+        allergies: formData.get('allergies') as string,
+        nationality: formData.get('nationality') as string,
+        next_kin: formData.get('next_kin') as string,
+        address_1: formData.get('address_1') as string,
+        address_2: formData.get('address_2') as string,
+        city: formData.get('city') as string,
+        parish: formData.get('parish') as string,
+        telephone_1: formData.get('telephone_1') as string,
+        telephone_2: formData.get('telephone_2') as string,
+        cellular: formData.get('cellular') as string,
+        email: formData.get('email') as string,
+        id_type: formData.get('id_type') as string,
+        idnum: formData.get('idnum') as string
+
+    }
+
+    //check if patient already exists
+    const existing = await findPatientByName(`${patientData.first_name} ${patientData.last_name}`,1,10)
+    if(existing.data.length > 0){
+        console.log("Patient already exists. No save required ", existing) 
+        return
+    }else{
+        console.log("Patient does not exist. Open patient form modal.")
+        //Open patient form modal to capture the rest of patient data before saving new patient
+    
+        const validatedFields = PatientSchema.safeParse(patientData)
+
+        // Return early if the form data is invalid
+        if (!validatedFields.success) {
+            console.log("Validation Failed");
+            console.log(validatedFields.error.flatten().fieldErrors);
+            return {
+                success: false,
+                errors: validatedFields.error.flatten().fieldErrors,
+            }
+        } else {
+            console.log("Validation Succeeded");
+            const patient = await db.patient.create({
+                data: patientData
+            })
+
+            return {
+                success: true,
+                //data: patientData
+            }
+
+        }
+    }
+}
+
 export const savePatient = async (prevState: any, formData: FormData): Promise<ActionResponse> => {
 
     console.log(formData);
@@ -203,7 +278,7 @@ export const savePatient = async (prevState: any, formData: FormData): Promise<A
         idnum: formData.get('idnum') as string
 
     }
-
+    
     const validatedFields = PatientSchema.safeParse(patientData)
 
     // Return early if the form data is invalid
