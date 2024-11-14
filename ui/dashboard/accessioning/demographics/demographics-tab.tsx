@@ -14,6 +14,8 @@ import PatientSearchModal from "./patient-search-modal";
 import { Patient } from "@/types/patient";
 import DatePickerField from "./dob-datepicker";
 import GenderDropdown from "./gender-dropdown";
+import PatientForm from "../../patient/patient-form";
+import PatientFormModal from "@/ui/modals/patient-form-modal";
 
 
 const initialState: ActionResponse = {
@@ -63,6 +65,7 @@ export default function DemographicsTab(props: {
     const [showModal, setShowModal] = useState(false);
 
     const [openSearchModal, setOpenSearchModal] = useState(false);
+    const [openPatientForm, setOpenPatientForm] = useState(false)
 
     const [patient, setPatient] = useState<Patient>(props.patient.patient_id !== '' ? props.patient : patientInitialState);
     const [patientDOB, setDOB] = useState<Date>(props.patient.patient_id !== '' ? new Date(props.patient.dob) : new Date(patient.dob))
@@ -102,6 +105,10 @@ export default function DemographicsTab(props: {
 
     const closeSearchModal = () => {
         setOpenSearchModal(false);
+    }
+
+    const closePatientForm = () => {
+        setOpenPatientForm(false);
     }
 
     const selectPatient = (patient: Patient) => {
@@ -161,11 +168,19 @@ export default function DemographicsTab(props: {
         console.log(data.message);
       }
       
-      
+    const checkIsExisting = async (formData: FormData) => {
+        const resp = await isExistingPatientAndSave(formData, patient.first_name, patient.last_name)
+        console.log("Resp from patient check ",resp)
+        if(!resp?.success){
+            setOpenPatientForm(true)
+        }
+        goToNext()
+    }
 
     return (
         <>
             <PatientSearchModal open={openSearchModal} onClose={closeSearchModal} onSelect={selectPatient} />
+            <PatientFormModal patient={patient} show={openPatientForm} onClose={closePatientForm}/>
             <div className="flex space-x-4">
                 {patient.patient_id && <Button className="mb-4" onClick={() => clearPatient()}>
                     <HiX className="mr-2 h-5 w-5" />
@@ -183,7 +198,7 @@ export default function DemographicsTab(props: {
                     </Button>
                 </form>
             </div>
-            <form action={isExistingPatientAndSave} autoComplete="off">
+            <form action={checkIsExisting} autoComplete="off">
 
                 {/** Demographics Section */}
                 <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-cyan-500 sm:text-2xl mb-3">Patient Data</h3>

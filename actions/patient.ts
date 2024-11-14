@@ -173,7 +173,7 @@ export const getPatientSearchCount = async (searchName: string) => {
     return patientCount;
 }
 
-export const isExistingPatientAndSave = async (formData: FormData) => {
+export const isExistingPatientAndSave = async (formData: FormData, firstName: string, lastName: string) => {
     //grab referring doctor data from formData
     const referringDoc = {
         doctor_name: formData.get('doctor_name') as string,
@@ -213,12 +213,22 @@ export const isExistingPatientAndSave = async (formData: FormData) => {
         idnum: formData.get('idnum') as string
 
     }
+    
+    if(patientData.first_name === null){
+        patientData.first_name = firstName
+    }
+    if(patientData.last_name === null){
+        patientData.last_name = lastName
+    }
 
     //check if patient already exists
     const existing = await findPatientByName(`${patientData.first_name} ${patientData.last_name}`,1,10)
     if(existing.data.length > 0){
         console.log("Patient already exists. No save required ", existing) 
-        return
+        return {
+            success: true,
+            data: existing
+        }
     }else{
         console.log("Patient does not exist. Open patient form modal.")
         //Open patient form modal to capture the rest of patient data before saving new patient
