@@ -165,9 +165,9 @@ model Configuration {
   serverPort       Int      @map("server_port")
   senderEmail      String   @map("sender_email")
   senderPassword   String   @map("sender_password")
-  receiverEmail    String   @map("receiver_email")
-  subject          String
-  message          String
+  receiverEmail    String?   @map("receiver_email")
+  subject          String?
+  message          String?
   updatedAt        DateTime @default(now()) @map("updated_at")
   modifiedBy       Int      @map("modified_by")
   modifier         User?    @relation(fields: [modifiedBy], references: [id])

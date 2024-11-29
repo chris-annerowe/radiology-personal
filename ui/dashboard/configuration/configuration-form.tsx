@@ -93,7 +93,7 @@ export default  function ConfigurationForm(props: ConfigurationFormProps) {
                             } />
                     </div>
 
-                    <div>
+                    {/* <div>
                         <div className="mb-2 block">
                             <Label htmlFor="receiver_email" value="Receiver Email" />
                         </div>
@@ -123,7 +123,7 @@ export default  function ConfigurationForm(props: ConfigurationFormProps) {
                             helperText={
                                 errors?.message && errors?.message[0]
                             } />
-                    </div>
+                    </div> */}
                 </div>
                 <div className="flex my-8 justify-end">
                     <Button className="w-40" type="submit" color="blue">Submit</Button>

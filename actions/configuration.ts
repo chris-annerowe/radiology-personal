@@ -18,7 +18,7 @@ export const saveConfiguration = async (prevState: any, formData: FormData): Pro
         receiverEmail: formData.get('receiver_email') as string,
         subject: formData.get('subject') as string,
         message: formData.get('message') as string,
-        modifiedBy: 5
+        modifiedBy: 5   //TODO: update to show logged in user
 
     }
 
