@@ -56,7 +56,7 @@ const Sidebar2 = () => {
             <SidebarItem href="/studies" >
               Studies
             </SidebarItem>
-            <SidebarItem href="/admin" >
+            <SidebarItem href="/dashboard/admin" >
               Administration
             </SidebarItem>
             <SidebarItem href="/dashboard/configuration" >
