@@ -1,5 +1,5 @@
 'use client'
-import { ClientProvider, InsuranceProvider, POSTransaction } from "@/types/pos";
+import { ClientProvider, InsuranceProvider, POSTransaction, PaymentType } from "@/types/pos";
 import { Table } from "flowbite-react";
 import { useEffect, useState } from "react";
 import PaymentModal from "./payment-modal";
@@ -8,6 +8,7 @@ import { findStudyById, findStudyByPatientId } from "@/actions/studies";
 import { PatientStudy, Study } from "@/types/studies";
 import { findPatientById } from "@/actions/patient";
 import { Patient } from "@/types/patient";
+import { getPaymentTypes } from "@/actions/pos";
 
 interface PaymentTableProps {
     transactions:POSTransaction[],
@@ -48,6 +49,7 @@ let temp:any[] = []
 const [openPaymentModal, setOpenPaymentModal] = useState(false)
 const [selectedTransaction, setSelectedTransaction] = useState<POSTransaction>()
 const [patientStudies, setPatientStudies] = useState<PatientStudy[]>([])
+const [paymentTypes,setPaymentTypes] = useState<PaymentType[]>([])
 const [studies, setStudies] = useState<Study[]>([]);
 const [patient, setPatient] = useState<Patient>(patientInitialState)
 
@@ -67,6 +69,16 @@ const getPatientStudies = () => {
     })
 }
 
+const fetchPaymentTypes = async () => {
+    try {
+        const response = await fetch('/api/getPaymentTypes');
+        const data = await response.json();
+        setPaymentTypes(data.paymentTypes);
+    } catch (error) {
+        console.error('Error fetching payment types', error);
+    }
+}
+
 const getPatient = () => {
     console.log("Get patient data for id ",selectedTransaction?.patient_id)
     findPatientById(selectedTransaction?.patient_id !== undefined ? selectedTransaction.patient_id : '').then(res=>{
@@ -77,6 +89,7 @@ const getPatient = () => {
 
 useEffect(()=>{
     getPatientStudies()
+    fetchPaymentTypes()
 },[selectedTransaction])
 
 useEffect(()=>{
@@ -129,6 +142,7 @@ const date = format(new Date(),'dd/MM/yyyy')
                 onClose={closePaymentModal} 
                 patient={patient}
                 studies={studies}
+                paymentTypes={paymentTypes}
                 clientProviders={props.clientProviders}
                 insuranceProviders={props.insuranceProviders}
                 outstandingTransaction={selectedTransaction}

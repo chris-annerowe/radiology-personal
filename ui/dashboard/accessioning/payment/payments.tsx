@@ -10,6 +10,7 @@ interface PaymentProps {
 }
 
 export default function Payments(props:PaymentProps) {
+    console.log("Payments props", props.paymentTypes,props.clientProviders)
     const savePayment = (data:FormData) => {
         let paidBy = data.get('paidby')?.valueOf()
         let amtPaid = data.get('amount')?.valueOf()

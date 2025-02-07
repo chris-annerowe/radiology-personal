@@ -24,6 +24,7 @@ interface PaymentModalProps {
 
 export default function PaymentModal(props: PaymentModalProps) {
     console.log("Outstanding transaction ",props.outstandingTransaction)
+    console.log("Payment modal props ",props.paymentTypes)
     const [openInsuranceModal, setOpenInsuranceModal] = useState(false)
     const [insuranceData, setInsuranceData] = useState<InsuranceData>({
             cardNo: 0,

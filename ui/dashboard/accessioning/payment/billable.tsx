@@ -12,10 +12,11 @@ interface BillableProps{
     numOfStudies: number,
     amtPaid: number,
     paymentData: PaymentData,
-    order_id: number,
+    order_id: string,
     outstandingTransaction?: POSTransaction,
     onClose: () => void
 }
+
 
 export default function Billable(props:BillableProps) {
     const router = useRouter()
@@ -40,6 +41,20 @@ export default function Billable(props:BillableProps) {
             clientProvider: '',
             insuranceProvider: '',
             timestamp: new Date()
+        }
+
+        //check if a payment was made
+        if(props.amtPaid > 0){
+            console.log("Payment made. Invoice data sending to printer")
+            //call function to print receipt
+            handlePrint(
+                props.amtPaid,
+                (props.outstandingTransaction ? props.outstandingTransaction.order_id : props.order_id),
+                props.paymentData.paidBy,
+                (props.taxable * 0.15),
+                props.insurance,
+                props.paymentData.paymentType
+            )
         }
 
         //check if outstanding order or new order
@@ -217,6 +232,29 @@ export default function Billable(props:BillableProps) {
             }
         } 
     }
+
+    const handlePrint = async (
+        amtPaid: number,
+        orderId: number,
+        paidBy: string,
+        tax: number,
+        insurance: number,
+        paymentType: string) => {
+        try {
+          const response = await fetch('/api/printInvoice', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ amtPaid,orderId,paidBy,tax,insurance,paymentType }),
+          });
+    
+          const result = await response.json();
+          alert(result.message);
+        } catch (error) {
+          alert('Failed to send invoice to printer');
+        }
+      };
 
     let billable = props.subtotal ? props.subtotal - (typeof props.insurance === 'number' ? props.insurance : 0.00) : 0.00 //the subtotal minus insurance
     let netTotal = billable 
