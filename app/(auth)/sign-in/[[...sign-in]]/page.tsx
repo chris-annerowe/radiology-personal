@@ -47,7 +47,7 @@ const SignIn = () => {
                 <form action={createUser} className='flex gap-2 flex-col '>
                     <FloatingLabel variant='outlined' label='Username' type='text' name='username' />
 
-                    <FloatingLabel variant='outlined' label='Password' type='text' name='password' />
+                    <FloatingLabel variant='outlined' label='Password' type='password' name='password' />
                     {/*<input
                         type='text'
                         name='username'

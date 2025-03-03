@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts","decs.d.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts","decs.d.ts", "pages/api/saveTransaction.js", "pages/api/saveTransaction.js"],
   "exclude": ["node_modules"]
 }
