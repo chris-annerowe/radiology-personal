@@ -161,6 +161,7 @@ export default function DemographicsTab(props: {
     }
 
     const goToNext = () => {
+        console.log("Active Tab: "+props.activeTab);
         props.tabsRef.current?.setActiveTab(props.activeTab+1)
     }
 
@@ -410,7 +411,7 @@ export default function DemographicsTab(props: {
 
                 <div className="flex my-8 justify-end">
                     {patient.patient_id ?
-                    (<Button className="w-40" color="blue" type="submit" onClick={()=>goToNext()}>Continue</Button>)
+                    (<Button className="w-40" color="blue" onClick={()=>goToNext()}>Continue</Button>)
                     :
                     (
                         <Button className="w-40" type="submit" color="blue">Continue</Button>

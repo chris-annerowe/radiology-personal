@@ -169,6 +169,7 @@ export default function PaymentModal(props: PaymentModalProps) {
                             paymentData={paymentData}
                             order_id={orderNo}
                             outstandingTransaction={props.outstandingTransaction}
+                            studies={props.studies}
                         />
                      </div>
                     </div>

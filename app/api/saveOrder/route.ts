@@ -1,4 +1,5 @@
 import { db } from '@/lib/db'
+import { Prisma } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -22,6 +23,16 @@ export async function POST(req: Request) {
       });
       return NextResponse.json({ transaction: transaction, message: 'Order created successfully'}, {status: 201})
     } catch (error) {
+      console.log("Error creating order");
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // The .code property can be accessed in a type-safe manner
+        console.log("Error: "+error.message);
+        if (error.code === 'P2002') {
+          console.log(
+            'There is a unique constraint violation, a new user cannot be created with this email'
+          )
+        }
+      }
       return NextResponse.json({ transaction: null, message: 'Order failed to send'}, {status: 500})
     }
   } else {
