@@ -63,6 +63,7 @@ const Payment = async () => {
 
   const getOutstanding = async () => {
     const transactions = await getMostRecentPerOrderNo()
+    console.log("Most recent order")
     outstandingTransactions = []
     transactions.map(transaction => {
       let temp:POSTransaction = {
@@ -72,7 +73,7 @@ const Payment = async () => {
         patient_last_name:'',
         numOfStudies: 0,
         amountPaid: 0,
-        outstandingBalance: 0,
+        outstanding_balance: 0,
         insuranceAmt: 0,
         taxPaid: 0,
         discountAmt: 0,
@@ -88,7 +89,7 @@ const Payment = async () => {
       temp.amountPaid = transaction.amountPaid,
       temp.order_id = transaction.order_id,
       temp.numOfStudies = transaction.numOfStudies,
-      temp.outstandingBalance = transaction.outstandingBalance,
+      temp.outstanding_balance = transaction.outstanding_balance,
       temp.patient_first_name = transaction.patient_first_name,
       temp.patient_last_name = transaction.patient_last_name,
       temp.patient_id = transaction.patient_id,
@@ -102,7 +103,7 @@ const Payment = async () => {
       temp.paidBy = transaction.paidBy,
       temp.paymentType = transaction.paymentType
 
-      if(transaction.outstandingBalance > 0){
+      if(transaction.outstanding_balance > 0){
         outstandingTransactions.push(temp)
       }
     })
@@ -110,6 +111,7 @@ const Payment = async () => {
   const call = await getOutstanding()
   const client = await fetchClientProviders()
   const insurance = await fetchInsuranceProviders()
+  console.log("Outstanding count: ",outstandingTransactions.length)
 
   return (
     <>

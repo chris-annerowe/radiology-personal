@@ -219,7 +219,7 @@ model pos_transactions {
   insuranceAmt          Float
   taxPaid               Float
   amountPaid            Float
-  outstandingBalance    Float
+  outstanding_balance    Float
   clientProvider        String?     @db.VarChar(40)
   insuranceProvider     String?     @db.VarChar(10)
   paymentType           String?     @db.VarChar(10)

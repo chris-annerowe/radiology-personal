@@ -51,7 +51,7 @@ export interface POSTransaction {
     insuranceAmt          :number,
     taxPaid               :number,
     amountPaid            :number,
-    outstandingBalance    :number,
+    outstanding_balance    :number,
     paidBy                :string | null,
     paymentType           :string | null,
     clientProvider        :string | null,

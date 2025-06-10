@@ -15,7 +15,7 @@ export const getInsuranceProviders = async () => {
 export const getTransactions = async () => {
     const transactions = await db.pos_transactions.findMany({
         where: {
-            outstandingBalance: {
+            outstanding_balance: {
                 gt: 0
             }
         }
@@ -53,7 +53,7 @@ export const saveTransaction = async (
     insuranceAmt: number,
     taxPaid: number,
     amountPaid: number,
-    outstandingBalance: number,
+    outstanding_balance: number,
     patient_first_name: string,
     patient_last_name: string,
     patient_id: string,
@@ -73,7 +73,7 @@ export const saveTransaction = async (
                 insuranceAmt,
                 taxPaid,
                 amountPaid,
-                outstandingBalance
+                outstanding_balance
             }
         })
         console.log("Transaction successfully created")

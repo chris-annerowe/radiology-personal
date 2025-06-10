@@ -129,7 +129,7 @@ const date = format(new Date(),'dd/MM/yyyy')
                                 <Table.Cell className="text-center">{transaction.patient_last_name}</Table.Cell>
                                 <Table.Cell className="text-center">{transaction.numOfStudies}</Table.Cell>
                                 <Table.Cell className="text-right">{new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(transaction.amountPaid)}</Table.Cell>
-                                <Table.Cell className="text-right">{new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(transaction.outstandingBalance)}</Table.Cell>
+                                <Table.Cell className="text-right">{new Intl.NumberFormat('en-IN',{style:'currency', currency: 'USD'}).format(transaction.outstanding_balance)}</Table.Cell>
                                 <Table.Cell>{format(transaction.timestamp,'dd-MM-yyyy')}</Table.Cell>
                             </Table.Row>
                         ))}

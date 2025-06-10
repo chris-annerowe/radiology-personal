@@ -29,7 +29,7 @@ export async function POST(req: Request) {
           order_id: order_id,
           taxPaid: tax,
           amountPaid: amtPaid,
-          outstandingBalance:balance,
+          outstanding_balance:balance,
           numOfStudies,
           patient_first_name,
           patient_last_name,

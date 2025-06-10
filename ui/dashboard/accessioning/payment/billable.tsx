@@ -38,7 +38,7 @@ export default function Billable(props: BillableProps) {
       patient_last_name: '',
       numOfStudies: 0,
       amountPaid: 0,
-      outstandingBalance: 0,
+      outstanding_balance: 0,
       insuranceAmt: 0,
       taxPaid: 0,
       discountAmt: 0,
@@ -80,7 +80,7 @@ export default function Billable(props: BillableProps) {
       transaction.taxPaid = props.outstandingTransaction.taxPaid
 
       transaction.amountPaid = props.amtPaid
-      transaction.outstandingBalance = props.outstandingTransaction.outstandingBalance - props.amtPaid
+      transaction.outstanding_balance = props.outstandingTransaction.outstanding_balance - props.amtPaid
       transaction.clientProvider = props.paymentData.provider
       transaction.paidBy = props.paymentData.paidBy
       transaction.paymentType = props.paymentData.paymentType
@@ -97,7 +97,7 @@ export default function Billable(props: BillableProps) {
             insurance: transaction.insuranceAmt,
             tax: transaction.taxPaid,
             amtPaid: transaction.amountPaid,
-            balance: transaction.outstandingBalance,
+            balance: transaction.outstanding_balance,
             patient_last_name: transaction.patient_last_name,
             patient_first_name: transaction.patient_first_name,
             patient_id: transaction.patient_id,
@@ -157,8 +157,8 @@ export default function Billable(props: BillableProps) {
       if (total - props.amtPaid === 0) {
         payment_status = "Completed"
       }
-      if (props.outstandingTransaction?.outstandingBalance) {
-        balance = props.outstandingTransaction?.outstandingBalance
+      if (props.outstandingTransaction?.outstanding_balance) {
+        balance = props.outstandingTransaction?.outstanding_balance
       }
 
       try {
@@ -260,11 +260,11 @@ export default function Billable(props: BillableProps) {
     if (props.outstandingTransaction && props.outstandingTransaction.order_id !== "") {
       let payment_status = "Pending"
       let balance = total
-      if (props.outstandingTransaction.outstandingBalance - props.amtPaid === 0) {
+      if (props.outstandingTransaction.outstanding_balance - props.amtPaid === 0) {
         payment_status = "Completed"
       }
-      if (props.outstandingTransaction?.outstandingBalance) {
-        balance = props.outstandingTransaction?.outstandingBalance
+      if (props.outstandingTransaction?.outstanding_balance) {
+        balance = props.outstandingTransaction?.outstanding_balance
       }
 
       try {
@@ -335,7 +335,7 @@ export default function Billable(props: BillableProps) {
             <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
               <Table.Cell className="text-right">{props.subtotal ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'USD' }).format(props.subtotal) : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'USD' }).format(billable)}</Table.Cell>
               <Table.Cell className={props.outstandingTransaction ? 'text-red-700 text-right' : 'text-right'}>{props.outstandingTransaction && props.outstandingTransaction.amountPaid > 0 ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'USD' }).format(props.outstandingTransaction.amountPaid) : (typeof props.insurance === 'number' ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'USD' }).format(props.insurance) : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'USD' }).format(0.00))}</Table.Cell>
-              <Table.Cell className="text-right">{props.outstandingTransaction ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'USD' }).format(props.outstandingTransaction.outstandingBalance) : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'USD' }).format(billable)}</Table.Cell>
+              <Table.Cell className="text-right">{props.outstandingTransaction ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'USD' }).format(props.outstandingTransaction.outstanding_balance) : new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'USD' }).format(billable)}</Table.Cell>
             </Table.Row>
           </Table.Body>
         </Table>
