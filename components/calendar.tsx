@@ -31,7 +31,8 @@ interface Appointment{
     appointment_time: Date | null,
     description: string | null,
     index: number | null,
-    modality: string | null
+    modality: string | null,
+    duration: string | null
 }
   
 const resetAppointment:Appointment = {
@@ -44,7 +45,8 @@ const resetAppointment:Appointment = {
     appointment_time: null,
     description: null,
     index: null,
-    modality: null
+    modality: null,
+    duration: null
 }
 
 const Calendar = (props:AppointmentProps) => {

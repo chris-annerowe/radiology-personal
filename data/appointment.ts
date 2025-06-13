@@ -13,7 +13,8 @@ export const createAppointment = async (
     tel: string,
     dob: Date,
     sex: string,
-    index: number
+    index: number,
+    duration: string
 ) =>{
     try{
         await db.appointment.create({
@@ -26,7 +27,8 @@ export const createAppointment = async (
                 tel,
                 dob,
                 sex,
-                index
+                index,
+                duration
             }
         })
 
@@ -44,7 +46,8 @@ export const updateAppointment = async (
     tel: string,
     dob: Date,
     sex: string,
-    index: number
+    index: number,
+    duration: string
 ) =>{
     try{
         await db.appointment.update({
@@ -60,7 +63,8 @@ export const updateAppointment = async (
                 tel,
                 dob,
                 sex,
-                index
+                index,
+                duration
             }
         })
 

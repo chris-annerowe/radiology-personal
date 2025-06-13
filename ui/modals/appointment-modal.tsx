@@ -97,6 +97,7 @@ export default function AppointmentModal(props: ApptModalProps) {
             const dobString = data.get('dob')?.valueOf()
             const timeString = data.get('appt_time')?.valueOf()
             const sex = data.get('sex')?.valueOf()
+            const duration = data.get('duration')?.valueOf()
 
             if (typeof firstName !== 'string' || firstName?.length === 0) {
                 throw new Error("Invalid First Name")
@@ -144,9 +145,9 @@ export default function AppointmentModal(props: ApptModalProps) {
             //check if appointment already exists
             if(props.appt?.appointment_id){
                 console.log("Update existing appointment")
-                await updateAppointment(props.appt.appointment_id, patient?.patient_id, time, lastName,firstName, description, tel, dob, sex, index)
+                await updateAppointment(props.appt.appointment_id, patient?.patient_id, time, lastName,firstName, description, tel, dob, sex, index, duration)
             }else{
-                await createAppointment(lastName,firstName, description, props.date, props.modality, tel, dob, sex, props.index)
+                await createAppointment(lastName,firstName, description, props.date, props.modality, tel, dob, sex, props.index, duration)
             }
            // close modal and return to /dashboard/daybook page
            router.push("/dashboard/daybook")
@@ -237,6 +238,15 @@ export default function AppointmentModal(props: ApptModalProps) {
                             maxDate={new Date()} 
                             defaultDate={typeof props.appt?.dob !== 'string' && typeof props.appt?.dob !== 'number' && props.appt?.dob !== null && typeof props.appt?.dob !== 'undefined' ? new Date(props.appt?.dob) : undefined} 
                             onSelectedDateChanged={()=>setDOB}
+                        />
+                    </div>
+
+                    <div>
+                        <div className="mb-2 block">
+                            <Label htmlFor="duration" value="Duration" />
+                        </div>
+                        <TextInput id="duration" name="duration" type="" placeholder="30 mins" defaultValue={typeof props.appt?.duration === 'string' ? props.appt?.duration : ""} shadow
+                            
                         />
                     </div>
 

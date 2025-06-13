@@ -43,6 +43,7 @@ model appointment {
   tel              String?   @db.VarChar(10)
   sex              String?   @db.VarChar(10)
   index            Int?
+  duration         String?    @db.VarChar(15)
 }
 
 model orders {

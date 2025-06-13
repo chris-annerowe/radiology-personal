@@ -40,7 +40,8 @@ const Daybook = async ({
         dob:null,
         description: "",
         index: null,
-        modality: ""
+        modality: "",
+        duration: ""
       }
       temp.appointment_time = appt.appointment_time
       temp.appointment_id = appt.appointment_id
@@ -52,6 +53,7 @@ const Daybook = async ({
       temp.description = appt.description
       temp.index = appt.index
       temp.modality = appt.modality
+      temp.duration = appt.duration
       
       appts.push(temp)
   })
@@ -96,7 +98,8 @@ const Daybook = async ({
         dob:null,
         description: "",
         index: null,
-        modality: ""
+        modality: "",
+        duration: ""
       }
       temp.appointment_time = appt.appointment_time
       temp.appointment_id = appt.appointment_id
@@ -108,6 +111,7 @@ const Daybook = async ({
       temp.description = appt.description
       temp.index = appt.index
       temp.modality = appt.modality
+      temp.duration = appt.duration
       
       searchAppointments.push(temp)
     })

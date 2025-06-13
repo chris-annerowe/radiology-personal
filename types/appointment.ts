@@ -8,7 +8,8 @@ export interface Appointment {
     modality?: string | null,
     appointment_time: Date | null,
     description: string | null,
-    index: number | null
+    index: number | null,
+    duration: string | null
 }
 
 export const getBgColour = (modality:string) => {
