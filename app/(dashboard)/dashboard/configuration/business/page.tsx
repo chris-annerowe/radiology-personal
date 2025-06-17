@@ -1,11 +1,24 @@
-import { getConfiguration } from "@/actions/business-hours";
 import BusinessHoursForm from "@/ui/dashboard/configuration/business-hours-form";
 import { Button } from "flowbite-react";
 
 
-
 export default async function Configuration() {
-    const existingConfigurationData = await getConfiguration(); 
+    let businessHrs:any = {}
+    const getBusinessHrs = async () => {
+        const resp = await fetch('/api/getBusinessHours',{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+        })
+    
+    const data = await resp.json();
+    
+    businessHrs.push(data)
+    console.log("Business hours: ",data,businessHrs)
+    }
+
+    const call = getBusinessHrs()
     
     return (
         <>
@@ -13,7 +26,7 @@ export default async function Configuration() {
                 <div className="mx-auto max-w-2xl text-center mb-8">
                     <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Business Hours</h2>
                 </div>
-                <BusinessHoursForm configurationData={existingConfigurationData}/>
+                <BusinessHoursForm configurationData={businessHrs}/>
                 
             </div>
         </>

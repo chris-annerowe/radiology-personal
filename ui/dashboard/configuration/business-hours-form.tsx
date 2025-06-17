@@ -12,26 +12,14 @@ const initialState: ActionResponse = {
 }
 
 interface ConfigurationFormProps{
-    configurationData?: any 
+    configurationData?: any
 }
-
 export default  function BusinessHoursForm(props: ConfigurationFormProps) {
-
-    // const [state, formAction] = useFormState(saveBusinessHours, initialState)
 
     const [errors, setErrors] = useState<{[key:string]:any}>({});
 
     const [showModal, setShowModal] = useState(false);
 
-    
-
-    // useEffect(()=>{
-    //     if(state.errors){
-    //         setErrors(state.errors)
-    //     }
-
-    //     setShowModal(state.success);
-    // },[state])
 
     const saveBusinessHours = async (data:FormData) => {
         let opening_time = data.get('opening_time')?.valueOf()
