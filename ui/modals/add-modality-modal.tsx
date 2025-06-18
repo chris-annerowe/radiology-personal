@@ -18,7 +18,7 @@ export default  function AddModality(props:ModalProps) {
 
     const [errors, setErrors] = useState<{[key:string]:any}>({});
 
-    const handleSave = (data:FormData) => {
+    const handleSave = async (data:FormData) => {
         const name = data.get('name')?.valueOf()
         const code = data.get('code')?.valueOf()
         const description = data.get('description')?.valueOf()
@@ -31,7 +31,28 @@ export default  function AddModality(props:ModalProps) {
         }
 
         console.log("Modality form values: ",name, code, description)
-        //TODO: save values to db
+        
+        try {
+            const response = await fetch('/api/getModalities', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                code, name, description
+              }),
+            });
+    
+            if (response.ok) {
+              const result = await response.json();
+              console.log('New modality created', result)
+            } else {
+              console.error('Failed to save new modality');
+            }
+        } catch (e) {
+            console.log(e)
+        }
+        props.onClose()
     }
 
     return (

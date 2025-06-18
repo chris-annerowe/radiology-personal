@@ -33,10 +33,6 @@ export default function ModalityList(){
             }
             tempModality.push(temp)
         })
-    // temp = {
-    //     name: data.modality_name,
-    //     code: data.modality_code
-    // }
         setModalities(tempModality)
         console.log("Modality List: ",data.modalities, tempModality)
     }
