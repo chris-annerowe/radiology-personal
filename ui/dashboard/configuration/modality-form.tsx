@@ -1,10 +1,11 @@
 "use client"
 
-import { Pagination, Popover, Table } from "flowbite-react"
+import AddModality from "@/ui/modals/add-modality-modal"
+import { Button, Pagination, Popover, Table } from "flowbite-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { HiOutlinePencilAlt, HiTrash } from "react-icons/hi"
+import { HiOutlinePencilAlt, HiPlus, HiTrash } from "react-icons/hi"
 
 
 interface Modality{
@@ -14,6 +15,7 @@ interface Modality{
 export default function ModalityList(){
     let tempModality:Modality[] = []
     const [modalities, setModalities] = useState<Modality[]>([])
+    const [openModal, setOpenModal] = useState(false)
 
     const getModalities = async () => {
         const resp = await fetch('/api/getModalities',{
@@ -43,9 +45,20 @@ export default function ModalityList(){
         getModalities()
     },[])    
 
+    const closeModal = () => {
+        setOpenModal(false);
+    }
 
     return (
         <div className="overflow-x-auto">
+            <AddModality open={openModal} onClose={closeModal} />
+            <div className="flex space-x-4">
+                <Button className="mb-4" onClick={() => setOpenModal(true)}>
+                    <HiPlus className="mr-2 h-5 w-5" />
+                        Add Modality
+                </Button>         
+            </div>
+            
             <Table striped>
                 <Table.Head>
                     <Table.HeadCell>Name</Table.HeadCell>
