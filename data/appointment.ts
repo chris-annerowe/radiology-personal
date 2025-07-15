@@ -14,16 +14,18 @@ export const createAppointment = async (
     dob: Date,
     sex: string,
     index: number,
-    duration: string
+    duration: string,
+    patient_id: string
 ) =>{
     try{
         await db.appointment.create({
             data: {
-                lastName, 
-                firstName,
+                last_name: lastName, 
+                first_name: firstName,
                 appointment_time: date,
                 description,
                 modality: modality,
+                patient_id,
                 tel,
                 dob,
                 sex,
@@ -55,9 +57,9 @@ export const updateAppointment = async (
                 appointment_id: id
             },
             data: {
-                lastName, 
-                firstName,
-                patientid,
+                last_name: lastName, 
+                first_name: firstName,
+                patient_id: patientid,
                 appointment_time: sub(time,{hours: 5}),
                 description,
                 tel,
@@ -132,7 +134,7 @@ export const getUpcomingAppointmentsCount = async () => {
 export const getAppointmentSearchCount = async (searchName: string) => {
     const appointmentCount = await db.appointment.count({
         where: {
-            lastName: {
+            last_name: {
                 startsWith: searchName
             }
         }

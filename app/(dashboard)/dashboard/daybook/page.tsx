@@ -31,9 +31,10 @@ const Daybook = async ({
     appts = []
     appointments?.map(appt=>{
       let temp:Appointment = {
-        firstName: "",
-        lastName: "",
+        first_name: "",
+        last_name: "",
         appointment_id: null,
+        patient_id: "",
         appointment_time: null,
         tel: "",
         sex: "",
@@ -45,8 +46,9 @@ const Daybook = async ({
       }
       temp.appointment_time = appt.appointment_time
       temp.appointment_id = appt.appointment_id
-      temp.firstName = appt.firstName
-      temp.lastName = appt.lastName
+      temp.first_name = appt.first_name
+      temp.last_name = appt.last_name
+      temp.patient_id = appt.patient_id
       temp.tel = appt.tel
       temp.sex = appt.sex
       temp.dob = appt.dob
@@ -89,8 +91,8 @@ const Daybook = async ({
     searchAppointments = []
     appointments?.map(appt=>{
       let temp:Appointment = {
-        firstName: "",
-        lastName: "",
+        first_name: "",
+        last_name: "",
         appointment_id: null,
         appointment_time: null,
         tel: "",
@@ -99,18 +101,20 @@ const Daybook = async ({
         description: "",
         index: null,
         modality: "",
+        patient_id: "",
         duration: ""
       }
       temp.appointment_time = appt.appointment_time
       temp.appointment_id = appt.appointment_id
-      temp.firstName = appt.firstName
-      temp.lastName = appt.lastName
+      temp.first_name = appt.first_name
+      temp.last_name = appt.last_name
       temp.tel = appt.tel
       temp.sex = appt.sex
       temp.dob = appt.dob
       temp.description = appt.description
       temp.index = appt.index
       temp.modality = appt.modality
+      temp.patient_id = appt.patient_id
       temp.duration = appt.duration
       
       searchAppointments.push(temp)

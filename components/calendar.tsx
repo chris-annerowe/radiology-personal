@@ -22,9 +22,9 @@ interface AppointmentProps {
 }
 
 interface Appointment{
-    firstName: string | null,
-    lastName: string | null,
-    appointment_id: bigint | null,
+    first_name: string | null,
+    last_name: string | null,
+    appointment_id: number | null,
     dob: Date | null,
     tel: string | null,
     sex: string | null,
@@ -36,8 +36,8 @@ interface Appointment{
 }
   
 const resetAppointment:Appointment = {
-    firstName: null,
-    lastName: null,
+    first_name: null,
+    last_name: null,
     tel: null,
     sex: null,
     dob: null,

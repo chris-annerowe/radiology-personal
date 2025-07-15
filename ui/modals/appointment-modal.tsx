@@ -31,6 +31,7 @@ export default function AppointmentModal(props: ApptModalProps) {
     const [errors, setErrors] = useState<{[key:string]:any}>({});
     const [dob, setDOB] = useState<Date>()
     const [time, setTime] = useState<Date>()
+    const [businessHrs, setBusinessHrs] = useState(0)
 
     useEffect(()=>{
         if(errors){
@@ -39,52 +40,82 @@ export default function AppointmentModal(props: ApptModalProps) {
 
     },[errors])
 
-    const getIndex = (hour: number, mins: number) => {
-        switch(hour){
-            case 9: 
-                if(mins === 0)
-                    return 0
-                else
-                    return 1
-            case 10:  
-                if(mins === 0)
-                    return 2
-                else
-                    return 3
-            case 11: 
-                if(mins === 0)
-                    return 4
-                else
-                    return 5
-            case 12: 
-                if(mins === 0)
-                    return 6
-                else
-                    return 7
-            case 13: 
-                if(mins === 0)
-                    return 8
-                else
-                    return 9
-            case 14: 
-                if(mins === 0)
-                    return 10
-                else
-                    return 11
-            case 15: 
-                if(mins === 0)
-                    return 12
-                else
-                    return 13
-            case 16: 
-                if(mins === 0)
-                    return 14
-                else
-                    return 15
-            case 17:
-                return 16
-        }
+    useEffect(()=>{
+        getBusinessHours()
+
+    },[])
+
+    const getBusinessHours = async () => {
+        const resp = await fetch('/api/getBusinessHours',{
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        const data = await resp.json();
+        console.log("Appointments: ",data.config)
+        setBusinessHrs(data.config.opening_time);
     }
+
+    //TODO: pull opening hours and interval from db instead of hardcoding
+    const getIndex = (hour: number, mins: number, baseHour: number = businessHrs) => {
+        console.log("Opening hour ",businessHrs)
+        if (hour < baseHour || hour > 23 || (mins !== 0 && mins !== 30)) {
+            alert("Invalid time input");
+        }
+    
+        const hourOffset = hour - baseHour;
+        const minuteOffset = mins === 0 ? 0 : 1;
+    
+        return hourOffset * 2 + minuteOffset;
+    };
+
+    // const getIndex = (hour: number, mins: number) => {
+    //     switch(hour){
+    //         case 9: 
+    //             if(mins === 0)
+    //                 return 0
+    //             else
+    //                 return 1
+    //         case 10:  
+    //             if(mins === 0)
+    //                 return 2
+    //             else
+    //                 return 3
+    //         case 11: 
+    //             if(mins === 0)
+    //                 return 4
+    //             else
+    //                 return 5
+    //         case 12: 
+    //             if(mins === 0)
+    //                 return 6
+    //             else
+    //                 return 7
+    //         case 13: 
+    //             if(mins === 0)
+    //                 return 8
+    //             else
+    //                 return 9
+    //         case 14: 
+    //             if(mins === 0)
+    //                 return 10
+    //             else
+    //                 return 11
+    //         case 15: 
+    //             if(mins === 0)
+    //                 return 12
+    //             else
+    //                 return 13
+    //         case 16: 
+    //             if(mins === 0)
+    //                 return 14
+    //             else
+    //                 return 15
+    //         case 17:
+    //             return 16
+    //     }
+    // }
 
     async function handleSave(data: FormData) {
         try{
@@ -176,7 +207,7 @@ export default function AppointmentModal(props: ApptModalProps) {
                         <div className="mb-2 block">
                             <Label htmlFor="firstName" value="First Name" />
                         </div>
-                        <TextInput id="firstName" name="firstName" type="" placeholder="" defaultValue={typeof props.appt?.firstName === 'string' ? props.appt?.firstName : ""} required shadow
+                        <TextInput id="firstName" name="firstName" type="" placeholder="" defaultValue={typeof props.appt?.first_name === 'string' ? props.appt?.first_name : ""} required shadow
                             helperText={
                                 errors?.firstName && 'Required'
                             }
@@ -187,7 +218,7 @@ export default function AppointmentModal(props: ApptModalProps) {
                         <div className="mb-2 block">
                             <Label htmlFor="lastName" value="Last Name" />
                         </div>
-                        <TextInput id="lastName" name="lastName" type="" placeholder="" defaultValue={typeof props.appt?.lastName === 'string' ? props.appt?.lastName : ""} required shadow
+                        <TextInput id="lastName" name="lastName" type="" placeholder="" defaultValue={typeof props.appt?.last_name === 'string' ? props.appt?.last_name : ""} required shadow
                             helperText={
                                 errors?.lastName && 'Required'
                             }
