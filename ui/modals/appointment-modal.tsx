@@ -59,12 +59,13 @@ export default function AppointmentModal(props: ApptModalProps) {
             }
         })
         const data = await resp.json();
-        console.log("Appointments: ",data.config)
-        setBusinessHrs(data.config.opening_time);
+        console.log("Appointments: ",data.config[0])
+        setBusinessHrs(data.config[0].opening_time);
     }
 
-    const getIndex = (hour: number, mins: number, baseHour: number = businessHrs) => {
-        console.log("Opening hour ",businessHrs)
+    const getIndex = async (hour: number, mins: number, baseHour: number = businessHrs) => {
+        await getBusinessHours()
+        console.log("Setting index ",businessHrs)
         if (hour < baseHour || hour > 23 || (mins !== 0 && mins !== 30)) {
             console.log("Invalid time input");
         }
@@ -115,31 +116,38 @@ export default function AppointmentModal(props: ApptModalProps) {
             if (typeof props.index !== 'number'){
                 throw new Error("Invalid index")
             }
+            if (typeof duration !== 'string') {
+                throw new Error("Invalid Duration")
+            }
 
             const dob = new Date(dobString)
             const time = new Date(timeString)
 
             //assign index based on updated time
-            const index = getIndex(time.getHours(), time.getMinutes())
+            const index = await getIndex(time.getHours(), time.getMinutes())
+            console.log("Index: ",index)
 
             //check if patient exists
-            let patient = await findPatientByName(lastName,1,5).then(res=>{
+            let patients = await findPatientByName(lastName,1,5).then(res=>{
                 console.log("Patient res ",res)
             })
-            console.log("Patient: ",patient)
+            let patient = {}
+            console.log("Patient: ",patients)
             //verify patient is correct using dob
-            patient?.map(p => {
+            patients?.map(p => {
                     if(p.dob.getDate() === dob.getDate() && p.dob.getMonth() === dob.getMonth() && p.dob.getFullYear() === dob.getFullYear()){
-                        console.log("Patient dob verified: ", p)
+                        patient = p
+                        console.log("Patient dob verified: ", p,patient)
                     }
+                    //TODO: set patient that matches to a variable
              })
 
             //check if appointment already exists
             if(props.appt?.appointment_id){
                 console.log("Update existing appointment")
-                await updateAppointment(props.appt.appointment_id, patient?.patient_id, time, lastName,firstName, description, tel, dob, sex, index, duration)
+                await updateAppointment(props.appt.appointment_id, patient.patient_id ? patient.patient_id : null, time, lastName,firstName, description, tel, dob, sex, duration, index)
             }else{
-                await createAppointment(lastName,firstName, description, props.date, props.modality, tel, dob, sex, props.index, duration)
+                await createAppointment(lastName,firstName, description, props.date, props.modality, tel, dob, sex, props.index, duration,patient.patient_id ? patient.patient_id : null)
             }
            // close modal and return to /dashboard/daybook page
            router.push("/dashboard/daybook")
@@ -278,8 +286,18 @@ export default function AppointmentModal(props: ApptModalProps) {
                         Delete <HiTrash />
                     </Button>
                 )}
-                <Button type="submit" color="blue">Save</Button>
+                <Button type="submit" onClick={handleSave} color="blue">Save</Button>
                 <Button type="button" onClick={handleAccessioning}>Accession</Button>
+                {/* <Popover
+                                                        trigger="hover"
+                                                        content={
+                                                            (<div className="p-2">
+                                                                Accession
+                                                            </div>)}>
+                                                        <Link href='#' onClick={handleAccessioning} className="font-medium pt-4 text-cyan-600 dark:text-cyan-500 text-center">
+                                                            <HiNewspaper size={18} className="mx-auto" />
+                                                        </Link>
+                                                    </Popover> */}
             </div>
 
 
