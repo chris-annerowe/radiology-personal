@@ -87,7 +87,8 @@ export default function DemographicsTab(props: {
     const [patientSex, setSex] = useState(props.patient.patient_id !== '' && props.patient.sex !== undefined && props.patient.sex !== null ? props.patient.sex : (patient.sex !== undefined && patient.sex !== null ? patient.sex : ''))
 
     const [patientFormDisabled, setPatientFormDisabled] = useState(false);
-    const [file, setFile] = useState<File>()
+    const [file, setFile] = useState<File>()    
+    const [uploadSuccess, setUploadSuccess] = useState(false);
 
     
     useEffect(() => {
@@ -168,6 +169,11 @@ export default function DemographicsTab(props: {
     }
 
     const goToNext = () => {
+        if (!uploadSuccess) {
+            alert("You must upload a valid image before continuing.");
+            return;
+        }
+
         console.log("Active Tab: "+props.activeTab);
         props.tabsRef.current?.setActiveTab(props.activeTab+1)
     }
@@ -196,7 +202,13 @@ export default function DemographicsTab(props: {
                     body: data
                 })
 
-                if(!response.ok) throw new Error (await response.text())
+                if(!response.ok) {
+                    console.warn("Upload failed. ", await response.text())
+                    alert("Upload failed. Please try again.");
+                }
+                // mark upload as successful
+                setUploadSuccess(true);
+
             }catch(e){
                 console.error(e)
             }
