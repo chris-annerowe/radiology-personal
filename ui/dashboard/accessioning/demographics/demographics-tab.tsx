@@ -14,7 +14,6 @@ import PatientSearchModal from "./patient-search-modal";
 import { Patient } from "@/types/patient";
 import DatePickerField from "./dob-datepicker";
 import GenderDropdown from "./gender-dropdown";
-import PatientForm from "../../patient/patient-form";
 import PatientFormModal from "@/ui/modals/patient-form-modal";
 
 import store from '@/store'
@@ -58,7 +57,6 @@ export default function DemographicsTab(props: {
     setSelectedPatient:(patient:Patient)=>void,
     patient: Patient
 }) {
-    // console.log("Patient prop from patient list ",props.patient)
     const [state, formAction] = useFormState(savePatient, initialState)
 
     const [errors, setErrors] = useState<{ [key: string]: any }>({});
@@ -127,7 +125,6 @@ export default function DemographicsTab(props: {
     const closePatientForm = () => {
         setOpenPatientForm(false);
         console.log("Closing patient modal. ",patient)
-        // goToNext()
     }
 
     const sendEmail = async (emailData:any) => {
@@ -179,6 +176,13 @@ export default function DemographicsTab(props: {
         e.preventDefault()
         if(!file) return
         
+        // Validate file type
+        const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!validImageTypes.includes(file.type)) {
+            alert("Invalid file type. Please upload an image.");
+            throw new Error("File type not allowed. Only image files are accepted.");
+        }
+
       // Example usage
       if(patient.patient_id !== ''){
         await createFolder(patient.patient_id)
@@ -245,8 +249,7 @@ export default function DemographicsTab(props: {
         }
     },[])
     
-    // consts appointment = store.getState().appointment.appointment.firstName
-    console.log("Store ",store.getState().appointment.appointment.firstName )
+    console.log("Store ",store.getState().appointment.appointment )
     return (
     <>
             
@@ -396,15 +399,6 @@ export default function DemographicsTab(props: {
                             }
                         />
                     </div>
-                    {/* <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="doc_id" value="Doc ID" />
-                        </div>
-                        <TextInput id="doc_id" name="doc_id" type="" placeholder="" sizing='xs' color={errors?.doc_id ? "failure" : "gray"} onChange={() => resetField("doc_id")} defaultValue={""} disabled={false} shadow
-                            helperText={
-                                errors?.doc_id && errors?.doc_id[0]
-                            } />
-                    </div> */}
                     <div>
                         <div className="mb-2 block">
                             <Label htmlFor="ref_date" value="Referral Date" />
@@ -422,42 +416,10 @@ export default function DemographicsTab(props: {
                 </div>
                 <div className="border-t border-2 border-gray-200 my-7"></div>
 
-                {/** Identification Section */}
-                {/* <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-cyan-500 sm:text-2xl mb-3">Examination Required</h3>
-                <div className="grid grid-flow-row grid-cols-2 justify-stretch gap-3">
-                    
-                <div >
-                        <div className="mb-2 block">
-                            <Label htmlFor="priority" value="Priority" />
-                        </div>
-                        <Select id="priority" name="priority" defaultValue={'RT'} disabled={patientFormDisabled} required>
-                            <option value={'RT'}>Routine</option>
-                            <option value={'URG'}>Urgent</option>
-                        </Select>
-                    </div>
-
-                    <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="study" value="Study Name" />
-                        </div>
-                        <TextInput id="study" name="study" type="" placeholder="" color={errors?.idnum ? "failure" : "gray"} onChange={() => resetField("study")} defaultValue={""} disabled={patientFormDisabled} required shadow
-                            helperText={
-                                errors?.study && errors?.study[0]
-                            }
-                        />
-                    </div>
-
-                </div>
- */}
-
                 <div className="flex my-8 justify-end">
-                    {/* {patient.patient_id ?
-                    (<Button className="w-40" color="blue" onClick={()=>goToNext()}>Continue</Button>)
-                    :
-                    ( */}
-                        <Button className="w-40" type="submit" color="blue">Continue</Button>
-                    {/* )
-                    } */}
+                   
+                    <Button className="w-40" type="submit" color="blue">Continue</Button>
+                    
                     
                 </div>
 
