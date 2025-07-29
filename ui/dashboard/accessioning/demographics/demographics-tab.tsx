@@ -89,7 +89,23 @@ export default function DemographicsTab(props: {
     const [patientFormDisabled, setPatientFormDisabled] = useState(false);
     const [file, setFile] = useState<File>()    
     const [uploadSuccess, setUploadSuccess] = useState(false);
+    const [previewURL, setPreviewURL] = useState<string | null>(null);
+    const [showPreview, setShowPreview] = useState(true);
 
+    // Update preview when file changes
+    useEffect(() => {
+        if (file) {
+            const objectURL = URL.createObjectURL(file);
+            setPreviewURL(objectURL);
+
+            
+            saveFile()
+    
+            // Cleanup to avoid memory leaks
+            return () => URL.revokeObjectURL(objectURL);
+        }
+    }, [file]);
+    
     
     useEffect(() => {
         if (state.errors) {
@@ -178,8 +194,8 @@ export default function DemographicsTab(props: {
         props.tabsRef.current?.setActiveTab(props.activeTab+1)
     }
 
-    const saveFile = async (e:React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    const saveFile = async () => {
+        // e.preventDefault()
         if(!file) return
         
         // Validate file type
@@ -279,12 +295,31 @@ export default function DemographicsTab(props: {
                     Search Patients
                 </Button>
                 <input type="file" name="image" onChange={(e)=>setFile(e.target.files?.[0])} />
-                <form onSubmit={saveFile}>
+                {/* <form onSubmit={saveFile}>
                     <Button className="mb-4" type="submit">
                         Upload Referral
                     </Button>
-                </form>
+                </form> */}
             </div>
+            {previewURL && (
+                <div style={{ marginTop: '1rem' }}>
+                    <button 
+                        type="button" 
+                        onClick={() => setShowPreview(prev => !prev)}
+                        style={{ marginBottom: '0.5rem' }}
+                    >
+                        {showPreview ? 'Hide Preview' : 'Show Preview'}
+                    </button>
+
+                    {showPreview && (
+                        <img
+                            src={previewURL}
+                            alt="Selected file preview"
+                            style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px' }}
+                        />
+                    )}
+                </div>
+            )}
             <form action={checkIsExisting} autoComplete="off">
 
                 {/** Demographics Section */}
