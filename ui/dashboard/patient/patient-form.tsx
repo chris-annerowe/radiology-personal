@@ -150,48 +150,17 @@ export default function PatientForm(props: PatientFormProps) {
                         <Select id="sex" name="sex" defaultValue={(patient && patient.sex) ? patient.sex : ''} required>
                             <option value={'M'}>Male</option>
                             <option value={'F'}>Female</option>
+                            <option value={'MTF'}>Trans-Woman</option>
+                            <option value={'FTM'}>Trans-Man</option>
                         </Select>
                     </div>
-
-
-                    {/* <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="height" value="Height" />
-                        </div>
-                        <TextInput id="height" name="height" type="number" step={'0.01'} placeholder="" color={errors?.last_name ? "failure" : "gray"} onChange={() => resetField("height")} defaultValue={(patient && patient.height) ? patient.height.toString() : ""} shadow
-                            helperText={
-                                errors?.height && errors?.height[0]
-                            } />
-                    </div>
-
-                    <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="weight" value="Weight" />
-                        </div>
-                        <TextInput id="weight" name="weight" type="number" step={'0.01'} placeholder="" color={errors?.last_name ? "failure" : "gray"} onChange={() => resetField("weight")} defaultValue={(patient && patient.weight) ? patient.weight.toString() : ""} shadow
-                            helperText={
-                                errors?.height && errors?.height[0]
-                            } />
-                    </div>
-
-                    <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="allergies" value="Allergies" />
-                        </div>
-                        <TextInput id="allergies" name="allergies" placeholder="" color={errors?.allergies ? "failure" : "gray"} onChange={() => resetField("allergies")} defaultValue={(patient && patient.allergies) ? patient.allergies.toString() : ""} shadow
-                            helperText={
-                                errors?.allergies && errors?.allergies[0]
-                            } />
-                    </div> */}
 
                     <div>
                         <div className="mb-2 block">
                             <Label htmlFor="nationality" value="Nationality" />
                         </div>
                         <TextInput id="nationality" name="nationality" type="" placeholder="" color={errors?.nationality ? "failure" : "gray"} onChange={() => resetField("nationality")} defaultValue={(patient && patient.nationality) ? patient.nationality : ""} required shadow
-                            helperText={
-                                errors?.nationality && errors?.nationality[0]
-                            } />
+                            helperText="Country Code eg JM"  />
                     </div>
 
                     {/* <div>

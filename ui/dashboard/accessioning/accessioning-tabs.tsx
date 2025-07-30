@@ -8,9 +8,6 @@ import { useEffect, useRef, useState } from "react";
 import { PatientStudy, Study } from "@/types/studies";
 import StudiesTab from "./studies/studies-tab";
 import { Patient } from "@/types/patient";
-// import { findStudyById, findStudyByPatientId } from "@/actions/studies";
-import { ClientProvider, InsuranceProvider, PaymentType } from "@/types/pos";
-import { deletePatientStudy } from "@/actions/studies";
 
 const patientInitialState = {
     patient_id: "",

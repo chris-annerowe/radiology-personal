@@ -49,7 +49,7 @@ interface PatientFormProps {
     selectedPatient: (patient:Patient)=>void
     show: boolean
     onClose: ()=>void | void
-    patient: any
+    patient?: any
 }
 
 export default function PatientFormModal(props: PatientFormProps) {
@@ -119,9 +119,6 @@ console.log("Patient form props ",props.patient)
             dob: new Date(formData.get('dob') as string),
             // age: getAge(formData.get('dob') as string),
             sex: formData.get('sex') as string,
-            // height: parseFloat(formData.get('height') as string),
-            // weight: parseFloat(formData.get('weight') as string),
-            // allergies: formData.get('allergies') as string,
             nationality: formData.get('nationality') as string,
             // next_kin: formData.get('next_kin') as string,
             address_1: formData.get('address_1') as string,
@@ -208,48 +205,17 @@ console.log("Patient form props ",props.patient)
                         <Select id="sex" name="sex" defaultValue={(props.patient && props.patient.sex) ? props.patient.sex : ''} required>
                             <option value={'M'}>Male</option>
                             <option value={'F'}>Female</option>
+                            <option value={'MTF'}>Trans-Woman</option>
+                            <option value={'FTM'}>Trans-Man</option>
                         </Select>
                     </div>
-
-
-                    {/* <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="height" value="Height" />
-                        </div>
-                        <TextInput id="height" name="height" type="number" step={'0.01'} placeholder="" color={errors?.last_name ? "failure" : "gray"} onChange={() => resetField("height")} defaultValue={(patient && patient.height) ? patient.height.toString() : ""} shadow
-                            helperText={
-                                errors?.height && errors?.height[0]
-                            } />
-                    </div>
-
-                    <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="weight" value="Weight" />
-                        </div>
-                        <TextInput id="weight" name="weight" type="number" step={'0.01'} placeholder="" color={errors?.last_name ? "failure" : "gray"} onChange={() => resetField("weight")} defaultValue={(patient && patient.weight) ? patient.weight.toString() : ""} shadow
-                            helperText={
-                                errors?.height && errors?.height[0]
-                            } />
-                    </div>
-
-                    <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="allergies" value="Allergies" />
-                        </div>
-                        <TextInput id="allergies" name="allergies" placeholder="" color={errors?.allergies ? "failure" : "gray"} onChange={() => resetField("allergies")} defaultValue={(patient && patient.allergies) ? patient.allergies.toString() : ""} shadow
-                            helperText={
-                                errors?.allergies && errors?.allergies[0]
-                            } />
-                    </div> */}
 
                     <div>
                         <div className="mb-2 block">
                             <Label htmlFor="nationality" value="Nationality" />
                         </div>
                         <TextInput id="nationality" name="nationality" type="" placeholder="" color={errors?.nationality ? "failure" : "gray"} onChange={() => resetField("nationality")} defaultValue={(patient && patient.nationality) ? patient.nationality : ""} required shadow
-                            helperText={
-                                errors?.nationality && errors?.nationality[0]
-                            } />
+                            helperText="Country Code eg JM" />
                     </div>
 
                     {/* <div>

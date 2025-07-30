@@ -4,10 +4,14 @@ import { findPatientByName } from "@/actions/patient";
 import { createAppointment, deleteAppointment, updateAppointment } from "@/data/appointment";
 import { Appointment } from "@/types/appointment";
 import { add, format } from "date-fns";
-import { Button, Datepicker, Label, Modal, TextInput } from "flowbite-react";
+import { Button, Datepicker, Label, Modal, Popover, TextInput } from "flowbite-react";
 import { redirect, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { HiTrash } from "react-icons/hi";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { HiNewspaper, HiTrash } from "react-icons/hi";
+import { updateAppt } from "@/ui/reducers/appointmentSlice"
+import store from "@/store"
+import Link from "next/link";
 
 // interface Appointment{
 //     date: Date | null,
@@ -26,6 +30,8 @@ interface ApptModalProps{
 };
 
 export default function AppointmentModal(props: ApptModalProps) {
+    const dispatch = useDispatch();
+
     const router = useRouter()
     console.log("Appointment to update: ",props.appt)
     const [errors, setErrors] = useState<{[key:string]:any}>({});
@@ -53,15 +59,15 @@ export default function AppointmentModal(props: ApptModalProps) {
             }
         })
         const data = await resp.json();
-        console.log("Appointments: ",data.config)
-        setBusinessHrs(data.config.opening_time);
+        console.log("Appointments: ",data.config[0])
+        setBusinessHrs(data.config[0].opening_time);
     }
 
-    //TODO: pull opening hours and interval from db instead of hardcoding
-    const getIndex = (hour: number, mins: number, baseHour: number = businessHrs) => {
-        console.log("Opening hour ",businessHrs)
+    const getIndex = async (hour: number, mins: number, baseHour: number = businessHrs) => {
+        await getBusinessHours()
+        console.log("Setting index ",businessHrs)
         if (hour < baseHour || hour > 23 || (mins !== 0 && mins !== 30)) {
-            alert("Invalid time input");
+            console.log("Invalid time input");
         }
     
         const hourOffset = hour - baseHour;
@@ -70,65 +76,21 @@ export default function AppointmentModal(props: ApptModalProps) {
         return hourOffset * 2 + minuteOffset;
     };
 
-    // const getIndex = (hour: number, mins: number) => {
-    //     switch(hour){
-    //         case 9: 
-    //             if(mins === 0)
-    //                 return 0
-    //             else
-    //                 return 1
-    //         case 10:  
-    //             if(mins === 0)
-    //                 return 2
-    //             else
-    //                 return 3
-    //         case 11: 
-    //             if(mins === 0)
-    //                 return 4
-    //             else
-    //                 return 5
-    //         case 12: 
-    //             if(mins === 0)
-    //                 return 6
-    //             else
-    //                 return 7
-    //         case 13: 
-    //             if(mins === 0)
-    //                 return 8
-    //             else
-    //                 return 9
-    //         case 14: 
-    //             if(mins === 0)
-    //                 return 10
-    //             else
-    //                 return 11
-    //         case 15: 
-    //             if(mins === 0)
-    //                 return 12
-    //             else
-    //                 return 13
-    //         case 16: 
-    //             if(mins === 0)
-    //                 return 14
-    //             else
-    //                 return 15
-    //         case 17:
-    //             return 16
-    //     }
-    // }
-
-    async function handleSave(data: FormData) {
+    
+    async function handleSave(e) {
         try{
+            e.preventDefault();
+            const data = getFormData();
             console.log("Handling save")
 
-            const lastName = data.get('lastName')?.valueOf()
-            const firstName = data.get('firstName')?.valueOf()
-            const description = data.get('description')?.valueOf()           
-            const tel = data.get('tel')?.valueOf()
-            const dobString = data.get('dob')?.valueOf()
-            const timeString = data.get('appt_time')?.valueOf()
-            const sex = data.get('sex')?.valueOf()
-            const duration = data.get('duration')?.valueOf()
+            const lastName = data.lastName
+            const firstName = data.firstName
+            const description = data.description          
+            const tel = data.tel
+            const dobString = data.dob
+            const timeString = data.appt_time
+            const sex = data.sex
+            const duration = data.duration
 
             if (typeof firstName !== 'string' || firstName?.length === 0) {
                 throw new Error("Invalid First Name")
@@ -154,31 +116,38 @@ export default function AppointmentModal(props: ApptModalProps) {
             if (typeof props.index !== 'number'){
                 throw new Error("Invalid index")
             }
+            if (typeof duration !== 'string') {
+                throw new Error("Invalid Duration")
+            }
 
             const dob = new Date(dobString)
             const time = new Date(timeString)
 
             //assign index based on updated time
-            const index = getIndex(time.getHours(), time.getMinutes())
+            const index = await getIndex(time.getHours(), time.getMinutes())
+            console.log("Index: ",index)
 
             //check if patient exists
-            let patient = await findPatientByName(lastName,1,5).then(res=>{
+            let patients = await findPatientByName(lastName,1,5).then(res=>{
                 console.log("Patient res ",res)
             })
-            console.log("Patient: ",patient)
+            let patient = {}
+            console.log("Patient: ",patients)
             //verify patient is correct using dob
-            patient?.map(p => {
+            patients?.map(p => {
                     if(p.dob.getDate() === dob.getDate() && p.dob.getMonth() === dob.getMonth() && p.dob.getFullYear() === dob.getFullYear()){
-                        console.log("Patient dob verified: ", p)
+                        patient = p
+                        console.log("Patient dob verified: ", p,patient)
                     }
+                    //TODO: set patient that matches to a variable
              })
 
             //check if appointment already exists
             if(props.appt?.appointment_id){
                 console.log("Update existing appointment")
-                await updateAppointment(props.appt.appointment_id, patient?.patient_id, time, lastName,firstName, description, tel, dob, sex, index, duration)
+                await updateAppointment(props.appt.appointment_id, patient.patient_id ? patient.patient_id : null, time, lastName,firstName, description, tel, dob, sex, duration, index)
             }else{
-                await createAppointment(lastName,firstName, description, props.date, props.modality, tel, dob, sex, props.index, duration)
+                await createAppointment(lastName,firstName, description, props.date, props.modality, tel, dob, sex, props.index, duration,patient.patient_id ? patient.patient_id : null)
             }
            // close modal and return to /dashboard/daybook page
            router.push("/dashboard/daybook")
@@ -193,6 +162,25 @@ export default function AppointmentModal(props: ApptModalProps) {
         props.onClose()
     }
 
+    const handleAccessioning = () => {
+        const data = getFormData();
+        console.log('Accessioning:', data);
+        dispatch(updateAppt(data));
+        console.log("Store ",store.getState())
+
+        router.push(`/dashboard/accessioning`)
+    }
+
+    const formRef = useRef(null);
+
+    const getFormData = () => {
+      const formData = new FormData(formRef.current);
+      return Object.fromEntries(formData.entries());
+    };
+  
+  
+      
+      
 
     return (
         <Modal show={props.show} size="md" onClose={props.onClose} popup>
@@ -200,8 +188,8 @@ export default function AppointmentModal(props: ApptModalProps) {
                 <div  className="justify-center">Appointment Details {props.holiday ? `: ${props.holiday}` : null}</div>
             </Modal.Header>
             <Modal.Body>
-            <>
-            <form autoComplete="off" action={handleSave}>
+            <div className="relative pb-24">
+              <form autoComplete="off" ref={formRef} onSubmit={handleSave}>
                 <div className="grid grid-flow-row grid-cols-2 justify-stretch gap-3">
                     <div>
                         <div className="mb-2 block">
@@ -283,25 +271,37 @@ export default function AppointmentModal(props: ApptModalProps) {
 
                     <div  className="col-span-2">
                         <div className="mb-2 block">
-                            <Label htmlFor="description" value="Description" />
+                            <Label htmlFor="description" value="Notes" />
                         </div>
-                        <TextInput id="description" name="description" sizing='lg' placeholder="Description" defaultValue={typeof props.appt?.description === 'string' ? props.appt?.description : ""} shadow
+                        <TextInput id="description" name="description" sizing='lg' placeholder="Notes" defaultValue={typeof props.appt?.description === 'string' ? props.appt?.description : ""} shadow
                             helperText='Eg. Xray of left arm'
                         />
                     </div>
-
-                    <Modal.Footer>
-                    <div className="flex my-8 gap-2 justify-end">
-                        <Button color='red' onClick={()=>{props.onClose()}}>Exit</Button>
-                        {props.appt?.appointment_id ? <Button onClick={()=>{handleDelete()}}>Delete <HiTrash/></Button> : null}
-                        <Button type="submit" color="blue">Save</Button>
-                    </div>
-                    </Modal.Footer>
                 </div>
-            </form>
+              </form>
+            <div className="absolute bottom-4 right-4 flex gap-2"> {/* Positioned Footer */}
+                <Button color='red' onClick={props.onClose}>Exit</Button>
+                {props.appt?.appointment_id && (
+                    <Button onClick={handleDelete}>
+                        Delete <HiTrash />
+                    </Button>
+                )}
+                <Button type="submit" onClick={handleSave} color="blue">Save</Button>
+                <Button type="button" onClick={handleAccessioning}>Accession</Button>
+                {/* <Popover
+                                                        trigger="hover"
+                                                        content={
+                                                            (<div className="p-2">
+                                                                Accession
+                                                            </div>)}>
+                                                        <Link href='#' onClick={handleAccessioning} className="font-medium pt-4 text-cyan-600 dark:text-cyan-500 text-center">
+                                                            <HiNewspaper size={18} className="mx-auto" />
+                                                        </Link>
+                                                    </Popover> */}
+            </div>
 
 
-        </>
+        </div>
             </Modal.Body>
         </Modal>
     )

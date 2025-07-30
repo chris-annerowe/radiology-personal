@@ -39,7 +39,7 @@ export const createAppointment = async (
 }
 
 export const updateAppointment = async (
-    id: bigint,
+    id: number,
     patientid: string,
     time: Date,
     lastName: string,
@@ -48,9 +48,10 @@ export const updateAppointment = async (
     tel: string,
     dob: Date,
     sex: string,
-    index: number,
-    duration: string
+    duration: string,
+    index: number
 ) =>{
+    console.log("Updating")
     try{
         await db.appointment.update({
             where: {
@@ -65,8 +66,8 @@ export const updateAppointment = async (
                 tel,
                 dob,
                 sex,
-                index,
-                duration
+                duration,
+                index
             }
         })
 
@@ -185,7 +186,7 @@ export const getAppointmentsByName = async(name:string) => {
     return appointments
 }
 
-export const deleteAppointment = async (id: bigint) => {
+export const deleteAppointment = async (id: number) => {
     await db.appointment.delete({
         where: {
             appointment_id: id

@@ -1,16 +1,14 @@
 "use client";
 
-import { findPatientByName, findPatientsByNameAndDOB } from "@/actions/patient";
+import { findPatientByName } from "@/actions/patient";
 import { ActionResponse } from "@/types/action";
 import { Patient, PatientSearch } from "@/types/patient";
-import DatePicker from "@/ui/common/date-picker";
-import { Prisma } from "@prisma/client";
 import { format } from "date-fns";
-import { Button, Checkbox, Label, Modal, Pagination, Table, TextInput } from "flowbite-react";
-import email from "next-auth/providers/email";
+import { Button, Modal, Pagination, Table, TextInput } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { useFormState } from "react-dom";
-import { HiSearch } from "react-icons/hi";
+import { HiPlus, HiSearch } from "react-icons/hi";
+import store from "@/store"
+import PatientFormModal from "@/ui/modals/patient-form-modal";
 
 const initialState: ActionResponse<PatientSearch> = {
     success: false,
@@ -22,14 +20,44 @@ interface PatientSearchModalProps {
     onClose: () => void,
     onSelect: (patient: Patient) => void
 }
-export default function PatientSearchModal(props: PatientSearchModalProps) {
 
-    //const patients: Patient[] = [];
+const patientInitialState = {
+    patient_id: "",
+    first_name: "",
+    last_name: "",
+    other_name: "",
+    title: "",
+    dob: undefined,
+    age: 0,
+    sex: "",
+    height: 0,
+    weight: 0,
+    allergies: "",
+    nationality: "",
+    next_kin: "",
+    address_1: "",
+    address_2: "",
+    city: "",
+    parish: "",
+    telephone_1: "",
+    telephone_2: "",
+    cellular: "",
+    email: "",
+    id_type: "",
+    idnum: ""
+
+}
+
+export default function PatientSearchModal(props: PatientSearchModalProps) {
+    const daybookData = store.getState().appointment.appointment
 
     const [patients, setPatients] = useState<Patient[]>([])
+    const [patient, setPatient] = useState<Patient>(patientInitialState)
 
-    const [errors, setErrors] = useState<{ [key: string]: any }>({});
-
+    const [openPatientModal, setOpenPatientModal] = useState(false);
+    
+    const defaultSearch = daybookData.firstName || daybookData.lastName ? `${daybookData.firstName} ${daybookData.lastName}`.trim() : '';
+      
     const limit = 5;
 
 
@@ -48,21 +76,48 @@ export default function PatientSearchModal(props: PatientSearchModalProps) {
 
     const [totalPages, setTotalPages] = useState(1);
 
+const selectPatient = (patient: Patient) => {
+        console.log("Selected patient ",patient)
+        setPatient(patient);
+        closePatientModal();
+        console.log(patient);
+    }
 
-
-    const searchPatients = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const searchPatients = async (e:React.ChangeEvent<HTMLInputElement>) => {
         const search = e.currentTarget.value;
-        if (e.key === "Enter") {
-            let result = await findPatientByName(search, activePage, limit);
+        let result = await findPatientByName(search, activePage, limit);
 
             if (result.data) {
                 setPatients(result.data);
                 setTotalPages(result.pagination.count / limit);
             }
-        }
-
-
     };
+
+    const searchDefault = async (data:string) => {
+        let result = await findPatientByName(data, activePage, limit);
+
+            if (result.data) {
+                setPatients(result.data);
+                setTotalPages(result.pagination.count / limit);
+            }else{
+                return 
+            }
+    }
+
+    useEffect(() => {
+        if (defaultSearch) {
+            console.log("Searching ",defaultSearch)
+            searchDefault(defaultSearch); // simulating an event
+        }
+    }, [defaultSearch]);
+
+    useEffect(() => {
+        if (patient.first_name) {
+            console.log("Searching ",patient.first_name, patient.last_name)
+            searchDefault(`${patient.first_name} ${patient.last_name}`); // simulating an event
+        }
+    }, [patient]);
+    
 
     const onPageChange = (page: number) => {
         setActivePage(page);
@@ -80,6 +135,9 @@ export default function PatientSearchModal(props: PatientSearchModalProps) {
 
     }
 
+    const closePatientModal = () => {
+        setOpenPatientModal(false);
+    }
 
     return (
         <>
@@ -89,18 +147,18 @@ export default function PatientSearchModal(props: PatientSearchModalProps) {
                     <div className="space-y-6">
                         <h3 className="text-xl font-medium text-gray-900 dark:text-white">Search Patients</h3>
 
-
-                        <div className="flex space-x-2">
-                            <TextInput id="search" type="ematextil" icon={HiSearch} placeholder="Search for patients" className="" onKeyDown={searchPatients} />
-                            {/*<TextInput id="first_name" name="first_name" type="" placeholder="First Name" color={errors?.last_name ? "failure" : "gray"} onChange={handlePatientSearchChange} className="" />
-                            <TextInput id="last_name" name="last_name" type="" placeholder="Last Name" color={errors?.first_name ? "failure" : "gray"} onChange={handlePatientSearchChange} className="" />*/}
-                            {/*<Datepicker name="dob" value={patientSearch.dob.toDateString()} onSelectedDateChanged={(date) => handleDOBDateChange(date)}  />*/}
-                            {/*<Button onClick={() => { searchPatients(patientSearch.firstName) }}>
-                                <HiSearch className="mr-2 h-5 w-5" />
-                                Search
-                        </Button>*/}
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="flex space-x-2">
+                                <TextInput id="search" type="text" icon={HiSearch} placeholder="Search for patients" className="" onChange={searchPatients} 
+                                defaultValue={defaultSearch}/>
+                            </div>
+                            <div>
+                                <Button className="mb-4" onClick={() => setOpenPatientModal(true)}>
+                                    <HiPlus className="mr-2 h-5 w-5" />
+                                        Create Patient
+                                </Button>
+                            </div>
                         </div>
-
                         <Table striped hoverable>
                             <Table.Head>
                                 <Table.HeadCell>Last Name</Table.HeadCell>
@@ -133,7 +191,10 @@ export default function PatientSearchModal(props: PatientSearchModalProps) {
                         <div className="flex overflow-x-auto sm:justify-center">
                             <Pagination currentPage={activePage} totalPages={totalPages < 1 ? 1 : totalPages} onPageChange={onPageChange} />
                         </div>
+                        
+                        <PatientFormModal show={openPatientModal} onClose={closePatientModal} selectedPatient={selectPatient}/>
 
+                        
                     </div>
                 </Modal.Body>
             </Modal>

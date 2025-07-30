@@ -186,11 +186,12 @@ model Business_Hours {
 }
 
 model referral {
-  doc_id          String    @id @db.VarChar(20)
+  doc_id          Int    @id @default(autoincrement())
   doc_name        String    @db.VarChar(50)
-  doc_address     String    @db.VarChar(80)
-  doc_tel         String    @db.VarChar(10)
-  fax             String    @db.VarChar(10)
+  doc_address1     String    @db.VarChar(80)
+  doc_tel         String    @db.VarChar(15)
+  doc_address2     String    @db.VarChar(80)
+  doc_tel2        String    @db.VarChar(15)
   diagnosis       String    @db.VarChar(150)
   ref_date        DateTime
   createdAt       DateTime  @default(now())    

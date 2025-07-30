@@ -14,9 +14,9 @@ import PatientSearchModal from "./patient-search-modal";
 import { Patient } from "@/types/patient";
 import DatePickerField from "./dob-datepicker";
 import GenderDropdown from "./gender-dropdown";
-import PatientForm from "../../patient/patient-form";
 import PatientFormModal from "@/ui/modals/patient-form-modal";
 
+import store from '@/store'
 
 const initialState: ActionResponse = {
     success: false,
@@ -57,7 +57,6 @@ export default function DemographicsTab(props: {
     setSelectedPatient:(patient:Patient)=>void,
     patient: Patient
 }) {
-    // console.log("Patient prop from patient list ",props.patient)
     const [state, formAction] = useFormState(savePatient, initialState)
 
     const [errors, setErrors] = useState<{ [key: string]: any }>({});
@@ -73,14 +72,40 @@ export default function DemographicsTab(props: {
         sex: '',
         dob: undefined
     })
+    const [referringDocData, setReferringDocData] = useState({
+        doctor_name: '',
+        doc_tel: '',
+        doc_address1: '',
+        doc_tel2: '',
+        doc_address2: '',
+        ref_date: undefined,
+        diagnosis: ''
+    })
 
     const [patient, setPatient] = useState<Patient>(props.patient.patient_id !== '' ? props.patient : patientInitialState);
     const [patientDOB, setDOB] = useState<Date>(props.patient.patient_id !== '' ? new Date(props.patient.dob) : new Date(patient.dob))
     const [patientSex, setSex] = useState(props.patient.patient_id !== '' && props.patient.sex !== undefined && props.patient.sex !== null ? props.patient.sex : (patient.sex !== undefined && patient.sex !== null ? patient.sex : ''))
 
     const [patientFormDisabled, setPatientFormDisabled] = useState(false);
-    const [file, setFile] = useState<File>()
+    const [file, setFile] = useState<File>()    
+    const [uploadSuccess, setUploadSuccess] = useState(false);
+    const [previewURL, setPreviewURL] = useState<string | null>(null);
+    const [showPreview, setShowPreview] = useState(true);
 
+    // Update preview when file changes
+    useEffect(() => {
+        if (file) {
+            const objectURL = URL.createObjectURL(file);
+            setPreviewURL(objectURL);
+
+            
+            saveFile()
+    
+            // Cleanup to avoid memory leaks
+            return () => URL.revokeObjectURL(objectURL);
+        }
+    }, [file]);
+    
     
     useEffect(() => {
         if (state.errors) {
@@ -117,7 +142,6 @@ export default function DemographicsTab(props: {
     const closePatientForm = () => {
         setOpenPatientForm(false);
         console.log("Closing patient modal. ",patient)
-        // goToNext()
     }
 
     const sendEmail = async (emailData:any) => {
@@ -161,14 +185,26 @@ export default function DemographicsTab(props: {
     }
 
     const goToNext = () => {
+        if (!uploadSuccess) {
+            alert("You must upload a valid image before continuing.");
+            return;
+        }
+
         console.log("Active Tab: "+props.activeTab);
         props.tabsRef.current?.setActiveTab(props.activeTab+1)
     }
 
-    const saveFile = async (e:React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    const saveFile = async () => {
+        // e.preventDefault()
         if(!file) return
         
+        // Validate file type
+        const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!validImageTypes.includes(file.type)) {
+            alert("Invalid file type. Please upload an image.");
+            throw new Error("File type not allowed. Only image files are accepted.");
+        }
+
       // Example usage
       if(patient.patient_id !== ''){
         await createFolder(patient.patient_id)
@@ -182,7 +218,13 @@ export default function DemographicsTab(props: {
                     body: data
                 })
 
-                if(!response.ok) throw new Error (await response.text())
+                if(!response.ok) {
+                    console.warn("Upload failed. ", await response.text())
+                    alert("Upload failed. Please try again.");
+                }
+                // mark upload as successful
+                setUploadSuccess(true);
+
             }catch(e){
                 console.error(e)
             }
@@ -203,6 +245,7 @@ export default function DemographicsTab(props: {
       }
       
     const checkIsExisting = async (formData: FormData) => {
+        console.log("Form Data ",formData)
         const resp = await isExistingPatientAndSave(formData, patient.first_name, patient.last_name)
         console.log("Resp from patient check ",resp)
         if(!resp?.success){
@@ -213,13 +256,32 @@ export default function DemographicsTab(props: {
                 sex: formData.get('sex'),
                 dob: formData.get('dob')
             })
+            
             setOpenPatientForm(true)
         }
+        setReferringDocData({
+            doctor_name: formData.get('doctor_name'),
+            doc_tel: formData.get('doc_tel'),
+            doc_address1: formData.get('doc_address1'),
+            doc_tel2: formData.get('doc_tel2'),
+            doc_address2: formData.get('doc_address2'),
+            ref_date: formData.get('ref_date'),
+            diagnosis: formData.get('diagnosis')
+        })
         goToNext()
     }
 
+    useEffect(()=> {
+        if(store.getState().appointment.appointment.firstName){
+            setOpenSearchModal(true)
+        }
+    },[])
+    
+    console.log("Store ",store.getState().appointment.appointment )
     return (
-        <>
+    <>
+            
+            <>
             <PatientSearchModal open={openSearchModal} onClose={closeSearchModal} onSelect={selectPatient} />
             <PatientFormModal selectedPatient={selectPatient} show={openPatientForm} onClose={closePatientForm} patient={patientFormData}/>
             <div className="flex space-x-4">
@@ -233,12 +295,31 @@ export default function DemographicsTab(props: {
                     Search Patients
                 </Button>
                 <input type="file" name="image" onChange={(e)=>setFile(e.target.files?.[0])} />
-                <form onSubmit={saveFile}>
+                {/* <form onSubmit={saveFile}>
                     <Button className="mb-4" type="submit">
                         Upload Referral
                     </Button>
-                </form>
+                </form> */}
             </div>
+            {previewURL && (
+                <div style={{ marginTop: '1rem' }}>
+                    <button 
+                        type="button" 
+                        onClick={() => setShowPreview(prev => !prev)}
+                        style={{ marginBottom: '0.5rem' }}
+                    >
+                        {showPreview ? 'Hide Preview' : 'Show Preview'}
+                    </button>
+
+                    {showPreview && (
+                        <img
+                            src={previewURL}
+                            alt="Selected file preview"
+                            style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px' }}
+                        />
+                    )}
+                </div>
+            )}
             <form action={checkIsExisting} autoComplete="off">
 
                 {/** Demographics Section */}
@@ -312,14 +393,14 @@ export default function DemographicsTab(props: {
 
                 <div className="border-t border-2 border-gray-200 my-7"></div>
 
-                {/** Contact Section */}
+                {/** Referring Doctor Section */}
                 <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-cyan-500 sm:text-2xl mb-3">Referring Doctor</h3>
                 <div className="grid grid-flow-row grid-cols-2 justify-stretch gap-3">
                 <div>
                         <div className="mb-2 block">
                             <Label htmlFor="doctor_name" value="Name" />
                         </div>
-                        <TextInput id="doctor_name" name="doctor_name" type="" sizing='xs' placeholder="" color={errors?.first_name ? "failure" : "gray"} onChange={() => resetField("doctor_name")} defaultValue={""} disabled={false} required shadow
+                        <TextInput id="doctor_name" name="doctor_name" type="" sizing='xs' placeholder="" color={errors?.first_name ? "failure" : "gray"} defaultValue={""} disabled={false} required shadow
                             helperText={
                                 errors?.doctor_name && errors?.doctor_name[0]
                             }
@@ -329,17 +410,17 @@ export default function DemographicsTab(props: {
                         <div className="mb-2 block">
                             <Label htmlFor="doc_tel" value="Telephone" />
                         </div>
-                        <TextInput ref={tel1InputRef} id="doc_tel" name="doc_tel" type="" sizing='xs' placeholder="" color={errors?.doc_tel ? "failure" : "gray"} defaultValue={""} disabled={false} shadow
+                        <TextInput ref={tel1InputRef} id="doc_tel" name="doc_tel" type="" sizing='xs' placeholder="" color={errors?.doc_tel ? "failure" : "gray"} defaultValue={""} disabled={false} required shadow
                             helperText={
                                 errors?.doc_tel && errors?.doc_tel[0]
                             }
                         />
                     </div>
-                    <div className="col-span-2">
+                    <div>
                         <div className="mb-2 block">
-                            <Label htmlFor="doc_address" value="Address" />
+                            <Label htmlFor="doc_address1" value="Address Line 1" />
                         </div>
-                        <TextInput id="doc_address" name="doc_address" type="" sizing='xs' placeholder="" color={errors?.doc_address ? "failure" : "gray"} defaultValue={""} disabled={false} shadow
+                        <TextInput id="doc_address1" name="doc_address1" type="" sizing='xs' placeholder="" color={errors?.doc_address ? "failure" : "gray"} defaultValue={""} disabled={false} required shadow
                             helperText={
                                 errors?.doc_address && errors?.doc_address[0]
                             }
@@ -347,28 +428,29 @@ export default function DemographicsTab(props: {
                     </div>
                     <div >
                         <div className="mb-2 block">
-                            <Label htmlFor="fax" value="Fax" />
+                            <Label htmlFor="doc_tel2" value="Telephone 2" />
                         </div>
-                        <TextInput ref={tel1InputRef} id="fax" name="fax" type="" sizing='xs' placeholder="" color={errors?.fax ? "failure" : "gray"} onChange={() => resetField("fax")} defaultValue={""} disabled={false} shadow
+                        <TextInput ref={tel2InputRef} id="doc_tel2" name="doc_tel2" type="" sizing='xs' placeholder="" color={errors?.doc_tel2 ? "failure" : "gray"} defaultValue={""} disabled={false} shadow
                             helperText={
-                                errors?.fax && errors?.fax[0]
+                                errors?.fax && errors?.doc_tel[0]
                             }
                         />
                     </div>
                     <div>
                         <div className="mb-2 block">
-                            <Label htmlFor="doc_id" value="Doc ID" />
+                            <Label htmlFor="doc_address2" value="Address Line 2" />
                         </div>
-                        <TextInput id="doc_id" name="doc_id" type="" placeholder="" sizing='xs' color={errors?.doc_id ? "failure" : "gray"} onChange={() => resetField("doc_id")} defaultValue={""} disabled={false} shadow
+                        <TextInput id="doc_address2" name="doc_address2" type="" sizing='xs' placeholder="" color={errors?.doc_address ? "failure" : "gray"} defaultValue={""} disabled={false} shadow
                             helperText={
-                                errors?.doc_id && errors?.doc_id[0]
-                            } />
+                                errors?.doc_address && errors?.doc_address[0]
+                            }
+                        />
                     </div>
                     <div>
                         <div className="mb-2 block">
                             <Label htmlFor="ref_date" value="Referral Date" />
                         </div>
-                        <Datepicker name="ref_date" maxDate={new Date()}  sizing='xs' defaultDate={undefined} disabled={false} />
+                        <Datepicker name="ref_date" maxDate={new Date()} sizing='xs' defaultDate={undefined} disabled={false} />
                     </div>
                     <div  className="col-span-2">
                         <div className="mb-2 block">
@@ -381,42 +463,10 @@ export default function DemographicsTab(props: {
                 </div>
                 <div className="border-t border-2 border-gray-200 my-7"></div>
 
-                {/** Identification Section */}
-                {/* <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-cyan-500 sm:text-2xl mb-3">Examination Required</h3>
-                <div className="grid grid-flow-row grid-cols-2 justify-stretch gap-3">
-                    
-                <div >
-                        <div className="mb-2 block">
-                            <Label htmlFor="priority" value="Priority" />
-                        </div>
-                        <Select id="priority" name="priority" defaultValue={'RT'} disabled={patientFormDisabled} required>
-                            <option value={'RT'}>Routine</option>
-                            <option value={'URG'}>Urgent</option>
-                        </Select>
-                    </div>
-
-                    <div>
-                        <div className="mb-2 block">
-                            <Label htmlFor="study" value="Study Name" />
-                        </div>
-                        <TextInput id="study" name="study" type="" placeholder="" color={errors?.idnum ? "failure" : "gray"} onChange={() => resetField("study")} defaultValue={""} disabled={patientFormDisabled} required shadow
-                            helperText={
-                                errors?.study && errors?.study[0]
-                            }
-                        />
-                    </div>
-
-                </div>
- */}
-
                 <div className="flex my-8 justify-end">
-                    {patient.patient_id ?
-                    (<Button className="w-40" color="blue" onClick={()=>goToNext()}>Continue</Button>)
-                    :
-                    (
-                        <Button className="w-40" type="submit" color="blue">Continue</Button>
-                    )
-                    }
+                   
+                    <Button className="w-40" type="submit" color="blue">Continue</Button>
+                    
                     
                 </div>
 
@@ -424,7 +474,9 @@ export default function DemographicsTab(props: {
 
                 <BasicModal show={showModal} message={"Patient Saved"} onClose={closeModal} />
             </form>
-
+        
+        </>
+        {/* )} */}
         </>
     )
 }

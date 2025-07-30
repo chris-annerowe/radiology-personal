@@ -56,7 +56,7 @@ export default async function Accessioning({
             patient.other_name = resp?.other_name
             patient.title = resp?.title
             patient.dob = resp?.dob
-            patient.age = resp.age
+            patient.age = resp?.age
             patient.sex = resp?.sex
             patient.nationality = resp?.nationality
             patient.address_1 = resp?.address_1
