@@ -4,10 +4,11 @@ import { findPatientByName } from "@/actions/patient";
 import { ActionResponse } from "@/types/action";
 import { Patient, PatientSearch } from "@/types/patient";
 import { format } from "date-fns";
-import { Modal, Pagination, Table, TextInput } from "flowbite-react";
+import { Button, Modal, Pagination, Table, TextInput } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { HiSearch } from "react-icons/hi";
+import { HiPlus, HiSearch } from "react-icons/hi";
 import store from "@/store"
+import PatientFormModal from "@/ui/modals/patient-form-modal";
 
 const initialState: ActionResponse<PatientSearch> = {
     success: false,
@@ -19,10 +20,41 @@ interface PatientSearchModalProps {
     onClose: () => void,
     onSelect: (patient: Patient) => void
 }
+
+const patientInitialState = {
+    patient_id: "",
+    first_name: "",
+    last_name: "",
+    other_name: "",
+    title: "",
+    dob: undefined,
+    age: 0,
+    sex: "",
+    height: 0,
+    weight: 0,
+    allergies: "",
+    nationality: "",
+    next_kin: "",
+    address_1: "",
+    address_2: "",
+    city: "",
+    parish: "",
+    telephone_1: "",
+    telephone_2: "",
+    cellular: "",
+    email: "",
+    id_type: "",
+    idnum: ""
+
+}
+
 export default function PatientSearchModal(props: PatientSearchModalProps) {
     const daybookData = store.getState().appointment.appointment
 
     const [patients, setPatients] = useState<Patient[]>([])
+    const [patient, setPatient] = useState<Patient>(patientInitialState)
+
+    const [openPatientModal, setOpenPatientModal] = useState(false);
     
     const defaultSearch = daybookData.firstName || daybookData.lastName ? `${daybookData.firstName} ${daybookData.lastName}`.trim() : '';
       
@@ -44,7 +76,12 @@ export default function PatientSearchModal(props: PatientSearchModalProps) {
 
     const [totalPages, setTotalPages] = useState(1);
 
-
+const selectPatient = (patient: Patient) => {
+        console.log("Selected patient ",patient)
+        setPatient(patient);
+        closePatientModal();
+        console.log(patient);
+    }
 
     const searchPatients = async (e:React.ChangeEvent<HTMLInputElement>) => {
         const search = e.currentTarget.value;
@@ -62,6 +99,8 @@ export default function PatientSearchModal(props: PatientSearchModalProps) {
             if (result.data) {
                 setPatients(result.data);
                 setTotalPages(result.pagination.count / limit);
+            }else{
+                return 
             }
     }
 
@@ -71,6 +110,13 @@ export default function PatientSearchModal(props: PatientSearchModalProps) {
             searchDefault(defaultSearch); // simulating an event
         }
     }, [defaultSearch]);
+
+    useEffect(() => {
+        if (patient.first_name) {
+            console.log("Searching ",patient.first_name, patient.last_name)
+            searchDefault(`${patient.first_name} ${patient.last_name}`); // simulating an event
+        }
+    }, [patient]);
     
 
     const onPageChange = (page: number) => {
@@ -89,6 +135,9 @@ export default function PatientSearchModal(props: PatientSearchModalProps) {
 
     }
 
+    const closePatientModal = () => {
+        setOpenPatientModal(false);
+    }
 
     return (
         <>
@@ -98,12 +147,18 @@ export default function PatientSearchModal(props: PatientSearchModalProps) {
                     <div className="space-y-6">
                         <h3 className="text-xl font-medium text-gray-900 dark:text-white">Search Patients</h3>
 
-
-                        <div className="flex space-x-2">
-                            <TextInput id="search" type="text" icon={HiSearch} placeholder="Search for patients" className="" onChange={searchPatients} 
-                            defaultValue={defaultSearch}/>
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="flex space-x-2">
+                                <TextInput id="search" type="text" icon={HiSearch} placeholder="Search for patients" className="" onChange={searchPatients} 
+                                defaultValue={defaultSearch}/>
+                            </div>
+                            <div>
+                                <Button className="mb-4" onClick={() => setOpenPatientModal(true)}>
+                                    <HiPlus className="mr-2 h-5 w-5" />
+                                        Create Patient
+                                </Button>
+                            </div>
                         </div>
-
                         <Table striped hoverable>
                             <Table.Head>
                                 <Table.HeadCell>Last Name</Table.HeadCell>
@@ -136,7 +191,10 @@ export default function PatientSearchModal(props: PatientSearchModalProps) {
                         <div className="flex overflow-x-auto sm:justify-center">
                             <Pagination currentPage={activePage} totalPages={totalPages < 1 ? 1 : totalPages} onPageChange={onPageChange} />
                         </div>
+                        
+                        <PatientFormModal show={openPatientModal} onClose={closePatientModal} selectedPatient={selectPatient}/>
 
+                        
                     </div>
                 </Modal.Body>
             </Modal>

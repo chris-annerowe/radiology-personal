@@ -49,7 +49,7 @@ interface PatientFormProps {
     selectedPatient: (patient:Patient)=>void
     show: boolean
     onClose: ()=>void | void
-    patient: any
+    patient?: any
 }
 
 export default function PatientFormModal(props: PatientFormProps) {
@@ -119,9 +119,6 @@ console.log("Patient form props ",props.patient)
             dob: new Date(formData.get('dob') as string),
             // age: getAge(formData.get('dob') as string),
             sex: formData.get('sex') as string,
-            // height: parseFloat(formData.get('height') as string),
-            // weight: parseFloat(formData.get('weight') as string),
-            // allergies: formData.get('allergies') as string,
             nationality: formData.get('nationality') as string,
             // next_kin: formData.get('next_kin') as string,
             address_1: formData.get('address_1') as string,
@@ -218,9 +215,7 @@ console.log("Patient form props ",props.patient)
                             <Label htmlFor="nationality" value="Nationality" />
                         </div>
                         <TextInput id="nationality" name="nationality" type="" placeholder="" color={errors?.nationality ? "failure" : "gray"} onChange={() => resetField("nationality")} defaultValue={(patient && patient.nationality) ? patient.nationality : ""} required shadow
-                            helperText={
-                                errors?.nationality && errors?.nationality[0]
-                            } />
+                            helperText="Country Code eg JM" />
                     </div>
 
                     {/* <div>

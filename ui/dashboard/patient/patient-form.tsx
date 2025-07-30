@@ -160,9 +160,7 @@ export default function PatientForm(props: PatientFormProps) {
                             <Label htmlFor="nationality" value="Nationality" />
                         </div>
                         <TextInput id="nationality" name="nationality" type="" placeholder="" color={errors?.nationality ? "failure" : "gray"} onChange={() => resetField("nationality")} defaultValue={(patient && patient.nationality) ? patient.nationality : ""} required shadow
-                            helperText={
-                                errors?.nationality && errors?.nationality[0]
-                            } />
+                            helperText="Country Code eg JM"  />
                     </div>
 
                     {/* <div>
