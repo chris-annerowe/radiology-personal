@@ -53,7 +53,7 @@ const Sidebar2 = () => {
             <SidebarItem href="/dashboard/patient">
               Patient Management
             </SidebarItem>
-            <SidebarItem href="/studies" >
+            <SidebarItem href="/dashboard/studies" >
               Studies
             </SidebarItem>
             <SidebarItem href="/dashboard/admin" >
