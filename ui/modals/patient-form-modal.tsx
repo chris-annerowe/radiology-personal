@@ -15,6 +15,7 @@ import { useFormState } from "react-dom";
 
 const patientInitialState = {
     patient_id: "",
+    internalid: "",
     first_name: "",
     last_name: "",
     other_name: "",
@@ -112,6 +113,7 @@ console.log("Patient form props ",props.patient)
         const id = uuidv4()
         const patientData:Patient = {
             patient_id: id,
+            internalid: formData.get('internalid') as string,
             first_name: formData.get('first_name') as string,
             last_name: formData.get('last_name') as string,
             other_name: formData.get('other_name') as string,
@@ -134,8 +136,8 @@ console.log("Patient form props ",props.patient)
     
         }
         props.selectedPatient(patientData)
-        console.log("Patient modal data ",patientData,patient)
-        savePatient(patient,formData)
+        console.log("Patient modal data ",patientData)
+        // savePatient(patient,formData)
         props.onClose()
     }
 
@@ -216,6 +218,14 @@ console.log("Patient form props ",props.patient)
                         </div>
                         <TextInput id="nationality" name="nationality" type="" placeholder="" color={errors?.nationality ? "failure" : "gray"} onChange={() => resetField("nationality")} defaultValue={(patient && patient.nationality) ? patient.nationality : ""} required shadow
                             helperText="Country Code eg JM" />
+                    </div>
+
+                    <div>
+                        <div className="mb-2 block">
+                            <Label htmlFor="internalid" value="Internal ID" />
+                        </div>
+                        <TextInput id="internalid" name="internalid" type="" placeholder="" color={errors?.internalid ? "failure" : "gray"} onChange={() => resetField("internalid")} defaultValue={(patient && patient.internalid) ? patient.internalid : ""} shadow
+                        />
                     </div>
 
                     {/* <div>

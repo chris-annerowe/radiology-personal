@@ -76,11 +76,25 @@ export default function PatientSearchModal(props: PatientSearchModalProps) {
 
     const [totalPages, setTotalPages] = useState(1);
 
-const selectPatient = (patient: Patient) => {
+const selectPatient = async (patient: Patient) => {
         console.log("Selected patient ",patient)
         setPatient(patient);
         closePatientModal();
         console.log(patient);
+        try {
+            const response = await fetch('/api/patient', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(patient),
+            });
+        
+            const result = await response.json();
+            console.log(result.message, result.patient);
+          } catch (error) {
+            console.error('Error saving patient:', error);
+          }
     }
 
     const searchPatients = async (e:React.ChangeEvent<HTMLInputElement>) => {
