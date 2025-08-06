@@ -81,7 +81,7 @@ export default function Payments(props:PaymentProps) {
                         <div className="mb-2 block">
                             <Label htmlFor="provider" value="Client Provider" />
                         </div>
-                        <Select id="provider" name="provider" defaultValue={''}  sizing='sm' disabled={false} required>
+                        <Select id="provider" name="provider" defaultValue={''}  sizing='sm' disabled={false} >
                         {clientProviders.map((prov,index)=> (
                             <option value={prov.clientprov_name} id={`clientProvider-${index}`}>{prov.clientprov_desc}</option>
                         ))}
@@ -92,7 +92,7 @@ export default function Payments(props:PaymentProps) {
                         <div className="mb-2 block">
                             <Label htmlFor="method" value="Method" />
                         </div>
-                        <Select id="method" name="method" defaultValue={''}  sizing='sm' disabled={false} required>
+                        <Select id="method" name="method" defaultValue={''}  sizing='sm' disabled={false} >
                         {payments.map((type,index)=> (
                             <option value={type.abbreviation} id={`paymentType-${index}`}>{type.name}</option>
                         ))}
@@ -104,7 +104,7 @@ export default function Payments(props:PaymentProps) {
                         <div className="mb-2 block">
                             <Label htmlFor="paidby" value="Paid By" />
                         </div>
-                        <TextInput id="paidby" name="paidby" type="" sizing='sm' placeholder="" color={"gray"} defaultValue={""} disabled={false} required shadow  />
+                        <TextInput id="paidby" name="paidby" type="" sizing='sm' placeholder="" color={"gray"} defaultValue={""} disabled={false}  shadow  />
                     </div>
                     <div>
                         <div className="mb-2 block">

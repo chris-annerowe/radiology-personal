@@ -15,6 +15,7 @@ export async function POST(req: Request) {
       patient_last_name,
       patient_id,
       numOfStudies,
+      items,
       paidBy,
       paymentType,
       clientProvider,
@@ -31,6 +32,7 @@ export async function POST(req: Request) {
           amountPaid: amtPaid,
           outstanding_balance:balance,
           numOfStudies,
+          items,
           patient_first_name,
           patient_last_name,
           patient_id,
@@ -48,3 +50,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ transaction: null, message: 'Method not allowed'}, {status: 405})
   }
 }
+
+export async function GET() {
+    try {
+     const transactions = await db.pos_transactions.findMany();
+  
+      return NextResponse.json({ transactions: transactions, message: 'Transactions retrieved successfully' ,status:200});
+    } catch (error) {
+      console.error('Error executing query', error);
+      return NextResponse.json({ error: 'Internal Server Error' ,status:500});
+    }
+  }

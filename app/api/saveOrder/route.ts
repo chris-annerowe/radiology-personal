@@ -14,17 +14,18 @@ export async function POST(req: Request) {
       patient_id
      } = body;
     try {
-      const transaction = await db.pos_order.create({
+      const order = await db.pos_order.create({
         data: {
           orderno,
           payment_status,
           balance_outstanding,
-          patient_id
+          patient_id,
+          last_modified: new Date()
         },
       });
-      return NextResponse.json({ transaction: transaction, message: 'Order created successfully'}, {status: 201})
+      return NextResponse.json({ order: order, message: 'Order created successfully'}, {status: 201})
     } catch (error) {
-      console.log("Error creating order");
+      console.log("Error creating order ",error);
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         // The .code property can be accessed in a type-safe manner
         console.log("Error: "+error.message);
@@ -34,10 +35,10 @@ export async function POST(req: Request) {
           )
         }
       }
-      return NextResponse.json({ transaction: null, message: 'Order failed to send'}, {status: 500})
+      return NextResponse.json({ order: null, message: 'Order failed to send'}, {status: 500})
     }
   } else {
-    return NextResponse.json({ transaction: null, message: 'Method not allowed'}, {status: 405})
+    return NextResponse.json({ order: null, message: 'Method not allowed'}, {status: 405})
   }
 }
 
@@ -51,25 +52,25 @@ export async function PUT(req: Request) {
         balance_outstanding
        } = body;
       try {
-        const transaction = await db.pos_order.update({
+        const order = await db.pos_order.update({
           where: { orderno},
           data: {
             payment_status,
             balance_outstanding
           },
         });
-        return NextResponse.json({ transaction: transaction, message: 'Order updated successfully'}, {status: 200})
+        return NextResponse.json({ order: order, message: 'Order updated successfully'}, {status: 200})
       } catch (error) {
-        return NextResponse.json({ transaction: null, message: 'Order failed to send'}, {status: 500})
+        return NextResponse.json({ order: null, message: 'Order failed to send'}, {status: 500})
       }
     } else {
-      return NextResponse.json({ transaction: null, message: 'Method not allowed'}, {status: 405})
+      return NextResponse.json({ order: null, message: 'Method not allowed'}, {status: 405})
     }
   }
 
   export async function GET() {
     try {
-      // get transactions for the previous month, 1st to 1st of current month
+      // get orders for the previous month, 1st to 1st of current month
       const previousMonthStart = startOfMonth(subMonths(new Date(), 1));
       const previousMonthEnd = endOfMonth(subMonths(new Date(), 1));
   

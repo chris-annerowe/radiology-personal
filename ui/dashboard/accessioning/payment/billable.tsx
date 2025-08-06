@@ -3,6 +3,7 @@ import { Patient } from "@/types/patient";
 import { InsuranceData, POSTransaction, PaymentData } from "@/types/pos";
 import { Study } from "@/types/studies";
 import LoadingModal from "@/ui/common/loading-modal";
+import uuidv4 from "@/Viewers/platform/core/src/utils/uuidv4";
 import { Button, Table } from "flowbite-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -14,6 +15,7 @@ interface BillableProps {
   taxable: number,
   patient: Patient,
   numOfStudies: number,
+  items: string,
   amtPaid: number,
   paymentData: PaymentData,
   order_id: string,
@@ -24,10 +26,14 @@ interface BillableProps {
 
 
 export default function Billable(props: BillableProps) {
-
+  
   const [showLoading,setShowLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
   const router = useRouter()
+
+  
+  //create a new orderId
+  const newOrder = uuidv4()
 
   //create new order and save to db
   async function completeOrder() {
@@ -37,6 +43,7 @@ export default function Billable(props: BillableProps) {
       patient_first_name: '',
       patient_last_name: '',
       numOfStudies: 0,
+      items: "",
       amountPaid: 0,
       outstanding_balance: 0,
       insuranceAmt: 0,
@@ -75,6 +82,7 @@ export default function Billable(props: BillableProps) {
       transaction.insuranceAmt = props.outstandingTransaction.insuranceAmt
       transaction.insuranceProvider = props.outstandingTransaction.insuranceProvider
       transaction.numOfStudies = props.outstandingTransaction.numOfStudies
+      transaction.items = props.outstandingTransaction.items
       transaction.totalBillable = props.outstandingTransaction.totalBillable
       transaction.discountAmt = props.outstandingTransaction.discountAmt
       transaction.taxPaid = props.outstandingTransaction.taxPaid
@@ -102,6 +110,7 @@ export default function Billable(props: BillableProps) {
             patient_first_name: transaction.patient_first_name,
             patient_id: transaction.patient_id,
             numOfStudies: transaction.numOfStudies,
+            items: transaction.items,
             paidBy: props.paymentData?.paidBy,
             paymentType: props.paymentData?.paymentType,
             insuranceProvider: transaction.insuranceProvider,
@@ -161,6 +170,7 @@ export default function Billable(props: BillableProps) {
         balance = props.outstandingTransaction?.outstanding_balance
       }
 
+
       try {
         const response = await fetch('/api/saveOrder', {
           method: 'POST',
@@ -168,7 +178,7 @@ export default function Billable(props: BillableProps) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            orderno: props.order_id,
+            orderno: newOrder,
             patient_id: props.patient.patient_id,
             payment_status: payment_status,
             balance_outstanding: balance - props.amtPaid
@@ -236,11 +246,12 @@ export default function Billable(props: BillableProps) {
           patient_first_name: props.patient.first_name,
           patient_id: props.patient.patient_id,
           numOfStudies: props.numOfStudies,
+          items: props.items,
           paidBy: props.paymentData?.paidBy,
           paymentType: props.paymentData?.paymentType,
           insuranceProvider: props.insuranceData.insuranceProv,
           clientProvider: props.paymentData.provider,
-          order_id: props.order_id,
+          order_id: props.order_id ? props.order_id : newOrder,
         }),
       });
 

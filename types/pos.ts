@@ -46,6 +46,7 @@ export interface POSTransaction {
     patient_first_name    :string ,    
     patient_id            :string ,    
     numOfStudies          :number,
+    items                 :string,
     totalBillable         :number,
     discountAmt           :number,
     insuranceAmt          :number,
@@ -57,4 +58,12 @@ export interface POSTransaction {
     clientProvider        :string | null,
     insuranceProvider     :string | null,
     timestamp             :Date
+}
+
+export interface POSOrder {  
+    orderno               :string,  
+    patient_id            :string ,    
+    balance_outstanding   :number,
+    payment_status        :string,
+    last_modified         :Date
 }

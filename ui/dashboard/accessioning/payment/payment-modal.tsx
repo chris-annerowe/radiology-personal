@@ -47,6 +47,12 @@ export default function PaymentModal(props: PaymentModalProps) {
     
     let subtotal = 0.00
     let taxable = 0.00
+
+    const studyNamesString = props.studies
+    .map(s => s.study_name)
+    .filter(name => typeof name === 'string' && name.trim() !== '') // skip null or empty names
+    .join(', ');
+
     
     const closeInsuranceModal = () => {
         setOpenInsuranceModal(false);
@@ -165,6 +171,7 @@ export default function PaymentModal(props: PaymentModalProps) {
                             taxable={taxable} 
                             patient={props.patient} 
                             numOfStudies={props.studies.length} 
+                            items={studyNamesString}
                             amtPaid={amtPaid}
                             paymentData={paymentData}
                             order_id={orderNo}
