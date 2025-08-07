@@ -163,6 +163,10 @@ export default function Billable(props: BillableProps) {
     if (!props.outstandingTransaction || props.outstandingTransaction.order_id === "") {
       let payment_status = "Pending"
       let balance = total
+      console.log("Provider ",props.paymentData.provider)
+      if(props.paymentData.provider){
+        payment_status = "Invoiced"
+      }
       if (total - props.amtPaid === 0) {
         payment_status = "Completed"
       }
