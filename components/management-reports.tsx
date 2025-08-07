@@ -1,36 +1,85 @@
 'use client'
-import { Button, Label, Select } from "flowbite-react";
-import { redirect } from "next/navigation";
+import { Button, Datepicker, Label, Select } from "flowbite-react";
+import { useState } from "react";
 
 
 export default function ManagementReports(){
-    const handleReport = (data: FormData) => {
-        const report = data.get('manageReports')?.valueOf()
-        console.log("Report selected ",report)
+  const [reportType, setReportType] = useState('');  
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
-        //TODO: case selection to redirect to report based on which report selected. Use html2pdf to allow download
-        switch(report){
+  const handleReportChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setReportType(e.target.value);
+  };
+
+  const handleDateChange = (date: Date) => {
+    setSelectedDate(date);
+  };
+
+  
+  const handleReport = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        // You can now use reportType and selectedDate here
+        console.log('Report Type:', reportType);
+        console.log('Selected Date:', selectedDate);
+
+        //case selection to redirect to report based on which report selected. Use html2pdf to allow download
+        switch(reportType){
+            case 'dailySales':
+                console.log("Daily")
+                const formattedDate = selectedDate ? selectedDate.toISOString().split('T')[0] : ''; // YYYY-MM-DD
+                window.location.href=`/reports/dailySales?date=${formattedDate}`;
+                break;
             case 'monthlyRev':
-                redirect('/reports/monthlyRevenue')
+                window.location.href='/reports/monthlyRevenue'
+                break;
             default:
                 console.log("No report chosen")
         }
     }
+
     return(
         <>
-            <form action={handleReport}>
-                        <div className="mb-2 block">
-                            <Label htmlFor="manageReports" value="Management Reports" />
+            <form onSubmit={handleReport}>
+                <div className="mb-2 block">
+                    <Label htmlFor="manageReports" value="Management Reports" />
+                </div>
+
+                <Select
+                    id="manageReports"
+                    name="manageReports"
+                    defaultValue=""
+                    onChange={handleReportChange}
+                >
+                    <option value=""> </option>
+                    <option value="monthlyRev">Total Monthly Revenue</option>
+                    <option value="dailySales">Daily Sales</option>
+                    <option value="orders">Detailed Orders</option>
+                </Select>
+
+                {reportType === 'dailySales' && (
+                    <>
+                        <div className="mb-2 mt-3 block">
+                            <Label htmlFor="reportDate" value="Select Date" />
                         </div>
-                        <Select id="manageReports" name="manageReports" defaultValue={''}>
-                            <option value={''}> </option>
-                            <option value={'monthlyRev'}>Total Monthly Revenue</option>
-                            <option value={'orders'}>Detailed Orders</option>
-                        </Select>
+                    
+                    <Datepicker
+                        id="reportDate"
+                        name="reportDate"
+                        maxDate={new Date()}
+                        size={8}
+                        onSelectedDateChanged={handleDateChange}
+                        />
+                    </>
+                )}
+
                 <div>
-                    <Button className="mt-10" type="submit">View</Button>
+                    <Button className="mt-10" type="submit">
+                    View
+                    </Button>
                 </div>
             </form>
+
         </>
     )
 }
