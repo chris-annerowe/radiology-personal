@@ -81,3 +81,17 @@ export const saveTransaction = async (
     console.log(e)
     }
 }
+
+export const getCompletedOrderTransactions = async () => {
+    try{
+        const transactions = await db.$queryRaw`
+        SELECT t.*
+        FROM pos_transactions t
+        JOIN pos_order o ON t.order_id = o.orderno
+        WHERE o.payment_status IN ('Completed', 'Invoiced');`
+        console.log("Completed order details ",transactions)
+        return transactions
+    }catch(e){
+        console.log(e)
+    }
+}

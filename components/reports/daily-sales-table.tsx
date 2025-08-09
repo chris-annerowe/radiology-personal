@@ -1,17 +1,32 @@
 'use client'
 
-import { Button, Table } from "flowbite-react";
-import { POSOrder, POSTransaction } from "@/types/pos";
+import { POSTransaction } from "@/types/pos";
 import html2pdf from "html2pdf.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
  
  export default function DailySalesTable(props:{date:string | null}){
-    const [total, setTotal] = useState(200)
+    const [details, setDetails] = useState<POSTransaction[]>([])
 
-    const rate = 1.99
 
+    const completedOrders = async () => {
+        setDetails([])
+        const resp = await fetch(`/api/getCompletedOrderTransactions?date=${props.date}`,{
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        const data = await resp.json()
+        setDetails(prevDetails => {
+            const existingIds = new Set(prevDetails.map(d => d.transaction_id));
+            const newDetails = data.transactions.filter(d => !existingIds.has(d.transaction_id));
+            return [...prevDetails, ...newDetails];
+        });
+        console.log("Order details: ",data.transactions)
+        return data.transactions
+    }
 
     const handleDownload = () => {
         const element = document.getElementById("generatePDF")
@@ -23,59 +38,15 @@ import Image from "next/image";
         
     }
 
-    
-    const getOrders = async () => {
-        const resp = await fetch('/api/saveOrder',{
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        const data = await resp.json();
-        console.log("Orders: ",data.orders)
-        return data.orders
-    }
+    useEffect(()=>{
+        completedOrders()
+    },[])
 
-    const getTransactions = async () => {
-        const resp = await fetch('/api/saveTransaction',{
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        const data = await resp.json();
-        console.log("Transactions: ",data.transactions)
-        return data.transactions
-    }
-    
-    let orders:POSOrder[] = getOrders()
-    let transactions:POSTransaction[] = getTransactions()
-
-    console.log("Array ",Array.isArray(orders))
-
-    const getTotals = () => {
-        try{
-            const mappedOrders = orders.map(order => {
-                const matchingTransaction = transactions.find(tx => tx.order_id === order.orderno);
-                console.log("Matching transaction ",matchingTransaction)
-              
-                return {
-                  ...order,
-                  transaction: matchingTransaction || null, // include matched transaction or null if none
-                };
-              });
-
-        }catch(e){
-            console.warn("Error retrieving totals. ",e)
-        }
-    }
-    
-    const totals = getTotals()
 
     return (
         <div id="generatePDF" className="max-w-4xl mx-auto px-6 py-8 bg-white text-gray-900 shadow-md rounded-md">
             {/* Header */}
-            <div className="flex justify-center mb-2">
+            {/* <div className="flex justify-center mb-2">
                 <Image
                 src="/assets/logo.png"
                 alt="Company Logo"
@@ -83,7 +54,7 @@ import Image from "next/image";
                 height={60}
                 priority
                 />
-            </div>
+            </div> */}
 
              {/* Metadata */}
             <div className="flex grid grid-cols-2 gap-4 text-sm mb-6">
@@ -97,17 +68,30 @@ import Image from "next/image";
             <table className="w-full text-sm border border-gray-300 mb-6">
                 <thead className="bg-gray-100 border-b border-gray-300">
                 <tr>
+                    <th className="p-2 text-left">Name</th>
+                    <th className="p-2 text-left">Cost</th>
+                    <th className="p-2 text-left">Provider</th>
                     <th className="p-2 text-left">Cash</th>
                     <th className="p-2 text-left">Credit/Debit Card</th>
                     <th className="p-2 text-left">Insurance</th>
+                    <th className="p-2 text-left">Insurance Provider</th>
+                    <th className="p-2 text-left">Items</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr className="border-b border-gray-200">
-                    <td className="p-2">$</td>
-                    <td className="p-2">$</td>
-                    <td className="p-2">$</td>
+                {details.map((d, index) => (
+                <tr key={index} className="border-b border-gray-200">
+                    <td className="p-2">{d.patient_last_name}, {d.patient_first_name}</td>
+                    <td className="p-2">{d.totalBillable.toFixed(2)}</td>
+                    <td className="p-2">{d.clientProvider}</td>
+                    <td className="p-2">{d.paymentType === 'cs' ? `$${d.amountPaid.toFixed(2)}` : ''}</td>
+                    {/* TODO: check if need to subtract insurance amount from amt paid*/}
+                    <td className="p-2">{d.paymentType === 'cc' || d.paymentType === 'db' ? `$${d.amountPaid.toFixed(2)}` : ''}</td>
+                    <td className="p-2">${d.insuranceAmt.toFixed(2)}</td>
+                    <td className="p-2">{d.insuranceProvider}</td>
+                    <td className="p-2">{d.items}</td>
                 </tr>
+                ))}
                 </tbody>
             </table>
 

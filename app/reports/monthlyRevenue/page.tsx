@@ -1,4 +1,4 @@
-import MonthlyRevenueTable from "@/components/monthly-revenue-table";
+import MonthlyRevenueTable from "@/components/reports/monthly-revenue-table";
 
 export default function MonthlyRevenueReport(){
     
