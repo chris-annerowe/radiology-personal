@@ -24,7 +24,7 @@ import Image from "next/image";
             const newDetails = data.transactions.filter(d => !existingIds.has(d.transaction_id));
             return [...prevDetails, ...newDetails];
         });
-        console.log("Order details: ",data.transactions)
+        // console.log("Order details: ",data.transactions)
         return data.transactions
     }
 
@@ -32,9 +32,12 @@ import Image from "next/image";
         const element = document.getElementById("generatePDF")
         console.log("Element to generate ",element)
         html2pdf(element, {
-            margin: 20,
-            filename: 'DailySalesReport.pdf'
-        })
+            margin: 10,
+            filename: `DailySalesReport${props.date}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          });
         
     }
 

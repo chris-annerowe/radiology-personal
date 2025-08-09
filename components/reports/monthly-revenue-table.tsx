@@ -44,36 +44,33 @@ import Image from "next/image";
     return (
         <div id="generatePDF" className="max-w-4xl mx-auto px-6 py-8 bg-white text-gray-900 shadow-md rounded-md">
             {/* Header */}
-            <div className="flex justify-center mb-2">
-                <Image
-                src="/assets/logo.png"
-                alt="Company Logo"
-                width={120}
-                height={60}
-                priority
-                />
-            {/* TODO: Update company details */}
-            <div className="text-center my-6 ml-5">
-                <h2 className="text-xl font-bold">AYE Technologies Limited</h2>
-                <p className="text-sm">2 Trafalgar Road, Kingston 5, Jamaica W.I.</p>
-                <p className="text-sm">Ph: (876)620-7533  |  Fax: (876)620-7533</p>
-                <p className="text-sm">info@aye-tech.com</p>
-            </div>
-
-            </div>
-            
-            {/* Metadata */}
-            <div className="flex grid grid-cols-2 gap-4 text-sm mb-6">
-                <div>
-                <h3 className="mt-4 text-lg font-semibold underline">Invoice</h3>
-                <p><span className="font-medium">Date:</span> {new Date().toLocaleDateString()}</p>
-                <p><span className="font-medium">Invoice #:</span> 4691</p>
-                <p><span className="font-medium">GCT Reg#:</span> 001-995-812</p>   {/* TODO: Update invoice details */}
+            <div className="grid grid-cols-12 items-start text-sm mb-6 border-b pb-4">
+                {/* Logo */}
+                <div className="col-span-2 flex items-start justify-start">
+                    <Image
+                    src="/assets/logo.png"
+                    alt="Company Logo"
+                    width={100}
+                    height={50}
+                    priority
+                    />
                 </div>
-                <div className="mt-9">
-                <p><span className="font-bold">Bill To:</span> Kris Radiology Limited</p>
-                <p>56 Ward Avenue, Mandeville, Manchester</p>
-                <p>Jamaica</p>
+
+                {/* Company Info */}
+                {/* TODO: Update company details */}
+                <div className="col-span-6 text-left mt-4 pl-2 leading-tight">
+                    <h3 className="text-lg font-bold text-gray-900">AYE Technologies Limited</h3>
+                    <p className="font-medium text-gray-700">2 Trafalgar Road, Kingston 5, Jamaica W.I.</p>
+                    <p className="font-medium text-gray-700">Ph: (876)620-7533 | Fax: (876)620-7533</p>
+                    <p className="font-medium text-gray-700">info@aye-tech.com</p>
+                </div>
+
+                {/* Metadata */}
+                <div className="col-span-4 text-right mt-6 leading-tight">
+                    <p className="font-bold text-gray-900">Monthly Revenue Report</p>
+                    <p className="font-medium text-gray-700">Date Range: {new Date().toLocaleDateString()}</p>
+                    <p className="text-gray-700">Run Date: {new Date().toLocaleDateString()}</p>
+                    <p className="text-gray-700">Run Time: {new Date().toLocaleTimeString()}</p>
                 </div>
             </div>
 
@@ -81,28 +78,33 @@ import Image from "next/image";
             <table className="w-full text-sm border border-gray-300 mb-6">
                 <thead className="bg-gray-100 border-b border-gray-300">
                 <tr>
+                    <th className="p-2 text-left">Item</th>
                     <th className="p-2 text-left">Quantity</th>
-                    <th className="p-2 text-left">Description</th>
-                    <th className="p-2 text-left">U/M</th>
-                    <th className="p-2 text-left">Contract Amt</th>
+                    <th className="p-2 text-left">Unit Cost</th>
+                    <th className="p-2 text-left">Total Cost</th>
+                    <th className="p-2 text-left">Billed Total</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr className="border-b border-gray-200">
-                    <td className="p-2">{total}</td>
-                    <td className="p-2">Software as a Service (SaaS) Orders processed by AyeLAB SaaS during month of {new Date().toLocaleString('default', { month: 'long' })} {new Date().getFullYear()}</td>
-                    <td className="p-2">{rate}</td>
-                    <td className="p-2 font-medium text-right">${total * rate}</td>
+                    <td className="p-2">study</td>
+                    <td className="p-2">2</td>
+                    <td className="p-2">$</td>
+                    <td className="p-2">$</td>
+                    <td className="p-2">$</td>
                 </tr>
                 </tbody>
+                {/* Totals */}
+                <tfoot>
+                    <tr className="border-t border-gray-300 font-bold text-gray-900">
+                        <td className="p-2 text-center" colSpan={2}>Totals</td>
+                        <td className="p-2 text-left">${(total * rate).toFixed(2)}</td>
+                        <td className="p-2 text-left">${(total * rate + total * rate * 0.15).toFixed(2)}</td>
+                        <td className="p-2 text-left">${(total * rate + total * rate * 0.15).toFixed(2)}</td>
+                    </tr>
+                </tfoot>
             </table>
-
-            {/* Totals */}
-            <div className="text-right text-sm space-y-1 mb-6">
-                <p><span className="font-medium">GCT (15%):</span> USD {(total * rate * 0.15).toFixed(2)}</p>
-                <p className="text-base font-bold">Total: USD ${((total * rate) + (total * rate * 0.15)).toFixed(2)}</p>
-            </div>
-
+            
             {/* Download */}
             <div className="flex justify-end">
                 <button
