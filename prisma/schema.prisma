@@ -219,7 +219,7 @@ model pos_order {
 }
 
 model pos_transactions {
-  transaction_id        Int        @id @default(autoincrement())
+  transaction_id        String     @id @db.VarChar(50)
   order_id              String     @db.VarChar(50)       
   patient_last_name     String     @db.VarChar(50)
   patient_first_name    String     @db.VarChar(50)
@@ -236,7 +236,29 @@ model pos_transactions {
   insuranceProvider     String?     @db.VarChar(10)
   paymentType           String?     @db.VarChar(10)
   paidBy                String?     @db.VarChar(10)
-  timestamp             DateTime  @default(now())
+  timestamp             DateTime    @default(now())
+}
+
+model PosTransactionDetails {
+  transaction_id  String   @db.VarChar(50)
+  seq_num         Int      @default(autoincrement())
+  branchcode      String?  @db.VarChar(5)
+  ordercode       String   @db.VarChar(50)
+  trans_type      String   @db.VarChar(25)
+  trans_code      String?  @db.VarChar(100)
+  src_id          String?  @db.VarChar(100)
+  item_id         Int 
+  item_name       String   @db.VarChar(100)
+  debit_amount    Float?  
+  credit_amount   Float?  
+  user_id         Int
+  last_modified   DateTime @default(now())
+  cancel_date     DateTime? 
+  cancel_by       Int?
+  cancelled       Boolean?
+
+  @@id([transaction_id, seq_num])
+  @@map("pos_transaction_details")
 }
 
 // model pos_insurance {

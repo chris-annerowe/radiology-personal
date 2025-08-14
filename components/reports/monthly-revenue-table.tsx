@@ -39,6 +39,8 @@ import Image from "next/image";
     }
     
     const orders:any[] = getOrders()
+    let user:[number, string] = [1,'dev']
+    console.log("Userr ",user[1])
     
 
     return (
@@ -97,7 +99,7 @@ import Image from "next/image";
                 {/* Totals */}
                 <tfoot>
                     <tr className="border-t border-gray-300 font-bold text-gray-900">
-                        <td className="p-2 text-center" colSpan={2}>Totals</td>
+                        <td className="p-2 text-center" colSpan={2}>Grand Totals</td>
                         <td className="p-2 text-left">${(total * rate).toFixed(2)}</td>
                         <td className="p-2 text-left">${(total * rate + total * rate * 0.15).toFixed(2)}</td>
                         <td className="p-2 text-left">${(total * rate + total * rate * 0.15).toFixed(2)}</td>

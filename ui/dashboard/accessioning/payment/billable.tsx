@@ -50,7 +50,7 @@ export default function Billable(props: BillableProps) {
       taxPaid: 0,
       discountAmt: 0,
       totalBillable: 0,
-      transaction_id: 0,
+      transaction_id: '',
       paidBy: '',
       paymentType: '',
       clientProvider: '',
@@ -94,13 +94,16 @@ export default function Billable(props: BillableProps) {
       transaction.paymentType = props.paymentData.paymentType
 
       updateOrder()
+
+      const transId = uuidv4()
       try {
-        const response = await fetch('/api/saveTransaction', {
+        const saveTrans = await fetch('/api/saveTransaction', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            transaction_id: transId,
             total: transaction.totalBillable,
             insurance: transaction.insuranceAmt,
             tax: transaction.taxPaid,
@@ -119,13 +122,35 @@ export default function Billable(props: BillableProps) {
           }),
         });
 
-        if (response.ok) {
-          const result = await response.json();
-          console.log('Paid', result);
-          router.push('/')
-        } else {
-          console.error('Failed to save transaction');
-        }
+        const saveDetails = await fetch('/api/saveTransactionDetails', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            orderno: props.order_id,
+            transaction_id: transId,
+            trans_type: props.paymentData?.paymentType,
+            trans_code: props.paymentData.paymentType,
+            src_id: '',
+            debit_amount: 0.00,
+            credit_amount: 0.00,
+            studies: props.studies
+          }),
+        });
+
+        const [transResponse, detailsResponse] = await Promise.all([
+          saveTrans.json(),
+          saveDetails.json(),
+        ]);
+      
+        if (transResponse.ok) {
+          console.log('Paid', transResponse);
+        } 
+
+        if (detailsResponse.ok) {
+          console.log("Details saved ",detailsResponse)
+        } 
       } catch (e) {
         console.log(e);
       }
@@ -144,9 +169,9 @@ export default function Billable(props: BillableProps) {
      
       await saveOrder();
 
-      setLoadingMessage("Saving Transaction Details");
+      // setLoadingMessage("Saving Transaction Details");
 
-      await saveTransaction();
+      // await saveTransaction();
 
       setLoadingMessage("Adding Worklist Entries");
 
@@ -174,9 +199,9 @@ export default function Billable(props: BillableProps) {
         balance = props.outstandingTransaction?.outstanding_balance
       }
 
-
+      const transId = uuidv4()
       try {
-        const response = await fetch('/api/saveOrder', {
+        const saveOrder = await fetch('/api/saveOrder', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -189,9 +214,41 @@ export default function Billable(props: BillableProps) {
           }),
         });
 
-        if (response.ok) {
-          const result = await response.json();
-          console.log('Order created', result)
+        const saveDetails = await fetch('/api/saveTransactionDetails', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            studies: props.studies,
+            orderno: newOrder,
+            transaction_id: transId,
+            trans_type: props.paymentData?.paymentType,
+            trans_code: props.paymentData.paymentType,
+            src_id: '',
+            debit_amount: 0.00,
+            credit_amount: 0.00
+          }),
+        });
+
+        await saveTransaction(transId)
+
+        const [orderResponse, detailsResponse] = await Promise.all([
+          saveOrder.json(),
+          // saveTrans.json(),
+          saveDetails.json(),
+        ]);
+      
+      // if (transResponse.ok) {
+      //     console.log("Transaction saved ",transResponse)
+      //   } 
+
+        if (detailsResponse.ok) {
+          console.log("Details saved ",detailsResponse)
+        } 
+
+        if (orderResponse.ok) {
+          console.log('Order created', orderResponse)
         } else {
           console.error('Failed to save order');
         }
@@ -232,7 +289,8 @@ export default function Billable(props: BillableProps) {
 
   }
 
-  async function saveTransaction() {
+  async function saveTransaction(id:string) {
+    const transId = uuidv4()
 
     try {
       const response = await fetch('/api/saveTransaction', {
@@ -241,6 +299,7 @@ export default function Billable(props: BillableProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          transaction_id: id ? id : transId,
           total,
           insurance: props.insurance,
           tax: props.taxable * 0.15,

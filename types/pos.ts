@@ -40,7 +40,7 @@ export interface PaymentData {
 }
 
 export interface POSTransaction {
-    transaction_id        :number,  
+    transaction_id        :string,  
     order_id              :string,  
     patient_last_name     :string , 
     patient_first_name    :string ,    

@@ -6,6 +6,7 @@ export async function POST(req: Request) {
     console.log("POST method")
     const body = await req.json();
     const { 
+      transaction_id,
       total, 
       insurance, 
       tax, 
@@ -25,6 +26,7 @@ export async function POST(req: Request) {
     try {
       const transaction = await db.pos_transactions.create({
         data: {
+          transaction_id,
           totalBillable: total,
           insuranceAmt: insurance,
           order_id: order_id,
