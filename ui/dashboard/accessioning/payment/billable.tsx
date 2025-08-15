@@ -51,6 +51,7 @@ export default function Billable(props: BillableProps) {
       taxPaid: 0,
       discountAmt: 0,
       totalBillable: 0,
+      totalCost: 0,
       transaction_id: '',
       paidBy: '',
       paymentType: '',
@@ -85,6 +86,7 @@ export default function Billable(props: BillableProps) {
       transaction.numOfStudies = props.outstandingTransaction.numOfStudies
       transaction.items = props.outstandingTransaction.items
       transaction.totalBillable = props.outstandingTransaction.totalBillable
+      transaction.totalCost = props.outstandingTransaction.totalCost
       transaction.discountAmt = props.outstandingTransaction.discountAmt
       transaction.taxPaid = props.outstandingTransaction.taxPaid
 
@@ -105,6 +107,7 @@ export default function Billable(props: BillableProps) {
           body: JSON.stringify({
             transaction_id: transId,
             total: transaction.totalBillable,
+            totalCost: transaction.totalCost,
             insurance: transaction.insuranceAmt,
             tax: transaction.taxPaid,
             amtPaid: transaction.amountPaid,
@@ -297,6 +300,7 @@ export default function Billable(props: BillableProps) {
           total,
           insurance: props.insurance,
           tax: props.taxable * 0.15,
+          totalCost: props.subtotal,
           amtPaid: props.amtPaid,
           balance: total - props.amtPaid,
           patient_last_name: props.patient.last_name,

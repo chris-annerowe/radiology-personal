@@ -48,6 +48,7 @@ export interface POSTransaction {
     numOfStudies          :number,
     items                 :string,
     totalBillable         :number,
+    totalCost             :number,
     discountAmt           :number,
     insuranceAmt          :number,
     taxPaid               :number,

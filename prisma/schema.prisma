@@ -226,6 +226,7 @@ model pos_transactions {
   patient_id            String     @db.VarChar(40)
   numOfStudies          Int
   items                 String     @db.VarChar(300)
+  totalCost             Float
   totalBillable         Float
   discountAmt           Float?
   insuranceAmt          Float

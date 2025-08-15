@@ -8,6 +8,7 @@ export async function POST(req: Request) {
     const { 
       transaction_id,
       total, 
+      totalCost,
       insurance, 
       tax, 
       amtPaid, 
@@ -27,6 +28,7 @@ export async function POST(req: Request) {
       const transaction = await db.pos_transactions.create({
         data: {
           transaction_id,
+          totalCost: totalCost,
           totalBillable: total,
           insuranceAmt: insurance,
           order_id: order_id,

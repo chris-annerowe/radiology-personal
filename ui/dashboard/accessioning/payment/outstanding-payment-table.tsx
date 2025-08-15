@@ -142,9 +142,6 @@ const date = format(new Date(),'dd/MM/yyyy')
                 onClose={closePaymentModal} 
                 patient={patient}
                 studies={studies}
-                paymentTypes={paymentTypes}
-                clientProviders={props.clientProviders}
-                insuranceProviders={props.insuranceProviders}
                 outstandingTransaction={selectedTransaction}
             />
         </>

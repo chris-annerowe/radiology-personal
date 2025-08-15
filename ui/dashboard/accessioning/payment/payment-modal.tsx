@@ -16,9 +16,6 @@ interface PaymentModalProps {
     onClose: () => void,
     patient: Patient,
     studies: Study[],
-    // clientProviders: ClientProvider[],
-    // paymentTypes: PaymentType[],
-    // insuranceProviders: InsuranceProvider[],
     outstandingTransaction?: POSTransaction
 }
 
