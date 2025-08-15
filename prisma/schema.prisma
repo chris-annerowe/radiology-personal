@@ -241,7 +241,7 @@ model pos_transactions {
 
 model PosTransactionDetails {
   transaction_id  String   @db.VarChar(50)
-  seq_num         Int      @default(autoincrement())
+  seq_num         Int      
   branchcode      String?  @db.VarChar(5)
   ordercode       String   @db.VarChar(50)
   trans_type      String   @db.VarChar(25)

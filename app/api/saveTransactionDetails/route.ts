@@ -24,10 +24,11 @@ export async function POST(req: Request) {
     } = body;
     try {
       const transaction = await db.posTransactionDetails.createMany({
-        data: studies.map((study: Study) => {
+        data: studies.map((study: Study, index) => {
           return {
             ordercode: orderno,
             transaction_id,
+            seq_num: index+1,
             trans_type,
             trans_code,
             src_id,

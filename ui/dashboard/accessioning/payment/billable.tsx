@@ -32,8 +32,9 @@ export default function Billable(props: BillableProps) {
   const router = useRouter()
 
   
-  //create a new orderId
+  //create a new orderId & transactionId
   const newOrder = uuidv4()
+  const transId = uuidv4()
 
   //create new order and save to db
   async function completeOrder() {
@@ -95,7 +96,6 @@ export default function Billable(props: BillableProps) {
 
       updateOrder()
 
-      const transId = uuidv4()
       try {
         const saveTrans = await fetch('/api/saveTransaction', {
           method: 'POST',
@@ -199,7 +199,6 @@ export default function Billable(props: BillableProps) {
         balance = props.outstandingTransaction?.outstanding_balance
       }
 
-      const transId = uuidv4()
       try {
         const saveOrder = await fetch('/api/saveOrder', {
           method: 'POST',
@@ -231,17 +230,13 @@ export default function Billable(props: BillableProps) {
           }),
         });
 
-        await saveTransaction(transId)
+        await saveTransaction()
 
         const [orderResponse, detailsResponse] = await Promise.all([
           saveOrder.json(),
-          // saveTrans.json(),
           saveDetails.json(),
         ]);
       
-      // if (transResponse.ok) {
-      //     console.log("Transaction saved ",transResponse)
-      //   } 
 
         if (detailsResponse.ok) {
           console.log("Details saved ",detailsResponse)
@@ -289,8 +284,7 @@ export default function Billable(props: BillableProps) {
 
   }
 
-  async function saveTransaction(id:string) {
-    const transId = uuidv4()
+  async function saveTransaction() {
 
     try {
       const response = await fetch('/api/saveTransaction', {
@@ -299,7 +293,7 @@ export default function Billable(props: BillableProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          transaction_id: id ? id : transId,
+          transaction_id: transId,
           total,
           insurance: props.insurance,
           tax: props.taxable * 0.15,
