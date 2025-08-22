@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 
 export default function ManagementReports(){
   const [reportType, setReportType] = useState('');  
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date>(new Date());
 
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
 
@@ -15,6 +17,14 @@ export default function ManagementReports(){
 
   const handleDateChange = (date: Date) => {
     setSelectedDate(date);
+  };
+
+  const handleStartDateChange = (date: Date) => {
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date: Date) => {
+    setEndDate(date);
   };
 
   const login = async () => {
@@ -58,12 +68,16 @@ export default function ManagementReports(){
         switch(reportType){
             case 'dailySales':
                 console.log("Daily")
-                const formattedDate = selectedDate ? selectedDate.toISOString().split('T')[0] : ''; // YYYY-MM-DD
+                const formattedDate = selectedDate.toISOString().split('T')[0]; // YYYY-MM-DD
                 queryParams.append("date", formattedDate);
                 break;
+            case 'operationSummary':
             case 'monthlyRev':
-              queryParams.append("startDate", selectedDate);
-                break;
+              const start = startDate ? startDate.toISOString().split('T')[0] : ""; // YYYY-MM-DD
+              const end = endDate.toISOString().split('T')[0]; // YYYY-MM-DD
+                queryParams.append("startDate", start);
+                queryParams.append("endDate", end);
+                  break;
             default:
                 console.log("No report chosen")
         }
@@ -96,6 +110,7 @@ export default function ManagementReports(){
                     <option value="monthlyRev">Total Monthly Revenue</option>
                     <option value="dailySales">Daily Sales</option>
                     <option value="orders">Detailed Orders</option>
+                    <option value="operationSummary">Operations Summary</option>
                 </Select>
 
                 {reportType === 'dailySales' && (
@@ -110,6 +125,34 @@ export default function ManagementReports(){
                         maxDate={new Date()}
                         size={8}
                         onSelectedDateChanged={handleDateChange}
+                        />
+                    </>
+                )}
+
+                {(reportType === 'monthlyRev' || reportType === 'operationSummary') && (
+                    <>
+                        <div className="mb-2 mt-3 block">
+                            <Label htmlFor="startDate" value="Start Date" />
+                        </div>
+                    
+                    <Datepicker
+                        id="startDate"
+                        name="startDate"
+                        maxDate={new Date()}
+                        size={8}
+                        onSelectedDateChanged={handleStartDateChange}
+                        />
+
+                        <div className="mb-2 mt-3 block">
+                            <Label htmlFor="endDate" value="End Date" />
+                        </div>
+                    
+                    <Datepicker
+                        id="endDate"
+                        name="endDate"
+                        maxDate={new Date()}
+                        size={8}
+                        onSelectedDateChanged={handleEndDateChange}
                         />
                     </>
                 )}
