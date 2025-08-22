@@ -7,6 +7,8 @@ export default function ManagementReports(){
   const [reportType, setReportType] = useState('');  
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+
   const handleReportChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setReportType(e.target.value);
   };
@@ -20,7 +22,7 @@ export default function ManagementReports(){
     const password = process.env.NEXT_PUBLIC_JWT_PASS;
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
+      const response = await fetch(`${baseUrl}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -49,7 +51,7 @@ export default function ManagementReports(){
         console.log('Selected Date:', selectedDate);
 
         const token = localStorage.getItem("jwtToken")
-        const response = await fetch("http://localhost:8080/api/reports/view?name=dailySales", {
+        const response = await fetch(`${baseUrl}/reports/view?name=${reportType}`, {
             method: "GET",
             headers: {
               "Authorization": `Bearer ${token}`
