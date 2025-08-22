@@ -51,7 +51,24 @@ export default function ManagementReports(){
         console.log('Selected Date:', selectedDate);
 
         const token = localStorage.getItem("jwtToken")
-        const response = await fetch(`${baseUrl}/reports/view?name=${reportType}`, {
+        const username = 'user'; // TODO: get from local storage or wherever logged in user is stored
+
+        let queryParams = new URLSearchParams({ name: reportType, user: username });
+
+        switch(reportType){
+            case 'dailySales':
+                console.log("Daily")
+                const formattedDate = selectedDate ? selectedDate.toISOString().split('T')[0] : ''; // YYYY-MM-DD
+                queryParams.append("date", formattedDate);
+                break;
+            case 'monthlyRev':
+              queryParams.append("startDate", selectedDate);
+                break;
+            default:
+                console.log("No report chosen")
+        }
+
+        const response = await fetch(`${baseUrl}/reports/view?${queryParams.toString()}`, {
             method: "GET",
             headers: {
               "Authorization": `Bearer ${token}`
