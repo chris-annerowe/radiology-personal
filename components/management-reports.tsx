@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 export default function ManagementReports(){
   const [reportType, setReportType] = useState('');  
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
 
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
@@ -82,16 +82,62 @@ export default function ManagementReports(){
                 console.log("No report chosen")
         }
 
-        const response = await fetch(`${baseUrl}/reports/view?${queryParams.toString()}`, {
+        // const response = await fetch(`${baseUrl}/reports/view?${queryParams.toString()}`, {
+        //     method: "GET",
+        //     headers: {
+        //       "Authorization": `Bearer ${token}`
+        //     }
+        //   });  
+        // const blob = await response.blob();
+        // const url = URL.createObjectURL(blob);
+        // window.open(url, "_blank");
+
+        try {
+          const generate = await fetch(`${baseUrl}/reports/generate?${queryParams.toString()}`, {
             method: "GET",
             headers: {
               "Authorization": `Bearer ${token}`
             }
-          });  
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        window.open(url, "_blank");
-    }
+          });
+
+          const generateContentType = generate.headers.get("Content-Type");
+          const generateResponse = generateContentType?.includes("application/json")
+            ? await generate.json()
+            : await generate.text();
+
+          if (generate.ok) {
+            console.log("Report generated", generateResponse);
+
+            // Now proceed to view the report
+            const view = await fetch(`${baseUrl}/reports/view?${queryParams.toString()}`, {
+              method: "GET",
+              headers: {
+                "Authorization": `Bearer ${token}`
+              }
+            });
+
+            const viewContentType = view.headers.get("Content-Type");
+            const viewResponse = viewContentType?.includes("application/json")
+              ? await view.json()
+              : view; // keep as Response object for blob()
+
+            if (view.ok) {
+              const blob = await view.blob();
+              const url = URL.createObjectURL(blob);
+              window.open(url, "_blank");
+              // const viewerUrl = `${baseUrl}/frameset?__report=${reportType}.rptdesign&${queryParams.toString()}`;
+              // window.open(viewerUrl, "_blank");
+              console.log("Report view opened");
+            } else {
+              console.error("Failed to view report");
+            }
+          } else {
+            console.error("Report generation failed", generateResponse);
+          }
+        } catch (e) {
+          console.error("Error handling report:", e);
+        }
+  }
 
     return(
         <>

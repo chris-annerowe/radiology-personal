@@ -15,6 +15,9 @@ model User {
   password               String          @unique
   createdAt              DateTime        @default(now())
   modifiedConfigurations Configuration[]
+  role                   role              @relation("RoleToUser", fields: [roleName, rolePermId], references: [name, permId])
+  roleName               String            @db.VarChar(25)  // Matches role.name
+  rolePermId            Int               // Matches role.permId
 }
 
 model modality {
@@ -293,4 +296,21 @@ model pos_payment_options {
   id_required   Boolean
   user_id       Int
   last_modified DateTime @default(now())
+}
+
+model permission {
+  id             Int      @id
+  name           String   @db.VarChar(15) @unique
+  last_modified  DateTime @default(now())
+  roles          role[]   @relation("PermissionToRole")
+}
+
+model role {
+  name           String     @db.VarChar(25)
+  permId         Int
+  permission     permission @relation("PermissionToRole", fields: [permId], references: [id])
+  last_modified  DateTime   @default(now())
+  users          User[]     @relation("RoleToUser")
+
+  @@id([name, permId])
 }
