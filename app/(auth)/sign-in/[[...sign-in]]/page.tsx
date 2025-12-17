@@ -1,67 +1,85 @@
-import { db } from '@/lib/db'
-import { redirect } from 'next/navigation'
-import React from 'react'
-import { compare } from 'bcrypt'
+'use client'
+
+import React, { useState, FormEvent, use, useEffect } from 'react'
+import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { Button, Card, FloatingLabel } from 'flowbite-react'
 import ThemeSwitch from '@/components/themeSwitch'
+import { useSession } from 'next-auth/react'
 
 const SignIn = () => {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const { data: session, status } = useSession()
 
-    async function createUser(data: FormData) {
-        "use server"
-        const users = await db.user.findMany()
-        console.log(users)
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.replace('dashboard/daybook')
+    } 
+  }, [status, router])
 
-        const username = data.get('username')?.valueOf()
-        const password = data.get('password')?.valueOf()
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setError(null)
+    const formData = new FormData(e.currentTarget)
+    const username = (formData.get('username') as string) || ''
+    const password = (formData.get('password') as string) || ''
 
-        if (typeof username !== 'string' || username?.length === 0) {
-            throw new Error("Invalid Username")
-        }
-        if (typeof password !== 'string' || password?.length === 0) {
-            throw new Error("Invalid Password")
-        }
-
-        {
-            users.map((user) => {
-                console.log(user.username)
-                console.log(user.password)
-                // const passwordMatch = await compare(user.password,password);
-                //     if(!passwordMatch){
-                //        console.log("Password incorrect. Please try again.")
-                //     }
-                //     console.log("decrypted: ",passwordMatch)
-                if (username === user.username && (password === user.password)) {
-                    console.log("User verified")
-                    redirect('/dashboard')
-                }
-            })
-        }
-        throw new Error("Credentials do not match. Please try again")
+    if (!username || !password) {
+      setError('Username and password are required')
+      return
     }
 
-    return (
-        <div className='flex bg-transparent px-30 py-30 pt-20 items-center justify-center'>
-            <ThemeSwitch />
-            <Card className='w-72'>
-                <form action={createUser} className='flex gap-2 flex-col '>
-                    <FloatingLabel variant='outlined' label='Username' type='text' name='username' />
+    setLoading(true)
+    try {
+      const res = await signIn('credentials', {
+        username,
+        password,
+        redirect: false,
+        callbackUrl: '/dashboard',
+      })
 
-                    <FloatingLabel variant='outlined' label='Password' type='password' name='password' />
-                    {/*<input
-                        type='text'
-                        name='username'
-    className='border border-slate-300 bg-transparent rounded px-2 py-1 outline-black focus-within:border-slate-100' />*/}
-                    {/*<input
-                        type='text'
-                        name='password'
-className='border border-slate-300 bg-transparent rounded px-2 py-1 outline-black focus-within:border-slate-100' />*/}
-                    {/*<button type='submit' className='border border-slate-300'>Sign In</button>*/}
-                    <Button type='submit'>Sign In</Button>
-                </form>
-            </Card>
+      if (res?.error) {
+        setError('Invalid credentials')
+        return
+      }
+
+      if (res?.ok) {
+        router.push(res.url||'sign-in')
+        return
+      }
+
+      if (res?.url) {
+        router.replace(res.url)
+        return
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="relative min-h-screen bg-transparent flex items-center justify-center px-30 py-30">
+  <div className="absolute top-4 left-4 z-10">
+    <ThemeSwitch />
+  </div>
+  <Card className="w-72">
+    <form onSubmit={onSubmit} className="flex gap-2 flex-col">
+      <FloatingLabel variant="outlined" label="Username" type="text" name="username" />
+      <FloatingLabel variant="outlined" label="Password" type="password" name="password" />
+      {error && (
+        <div className="text-red-600 text-sm mt-1" role="alert">
+          {error}
         </div>
-    )
+      )}
+      <Button type="submit" isProcessing={loading} disabled={loading}>
+        {loading ? 'Signing In...' : 'Sign In'}
+      </Button>
+    </form>
+  </Card>
+</div>
+  )
 }
 
 export default SignIn
