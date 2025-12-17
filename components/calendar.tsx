@@ -2,15 +2,13 @@
 import ReactCalendar from 'react-calendar'
 
 import React, { useState, useEffect } from 'react'
-import { add, format, sub } from 'date-fns'
+import { format, sub } from 'date-fns'
 import { COUNTRY_CODE, PUBLIC_HOLIDAYS_URL } from '@/config'
 import { FaCalendar } from 'react-icons/fa6'
 import AppointmentModal from '@/ui/modals/appointment-modal'
 import { getBgColour } from '@/types/appointment'
 import AppointmentTimes from './ui/daybook'
 import HolidayModal from '@/ui/modals/holiday-modal'
-import AppointmentSearch from '@/ui/dashboard/appointment/appointment-search'
-import { number } from 'zod'
 
 interface DateType {
     justDate: Date | null
@@ -57,7 +55,7 @@ const Calendar = (props:AppointmentProps) => {
     const [isHoliday, setIsHoliday] = useState(false)
     const [holiday, setHoliday] = useState("")
     const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined)
-    const [appointmentEdit, setAppointmentEdit] = useState<Appointment>(resetAppointment)
+    const [appointmentEdit, setAppointmentEdit] = useState<any>(resetAppointment)
     const [date, setDate] = useState<DateType>({
         justDate: null,
         dateTime: null
@@ -104,7 +102,7 @@ const Calendar = (props:AppointmentProps) => {
             const holidays = await resp.json()
             console.log("JM Holidays: ",URL,holidays)
 
-            holidays?.map(holiday => {
+            holidays?.map((holiday: any) => {
                 if(date.justDate){
                     const formatted = format(date.justDate,'yyyy-MM-dd')
                     //check if date selected is a holiday

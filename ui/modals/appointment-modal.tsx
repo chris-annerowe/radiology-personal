@@ -22,7 +22,7 @@ import Link from "next/link";
 interface ApptModalProps{
     show: boolean
     onClose: ()=>void | void
-    date: Date
+    date: Date | null
     modality: string
     index: number | undefined
     holiday?: string
@@ -77,7 +77,7 @@ export default function AppointmentModal(props: ApptModalProps) {
     };
 
     
-    async function handleSave(e) {
+    async function handleSave(e:any) {
         try{
             e.preventDefault();
             const data = getFormData();
