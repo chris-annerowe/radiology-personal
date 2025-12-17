@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@maskito/core": "^2.3.1",
     "@maskito/react": "^2.3.1",
     "@next-auth/prisma-adapter": "^1.0.7",
